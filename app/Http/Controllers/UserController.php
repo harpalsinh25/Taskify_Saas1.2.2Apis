@@ -1,0 +1,1328 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Throwable;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\Admin;
+use App\Models\Client;
+use App\Models\Project;
+use App\Models\TaskUser;
+use App\Models\Template;
+use App\Models\Workspace;
+use App\Models\TeamMember;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Services\DeletionService;
+use GuzzleHttp\Promise\TaskQueue;
+use App\Notifications\VerifyEmail;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Notifications\AccountCreation;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\RateLimiter;
+use Spatie\Permission\Contracts\Permission;
+use Spatie\Permission\Contracts\Role as ContractsRole;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Request as FacadesRequest;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+
+class UserController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $workspace = Workspace::find(session()->get('workspace_id'));
+        $users = $workspace->users;
+        $roles = Role::where('guard_name', 'web')
+            ->whereNotIn('name', ['superadmin', 'admin', 'manager'])
+            ->get();
+
+        return view('users.users', ['users' => $users, 'roles' => $roles]);
+    }
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        $roles = Role::where('guard_name', 'web')
+            ->whereNotIn('name', ['superadmin', 'admin', 'manager'])
+            ->get();
+        return view('users.create_user', ['roles' => $roles]);
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    /**
+ * Create a new user
+ *@group User Managemant
+ * This endpoint allows you to create a new user account with optional profile image,
+ * address info, and role assignment. It also attaches the user to the workspace and
+ * sends email notifications if configured.
+ *
+ * Requires authentication as an admin user.
+ *
+ * @bodyParam first_name string required The user's first name. Example: John
+ * @bodyParam last_name string required The user's last name. Example: Doe
+ * @bodyParam email string required The user's email address. Must be unique. Example: john.doe@example.com
+ * @bodyParam password string required The user's password. Minimum 6 characters. Example: secret123
+ * @bodyParam password_confirmation string required Must match the password field. Example: secret123
+ * @bodyParam address string The user's address. Example: 123 Main St
+ * @bodyParam phone string The user's phone number. Example: +1234567890
+ * @bodyParam country_code string ISO country dialing code. Example: +91
+ * @bodyParam city string The user's city. Example: Mumbai
+ * @bodyParam state string The user's state. Example: Maharashtra
+ * @bodyParam country string The user's country. Example: India
+ * @bodyParam zip string The user's postal/ZIP code. Example: 400001
+ * @bodyParam dob string The user's date of birth. Format: Y-m-d. Example: 1990-05-15
+ * @bodyParam doj string The user's date of joining. Format: Y-m-d. Example: 2024-01-01
+ * @bodyParam role string required The role to assign to the user. Example: employee
+ * @bodyParam country_iso_code string ISO country code. Example: IN
+ * @bodyParam profile file The user's profile image. JPEG, JPG, PNG. Max 2MB.
+ * @bodyParam require_ev boolean Whether to require email verification. Default is true.
+ * @bodyParam status boolean Whether to set the user as active. Default is false.
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "message": "User created successfully.",
+ *   "data": {
+ *     "id": 123,
+ *     "data": {
+ *       "id": 123,
+ *       "first_name": "John",
+ *       "last_name": "Doe",
+ *       "email": "john.doe@example.com",
+ *       "status": 1,
+ *       "email_verified_at": "2025-06-04T11:03:41.000000Z",
+ *       "photo": "photos/john.png",
+ *       ...
+ *     }
+ *   }
+ * }
+ *
+ * @response 422 {
+ *   "success": false,
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "email": ["The email has already been taken."]
+ *   }
+ * }
+ *
+ * @response 500 {
+ *   "success": false,
+ *   "message": "User could not be created.",
+ *   "error": "Call to a member function hasRole() on null",
+ *   "line": 81,
+ *   "file": "/path/to/UserController.php"
+ * }
+ */
+
+   public function store(Request $request)
+{
+    $isApi = $request->get('api', true);
+    $user = null; //
+
+    try {
+        $adminId = null;
+
+      $userAuth = Auth::guard('web')->user() ?? Auth::guard('sanctum')->user();
+
+if ($userAuth && $userAuth->hasRole('admin')) {
+    $admin = Admin::where('user_id', $userAuth->id)->first();
+    if ($admin) {
+        $adminId = $admin->id;
+    }
+}
+
+
+        ini_set('max_execution_time', 300);
+
+        $formFields = $request->validate([
+            'first_name' => ['required'],
+            'last_name' => ['required'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'password' => 'required|min:6',
+            'password_confirmation' => 'required|same:password',
+            'address' => 'nullable',
+            'phone' => 'nullable',
+            'country_code' => 'nullable',
+            'city' => 'nullable',
+            'state' => 'nullable',
+            'country' => 'nullable',
+            'zip' => 'nullable',
+            'dob' => 'nullable',
+            'doj' => 'nullable',
+            'role' => 'required',
+            'country_iso_code' => 'nullable',
+            'profile' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+        ]);
+
+        $validator = Validator::make($formFields, []);
+        $email = $request->input('email');
+
+        if (DB::table('users')->where('email', $email)->exists() || DB::table('clients')->where('email', $email)->exists()) {
+            $validator->errors()->add('email', 'The email has already been taken in users or clients.');
+        }
+
+        if ($validator->fails()) {
+            return formatApiValidationError($isApi, $validator->errors());
+        }
+
+        if ($request->filled('dob')) {
+            $formFields['dob'] = format_date($request->input('dob'), false, app('php_date_format'), 'Y-m-d');
+        }
+        if ($request->filled('doj')) {
+            $formFields['doj'] = format_date($request->input('doj'), false, app('php_date_format'), 'Y-m-d');
+        }
+
+        $password = $request->input('password');
+        $formFields['password'] = bcrypt($password);
+
+        if ($request->hasFile('profile')) {
+            $formFields['photo'] = $request->file('profile')->store('photos', 'public');
+        } else {
+            $formFields['photo'] = 'photos/no-image.jpg';
+        }
+
+        $requireEv = isAdminOrHasAllDataAccess() && $request->boolean('require_ev') === false ? 0 : 1;
+        $status = isAdminOrHasAllDataAccess() && $request->boolean('status') === true ? 1 : 0;
+        $formFields['email_verified_at'] = $requireEv === 0 ? now()->tz(config('app.timezone')) : null;
+        $formFields['status'] = $status;
+
+
+        $user = User::create($formFields);
+
+        TeamMember::create([
+            'admin_id' => $adminId ?? 0,
+            'user_id' => $user->id,
+        ]);
+
+        $workspace = Workspace::find(session('workspace_id'));
+        $workspace?->users()->attach($user->id);
+        $user->assignRole($request->input('role'));
+
+        if ($requireEv === 1) {
+            $user->notify(new VerifyEmail($user));
+        }
+
+        if (isEmailConfigured()) {
+            $template = Template::where('type', 'email')
+                ->where('name', 'account_creation')
+                ->first();
+
+            if (!$template || $template->status !== 0) {
+                $user->notify(new AccountCreation($user, $password));
+            }
+        }
+
+        return formatApiResponse(false, 'User created successfully.', [
+            'id' => $user->id,
+            'data' => formatUser($user),
+        ]);
+
+    } catch (TransportExceptionInterface $e) {
+        if ($user) {
+            $user->delete();
+        }
+        return formatApiResponse(true, 'User could not be created. Please check email settings.', [
+            'error' => $e->getMessage()
+        ]);
+    } catch (Throwable $e) {
+        if ($user) {
+            $user->delete();
+        }
+        return formatApiResponse(true, 'User could not be created.', [
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile()
+        ]);
+    }
+}
+
+    public function email_verification()
+    {
+        $user = getAuthenticatedUser();
+        if (!$user->hasVerifiedEmail()) {
+            return view('auth.verification-notice');
+        } else {
+            return redirect(route('home.index'));
+        }
+    }
+    public function resend_verification_link(Request $request)
+    {
+        if (isEmailConfigured()) {
+            $request->user()->sendEmailVerificationNotification();
+            return back()->with('message', 'Verification link sent.');
+        } else {
+            return back()->with('error', 'Verification link couldn\'t sent.');
+        }
+    }
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit_user($id)
+    {
+        $user = User::findOrFail($id);
+        $roles = Role::where('guard_name', 'web')
+            ->whereNotIn('name', ['superadmin', 'manager'])
+            ->get();
+        return view('users.edit_user', ['user' => $user, 'roles' => $roles]);
+    }
+    /**
+ * Update an existing user
+ */
+/**
+ * Update user profile details.
+ *
+ * @group User Managemant
+ *
+ * @urlParam id integer required The ID of the user to update.
+ *
+ * @bodyParam first_name string required The user's first name. Example: John
+ * @bodyParam last_name string required The user's last name. Example: Doe
+ * @bodyParam phone string nullable The user's phone number. Example: +1234567890
+ * @bodyParam country_code string nullable The user's country code. Example: US
+ * @bodyParam address string nullable The user's address. Example: 123 Main St
+ * @bodyParam city string nullable The city of the user. Example: New York
+ * @bodyParam state string nullable The state of the user. Example: NY
+ * @bodyParam country string nullable The country of the user. Example: USA
+ * @bodyParam zip string nullable The postal/zip code. Example: 10001
+ * @bodyParam dob date nullable Date of birth in app-specific format. Example: 1990-01-01
+ * @bodyParam doj date nullable Date of joining in app-specific format. Example: 2020-01-01
+ * @bodyParam password string nullable Minimum 6 characters, to update password.
+ * @bodyParam password_confirmation string required_with:password Must match password.
+ * @bodyParam country_iso_code string nullable ISO code of country. Example: US
+ * @bodyParam upload file image nullable User profile image (jpeg, jpg, png). Max size 2048 KB.
+ * @bodyParam status boolean nullable User active status (only admin or full access users).
+ * @bodyParam role string nullable Role to assign to the user (cannot update admin's role).
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "id": 1
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "first_name": ["The first name field is required."],
+ *     "password": ["The password must be at least 6 characters."]
+ *   }
+ * }
+ */
+public function update(Request $request, $id)
+{
+    $isApi = $request->get('api', true);
+
+    try {
+        $formFields = $request->validate([
+            'first_name' => ['required'],
+            'last_name' => ['required'],
+            'phone' => 'nullable',
+            'country_code' => 'nullable',
+            'address' => 'nullable',
+            'city' => 'nullable',
+            'state' => 'nullable',
+            'country' => 'nullable',
+            'zip' => 'nullable',
+            'dob' => 'nullable',
+            'doj' => 'nullable',
+            'password' => 'nullable|min:6',
+            'password_confirmation' => 'required_with:password|same:password',
+            'country_iso_code' => 'nullable',
+            'upload' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            'role' => 'nullable|string',
+            'status' => 'nullable|boolean'
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // Format date fields
+        if ($request->filled('dob')) {
+            $formFields['dob'] = format_date($request->input('dob'), false, app('php_date_format'), 'Y-m-d');
+        }
+
+        if ($request->filled('doj')) {
+            $formFields['doj'] = format_date($request->input('doj'), false, app('php_date_format'), 'Y-m-d');
+        }
+
+        // Handle profile image
+        if ($request->hasFile('upload')) {
+            if ($user->photo && $user->photo !== 'photos/no-image.jpg') {
+                Storage::disk('public')->delete($user->photo);
+            }
+
+            $formFields['photo'] = $request->file('upload')->store('photos', 'public');
+        }
+
+        // Update password if provided
+        if (isAdminOrHasAllDataAccess() && !empty($formFields['password'])) {
+            $formFields['password'] = bcrypt($formFields['password']);
+        } else {
+            unset($formFields['password']);
+        }
+
+        // Status handling
+        $formFields['status'] = isAdminOrHasAllDataAccess() && $request->has('status')
+            ? $request->input('status')
+            : $user->status;
+
+        // Role assignment (skip if user is admin)
+        if (!$user->hasRole('admin') && $request->filled('role')) {
+            $user->syncRoles($request->input('role'));
+        }
+
+        $user->update($formFields);
+
+        return formatApiResponse($isApi, 'User updated successfully.', [
+            'id' => $user->id,
+            'data' => formatUser($user),
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return formatApiValidationError($isApi, $e->validator->errors());
+    } catch (\Throwable $e) {
+        return formatApiResponse($isApi, 'User could not be updated.', [
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+        ]);
+    }
+}
+
+    public function update_photo(Request $request, $id)
+    {
+        if ($request->hasFile('upload')) {
+            $old = User::findOrFail($id);
+            if ($old->photo != 'photos/no-image.jpg' && $old->photo !== null)
+                Storage::disk('public')->delete($old->photo);
+            $formFields['photo'] = $request->file('upload')->store('photos', 'public');
+            User::findOrFail($id)->update($formFields);
+            return back()->with('message', 'Profile picture updated successfully.');
+        } else {
+            return back()->with('error', 'No profile picture selected.');
+        }
+    }
+
+/**
+ * Delete a user
+ *@group User Managemant
+ * This endpoint deletes a user by their ID. It also removes all associated todos for the user. If the user does not exist, a 404 error is returned.
+ *
+ * @urlParam id integer required The ID of the user to delete. Example: 6
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "User deleted successfully.",
+ *   "id": "6",
+ *   "title": "John Doe",
+ *   "data": []
+ * }
+ *
+ * @response 404 {
+ *   "message": "No query results for model [App\\Models\\User] 999"
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Failed to delete User due to internal server error."
+ * }
+ *
+ * @param int $id
+ * @return \Illuminate\Http\JsonResponse
+ */
+
+    public function delete_user($id)
+    {
+        $user = User::findOrFail($id);
+        $response = DeletionService::delete(User::class, $id, 'User');
+        $user->todos()->delete();
+        return $response;
+    }
+    public function delete_multiple_user(Request $request)
+    {
+        // Validate the incoming request
+        $validatedData = $request->validate([
+            'ids' => 'required|array', // Ensure 'ids' is present and an array
+            'ids.*' => 'integer|exists:users,id' // Ensure each ID in 'ids' is an integer and exists in the table
+        ]);
+        $ids = $validatedData['ids'];
+        $deletedUsers = [];
+        $deletedUserNames = [];
+        // Perform deletion using validated IDs
+        foreach ($ids as $id) {
+            $user = User::findOrFail($id);
+            if ($user) {
+                $deletedUsers[] = $id;
+                $deletedUserNames[] = $user->first_name . ' ' . $user->last_name;
+                DeletionService::delete(User::class, $id, 'User');
+                $user->todos()->delete();
+            }
+        }
+        return response()->json(['error' => false, 'message' => 'User(s) deleted successfully.', 'id' => $deletedUsers, 'titles' => $deletedUserNames]);
+    }
+    public function logout(Request $request)
+    {
+        if (Auth::guard('web')->check()) {
+            auth('web')->logout();
+        } else {
+            auth('client')->logout();
+        }
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/')->with('message', 'Logged out successfully.');
+    }
+
+    /**
+     * Login with Group Authentication
+     *
+     * This endpoint allows users to log in by providing their email, password, and the group name they belong to.
+     * If the credentials are valid and the user belongs to the specified group, a token is returned.
+     *@group User Authentication
+     * @bodyParam email string required The user's email address. Example: admin@gmail.com
+     * @bodyParam password string required The user's password. Example: password
+
+     *
+     * @response 200 {
+     *   "status": true,
+     *   "message": "Login successful.",
+     *   "data": {
+     *     "user": {
+     *       "id": 1,
+     *       "name": "John Doe",
+     *       "email": "john@example.com",
+     *       "group": "admin"
+     *     },
+     *     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "status": false,
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "email": ["The email field is required."],
+     *     "password": ["The password field is required."],
+     *     "group_name": ["The group name field is required."]
+     *   }
+     * }
+     *
+     * @response 401 {
+     *   "status": false,
+     *   "message": "Invalid email or password."
+     * }
+     *
+     * @response 403 {
+     *   "status": false,
+     *   "message": "User does not belong to the required group."
+     * }
+     */
+
+
+    public function login(Request $request)
+    {
+        if ($request->isMethod('get')) {
+            return view('front-end.login');
+        }
+
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('web')->attempt($credentials)) {
+            return redirect()->route('dashboard');
+        }
+
+        if (Auth::guard('client')->attempt($credentials)) {
+            return redirect()->route('client.dashboard'); // Optional for web clients
+        }
+
+        return redirect()->back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    /**
+ * login
+ *@group User Authentication
+ * This endpoint allows a user or client to authenticate using email and password. It applies rate limiting and returns a Bearer token upon successful login.
+ *
+ * @bodyParam email string required The email address of the account. Example: admin@gmail.com
+ * @bodyParam password string required The password for the account. Example: 123456
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "User login successful",
+ *   "access_token": "1|X1Y2Z3TOKENEXAMPLE",
+ *   "token_type": "Bearer",
+ *   "account_type": "user",
+ *   "role": "admin",
+ *   "user": {
+ *     "id": 1,
+ *     "name": "John Doe",
+ *     "email": "johndoe@example.com",
+ *     ...
+ *   },
+ *   "redirect_url": "http://yourapp.com/workspaces/edit/1"
+ * }
+ *
+ * @response 422 {
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "email": ["The email field is required."],
+ *     "password": ["The password field is required."]
+ *   }
+ * }
+ *
+ * @response 429 {
+ *   "error": true,
+ *   "message": "Too many login attempts. Please try again in 60 seconds."
+ * }
+ *
+ * @response 401 {
+ *   "error": true,
+ *   "message": "Invalid credentials. Please try again."
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "An unexpected error occurred. Please try again later."
+ * }
+ *
+ * @param \Illuminate\Http\Request $request
+ * @return \Illuminate\Http\JsonResponse
+ */
+
+
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => 'required',
+        ]);
+
+        $maxLoginAttempts = (int) $this->getSetting('max_login_attempts', 5);
+        $decayTime = (int) $this->getSetting('time_decay', 1) * 60;
+        $throttleKey = Str::lower($credentials['email']) . '|' . $request->ip();
+
+        if ($maxLoginAttempts > 0 && $this->hasTooManyLoginAttempts($throttleKey, $maxLoginAttempts)) {
+            return $this->sendLockoutResponse($throttleKey);
+        }
+
+        $account = $this->findAccount($credentials['email']);
+
+        if (!$account || !Hash::check($credentials['password'], $account->password)) {
+            return $this->handleFailedLogin($throttleKey, $maxLoginAttempts, $decayTime);
+        }
+
+        RateLimiter::clear($throttleKey);
+
+        $account_type = $account instanceof \App\Models\User ? 'user' : 'client';
+        $guard = $account_type === 'user' ? 'web' : 'client';
+
+        auth($guard)->login($account);
+
+        $token = $account->createToken('auth_token')->plainTextToken;
+        $role = $account_type === 'user' ? $account->getRoleNames()->first() : 'client';
+
+        // Safely get workspace ID
+        $workspace_id = optional($account->workspaces->first())->id;
+
+        // Safely generate redirect URL
+        if ($workspace_id) {
+            $redirectUrl = route('workspaces.edit', ['id' => $workspace_id]);
+        } else {
+            $redirectUrl = route('dashboard'); // Fallback route
+        }
+
+        return response()->json([
+            'error' => false,
+            'message' => ucfirst($role) . ' login successful',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'account_type' => $account_type,
+            'role' => $role,
+            'user' => $account,
+            'redirect_url' => $request->redirect_url ?? $redirectUrl,
+        ]);
+    }
+
+    protected function sendSuccessResponse(Request $request, $account)
+    {
+        RateLimiter::clear($account->email . '|' . $request->ip());
+
+        $guard = $account instanceof \App\Models\User ? 'web' : 'client';
+        auth($guard)->login($account);
+
+        $workspace_id = optional($account->workspaces->first())->id;
+        $locale = $account->lang ?? 'en';
+        $account_type = $account instanceof \App\Models\User ? 'user' : 'client';
+
+        session()->put([
+            'user_id' => $account->id,
+            'workspace_id' => $workspace_id,
+            'my_locale' => $locale,
+            'locale' => $locale,
+            'account_type' => $account_type,
+        ]);
+
+        $request->session()->regenerate();
+
+        Session::flash('message', 'Logged in successfully.');
+
+        if ($workspace_id) {
+            $redirectUrl = route('workspaces.edit', ['id' => $workspace_id]);
+        } else {
+            $redirectUrl = route('dashboard');
+        }
+
+        return response()->json([
+            'error' => false,
+            'message' => 'Logged in successfully',
+            'redirect_url' => $request->redirect_url ?? $redirectUrl,
+            'account_type' => $account_type,
+        ]);
+    }
+
+
+    protected function findAccount(string $email)
+    {
+        return User::where('email', $email)->first() ?? Client::where('email', $email)->first();
+    }
+
+    protected function attemptLogin($account, string $password)
+    {
+
+        if (!Hash::check($password, $account->password)) {
+            return false;
+        }
+
+        // If the account is a User
+        if ($account instanceof User) {
+            // Check if the user is an admin or if the account is active (status = 1)
+            if ($account->hasRole('admin') || $account->status == 1) {
+                return true;
+            } else {
+                // Return a custom error message if the status is not 1
+                return ['error' => true, 'message' => get_label('status_not_active', 'Your account is currently inactive. Please contact admin for assistance.')];
+            }
+        }
+
+        // If the account is a Client
+        if ($account instanceof Client) {
+            if ($account->status == 1) {
+                return true;
+            } else {
+                // Return a custom error message if the status is not 1
+                return ['error' => true, 'message' => get_label('status_not_active', 'Your client account is currently inactive. Please contact admin for assistance.')];
+            }
+        }
+
+        return false;
+    }
+
+
+
+
+
+    /**
+     * Handle a failed login attempt.
+     *
+     * @param string $throttleKey The RateLimiter key to throttle the login attempts.
+     * @param int $maxLoginAttempts The maximum number of login attempts to allow.
+     * @param int $decayTime The number of seconds to delay the next login attempt.
+     *
+     * @return \Illuminate\Http\JsonResponse The JSON response containing the error message.
+     */
+
+    protected function handleFailedLogin($throttleKey, $maxLoginAttempts, $decayTime)
+    {
+        if ($maxLoginAttempts > 0) {
+            RateLimiter::hit($throttleKey, $decayTime);
+        }
+        // dd($throttleKey , $maxLoginAttempts, $decayTime);
+
+        return response()->json([
+            'error' => true,
+            'message' => 'Invalid credentials!'
+        ]);
+    }
+
+
+    /**
+     * Check if the given key has exceeded the maximum allowed login attempts.
+     *
+     * @param string $key The key to check for rate limiting.
+     * @param int $maxAttempts The maximum allowed login attempts.
+     *
+     * @return bool Whether the given key has exceeded the maximum allowed login attempts.
+     */
+
+    protected function hasTooManyLoginAttempts($key, $maxAttempts)
+    {
+        return RateLimiter::tooManyAttempts($key, $maxAttempts);
+    }
+
+
+    /**
+     * Sends a JSON response indicating that the user is locked out due to too many login attempts.
+     *
+     * @param string $key The key to check for rate limiting.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    protected function sendLockoutResponse($key)
+    {
+        $seconds = RateLimiter::availableIn($key);
+        $minutes = floor($seconds / 60);
+        $remainingSeconds = $seconds % 60;
+
+        $timeString = '';
+        if ($minutes > 0) {
+            $timeString .= $minutes . ' minute' . ($minutes > 1 ? 's' : '');
+            if ($remainingSeconds > 0) {
+                $timeString .= ' and ';
+            }
+        }
+        if ($remainingSeconds > 0 || $minutes == 0) {
+            $timeString .= $remainingSeconds . ' second' . ($remainingSeconds != 1 ? 's' : '');
+        }
+
+        return response()->json([
+            'error' => true,
+            'message' => "Too many login attempts. Please try again in $timeString."
+        ]);
+    }
+
+    protected function getSetting($name, $default = null)
+    {
+        $security_settings = get_settings('security_settings', true);
+        return $security_settings[$name] ?? $default;
+    }
+
+    /**
+     * Register a New User
+     *
+     * This endpoint allows a user to register by providing first name, last name, email, password, confirm password, and phone number.
+     * On success, it returns the user data along with an access token.
+     *
+     *  @group  User Authentication
+     * @bodyParam first_name string required The user's first name. Example: harpalsinh
+     * @bodyParam last_name string required The user's last name. Example: sarvaiya
+     * @bodyParam email string required The user's email address. Must be unique. Example: harpalsinh@gmail.com
+     * @bodyParam password string required The user's password. Minimum 6 characters. Example: password
+     * @bodyParam confirm_password string required Must match the password field. Example: password
+     * @bodyParam phone_number string required The user's phone number. Example: +1234567890
+     *
+     * @response 201 {
+     *   "status": true,
+     *   "message": "Registration successful.",
+     *   "data": {
+     *     "user": {
+     *       "id": 1,
+     *       "first_name": "harpalsinh",
+     *       "last_name": "sarvaiya",
+     *       "email": "harpalsinh@gmail.com",
+     *       "phone_number": "+1234567890"
+     *     },
+     *     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+     *   }
+     * }
+     *
+     * @response 422 {
+     *   "status": false,
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "first_name": ["The first name field is required."],
+     *     "last_name": ["The last name field is required."],
+     *     "email": ["The email has already been taken."],
+     *     "password": ["The password must be at least 6 characters."],
+     *     "confirm_password": ["The confirm password and password must match."],
+     *     "phone_number": ["The phone number field is required."]
+     *   }
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Something went wrong. Please try again later."
+     * }
+     */
+
+    public function register(Request $request)
+    {
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|regex:/^[^\d]+$/',
+            'last_name' => 'required|string|regex:/^[^\d]+$/',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'unique:clients,email',
+            ],
+            'phone' => [
+                'required',
+                'string',
+                'regex:/^\d+$/',
+                'unique:users,phone',
+            ],
+            'password' => 'required|string|min:6|confirmed',
+            'password_confirmation' => 'required'
+        ], [
+            'first_name.required' => 'First name is required.',
+            'first_name.string' => 'First name must be a string.',
+            'first_name.regex' => 'First name cannot contain numbers.',
+            'last_name.required' => 'Last name is required.',
+            'last_name.string' => 'Last name must be a string.',
+            'last_name.regex' => 'Last name cannot contain numbers.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Invalid email format.',
+            'email.unique' => 'The email has already been taken in users or clients.',
+            'phone.required' => 'Phone number is required.',
+            'phone.string' => 'Phone number must be a string.',
+            'phone.unique' => 'The phone number has already been taken.',
+            'phone.regex' => 'Phone number can only contain digits.',
+            'password.required' => 'Password is required.',
+            'password.string' => 'Password must be a string.',
+            'password.min' => 'Password must be at least 6 characters long.',
+            'password.confirmed' => 'Password confirmation does not match.',
+        ]);
+
+        // Check if validation failed
+        if ($validator->fails()) {
+            return response()->json(['error' => true, 'message' => $validator->errors()], 422);
+        }
+
+        // Create a new user
+        $user = new User();
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->phone = $request->phone;
+        $user->email = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->status = '1';
+        $user->email_verified_at = now()->tz(config('app.timezone'));
+        $user->save();
+
+        // Assign role to user
+        $user->assignRole('admin');
+        $admin = new Admin();
+        $admin->user_id = $user->id;
+        $admin->save();
+
+        // Notify user if email configuration is set
+        if (isEmailConfigured()) {
+            $account_creation_template = Template::where('type', 'email')
+                ->where('name', 'account_creation')
+                ->first();
+
+            if (!$account_creation_template || $account_creation_template->status !== 0) {
+                $user->notify(new AccountCreation($user, $request->password));
+            }
+        }
+
+        // **API Token generate karna yahan add kar diya**
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // Return JSON response with token + existing message & redirect_url
+        return response()->json([
+            'error' => false,
+            'message' => 'User registered successfully',
+            'redirect_url' => route('login'),
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
+    }
+
+
+    public function show($id)
+    {
+        $user = User::findOrFail($id);
+        $workspace = Workspace::find(session()->get('workspace_id'));
+        $projects = isAdminOrHasAllDataAccess() ? $workspace->projects : $user->projects;
+        $tasks = isAdminOrHasAllDataAccess() ? $workspace->tasks->count() : $user->tasks->count();
+        $users = $workspace->users;
+        $clients = $workspace->clients;
+        return view('users.user_profile', ['user' => $user, 'projects' => $projects, 'tasks' => $tasks, 'users' => $users, 'clients' => $clients, 'auth_user' => getAuthenticatedUser()]);
+    }
+    public function list()
+    {
+        $workspace = Workspace::find(session()->get('workspace_id'));
+        $search = request('search');
+        $sort = request('sort') ?: 'id';
+        $order = request('order') ?: 'DESC';
+        $type = request('type');
+        $typeId = request('typeId');
+        $status = isset($_REQUEST['status']) && $_REQUEST['status'] !== '' ? $_REQUEST['status'] : "";
+        $role_ids = request('role_ids', []);
+
+        if ($type && $typeId) {
+            if ($type == 'project') {
+                $project = Project::find($typeId);
+                $users = $project->users();
+            } elseif ($type == 'task') {
+                $task = Task::find($typeId);
+                $users = $task->users();
+            } else {
+                $users = $workspace->users();
+            }
+        } else {
+            $users = $workspace->users();
+        }
+
+        // Ensure the search query does not introduce duplicates
+        $users = $users->when($search, function ($query) use ($search) {
+            return $query->where(function ($query) use ($search) {
+                $query->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        });
+
+        if ($status != '') {
+            $users = $users->where('status', $status);
+        }
+
+        if (!empty($role_ids)) {
+            $users = $users->whereHas('roles', function ($query) use ($role_ids) {
+                $query->whereIn('roles.id', $role_ids);
+            });
+        }
+
+        $totalusers = $users->count();
+
+        $canEdit = checkPermission('edit_users');
+        $canDelete = checkPermission('delete_users');
+        $canManageProjects = checkPermission('manage_projects');
+        $canManageTasks = checkPermission('manage_tasks');
+
+        // Use distinct to avoid duplicates if any join condition or query causes duplicates
+        $users = $users->select('users.*')
+            ->distinct()
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'roles.id', '=', 'model_has_roles.role_id')
+            ->orderByRaw("CASE WHEN roles.name = 'admin' THEN 0 ELSE 1 END")
+            ->orderByRaw("CASE WHEN roles.name = 'admin' THEN users.id END ASC")
+            ->orderBy($sort, $order)
+            ->paginate(request("limit"))
+            ->through(
+                function ($user) use ($workspace, $canEdit, $canDelete, $canManageProjects, $canManageTasks) {
+                    $actions = '';
+                    if ($canEdit) {
+                        $actions .= '<a href="' . route('users.edit', ['id' => $user->id]) . '" title="' . get_label('update', 'Update') . '">' .
+                            '<i class="bx bx-edit mx-1"></i>' .
+                            '</a>';
+                    }
+
+                    if ($canDelete) {
+                        $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $user->id . '" data-type="users">' .
+                            '<i class="bx bx-trash text-danger mx-1"></i>' .
+                            '</button>';
+                    }
+                    if (isAdminOrHasAllDataAccess()) {
+                        $actions .=
+                            '<a href="' . route('users.permissions', ['user' => $user->id]) . '" title="' . get_label('permissions', 'Permissions') . '">' .
+                            '<i class="bx bxs-key mx-1"></i>' .
+                            '</a>';
+                    }
+                    $actions = $actions ?: '-';
+
+                    $projectsBadge = '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('user', $user->id) ? count($workspace->projects) : count($user->projects)) . '</span>';
+                    if ($canManageProjects) {
+                        $projectsBadge = '<a href="javascript:void(0);" class="viewAssigned" data-type="projects" data-id="' . 'user_' . $user->id . '" data-user="' . $user->first_name . ' ' . $user->last_name . '">' .
+                            $projectsBadge . '</a>';
+                    }
+
+                    $tasksBadge = '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('user', $user->id) ? count($workspace->tasks) : count($user->tasks)) . '</span>';
+                    if ($canManageTasks) {
+                        $tasksBadge = '<a href="javascript:void(0);" class="viewAssigned" data-type="tasks" data-id="' . 'user_' . $user->id . '" data-user="' . $user->first_name . ' ' . $user->last_name . '">' .
+                            $tasksBadge . '</a>';
+                    }
+                    $photoHtml = "<div class='avatar avatar-md pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
+                    <a href=' " . route('users.show', ['id' => $user->id]) . "'>
+                        <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                    </a>
+                  </div>";
+
+                    $statusBadge = $user->status === 1
+                        ? '<span class="badge bg-success">' . get_label('active', 'Active') . '</span>'
+                        : '<span class="badge bg-danger">' . get_label('deactive', 'Deactive') . '</span>';
+
+                    $formattedHtml = '<div class="d-flex mt-2">' .
+                        $photoHtml .
+                        '<div class="mx-2">' .
+                        '<h6 class="mb-1">' .
+                        $user->first_name . ' ' . $user->last_name .
+                        ' ' . $statusBadge .
+                        '</h6>' .
+                        '<p class="text-muted">' . $user->email . '</p>' .
+                        '</div>' .
+                        '</div>';
+
+                    $phone = !empty($user->country_code) ? $user->country_code . ' ' . $user->phone : $user->phone;
+
+                    return [
+                        'id' => $user->id,
+                        'first_name' => $user->first_name,
+                        'last_name' => $user->last_name,
+                        'role' => "<span class='badge bg-label-" . (isset(config('taskify.role_labels')[$user->getRoleNames()->first()]) ? config('taskify.role_labels')[$user->getRoleNames()->first()] : config('taskify.role_labels')['default']) . " me-1'>" . $user->getRoleNames()->first() . "</span>",
+                        'email' => $user->email,
+                        'phone' => $phone,
+                        'profile' => $formattedHtml,
+                        'status' => $user->status,
+                        'created_at' => format_date($user->created_at, true),
+                        'updated_at' => format_date($user->updated_at, true),
+                        'assigned' => '<div class="d-flex justify-content-start align-items-center">' .
+                            '<div class="text-center mx-4">' .
+                            $projectsBadge .
+                            '<div>' . get_label('projects', 'Projects') . '</div>' .
+                            '</div>' .
+                            '<div class="text-center">' .
+                            $tasksBadge .
+                            '<div>' . get_label('tasks', 'Tasks') . '</div>' .
+                            '</div>' .
+                            '</div>',
+                        'actions' => $actions
+                    ];
+                }
+            );
+
+        return response()->json([
+            "rows" => $users->items(),
+            "total" => $totalusers,
+        ]);
+    }
+
+/**
+ * Get users list or specific user
+ * @group User Managemant
+ * This API endpoint retrieves a list of users within the current workspace or a specific user by ID.
+ * Supports filtering by search term, status, roles, type (project/task), sorting, and pagination.
+ *
+ * @urlParam id integer optional The ID of the user to retrieve. Leave blank to get all users. Example: 5
+ *
+ * @queryParam search string optional Filter users by name, email, or phone. Example: John
+ * @queryParam sort string optional Field to sort by. Default is `id`. Example: first_name
+ * @queryParam order string optional Sort order: `ASC` or `DESC`. Default is `DESC`. Example: ASC
+ * @queryParam status integer optional Filter users by status (1 for active, 0 for inactive). Example: 1
+ * @queryParam role_ids array optional Filter users by one or more role IDs. Example: [1,2]
+ * @queryParam type string optional Source of user relation (`project` or `task`). Example: project
+ * @queryParam typeId integer optional ID of the related project or task. Required if `type` is provided. Example: 3
+ * @queryParam limit integer optional Number of results per page. Example: 10
+ * @queryParam isApi boolean optional Indicates API context (used internally). Default: true. Example: true
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Users retrieved successfully",
+ *   "total": 2,
+ *   "data": [
+ *     {
+ *       "id": 1,
+ *       "first_name": "John",
+ *       "last_name": "Doe",
+ *       "email": "john@example.com",
+ *       "phone": "+91 9876543210",
+ *       "status": 1,
+ *       "created_at": "2024-01-01 10:00:00",
+ *       "updated_at": "2024-06-01 09:00:00",
+ *       "role": "Admin",
+ *       "profile": "...",
+ *       "assigned": "...",
+ *       "actions": "..."
+ *     }
+ *   ]
+ * }
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "User retrieved successfully",
+ *   "data": {
+ *     "id": 5,
+ *     "first_name": "Jane",
+ *     "last_name": "Smith",
+ *     "email": "jane@example.com",
+ *     "phone": "+91 1234567890",
+ *     "status": 1,
+ *     ...
+ *   }
+ * }
+ *
+ * @response 404 {
+ *   "error": true,
+ *   "message": "User not found",
+ *   "data": []
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Failed to retrieve users",
+ *   "error": "Exception message"
+ * }
+ *
+ * @param \Illuminate\Http\Request $request
+ * @param int|null $id
+ * @return \Illuminate\Http\JsonResponse
+ */
+
+public function apiList(Request $request, $id = null)
+{
+    $isApi = $request->get('isApi', true); // default to API mode
+
+    try {
+         $workspace = Workspace::find(getWorkspaceId());
+
+        if (!$workspace) {
+            return formatApiResponse(true, 'Workspace not found', [], 404);
+        }
+
+        if ($id) {
+            $user = $workspace->users()->where('users.id', $id)->first();
+
+            if (!$user) {
+                return formatApiResponse(true, 'User not found', [], 404);
+            }
+
+            return formatApiResponse(false, 'User retrieved successfully', [
+                'data' => formatUser($user),
+            ]);
+        }
+
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'id');
+        $order = $request->get('order', 'DESC');
+        $status = $request->get('status', '');
+        $role_ids = $request->get('role_ids', []);
+        $type = $request->get('type');
+        $typeId = $request->get('typeId');
+
+        if ($type && $typeId) {
+            if ($type === 'project') {
+                $project = Project::find($typeId);
+                $users = $project ? $project->users() : $workspace->users();
+            } elseif ($type === 'task') {
+                $task = Task::find($typeId);
+                $users = $task ? $task->users() : $workspace->users();
+            } else {
+                $users = $workspace->users();
+            }
+        } else {
+            $users = $workspace->users();
+        }
+
+        $users = $users->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', '%' . $search . '%')
+                    ->orWhere('last_name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        });
+
+        if ($status !== '') {
+            $users->where('status', $status);
+        }
+
+        if (!empty($role_ids)) {
+            $users->whereHas('roles', function ($q) use ($role_ids) {
+                $q->whereIn('roles.id', $role_ids);
+            });
+        }
+
+        $total = $users->count();
+
+        $users = $users->orderBy($sort, $order)
+            ->paginate($request->get('limit'))
+            ->through(fn ($user) => formatUser($user));
+
+        return formatApiResponse(false, 'Users retrieved successfully', [
+            'total' => $total,
+            'data' => $users->items()
+        ]);
+    }  catch (ValidationException $e) {
+            return formatApiValidationError($isApi, $e->errors());
+        }catch (\Exception $e) {
+        return formatApiResponse(true, 'Failed to retrieve users', [
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+    public function permissions(Request $request, User $user)
+    {
+        $userId = $user->id;
+        $role  = $user->roles[0]['name'];
+        $role = Role::where('name', $role)->first();
+        // Fetch permissions associated with the role
+        // $rolePermissions = $role->permissions;
+        $mergedPermissions = collect();
+        // Loop through each role to merge its permissions
+        $mergedPermissions = $mergedPermissions->merge($role->permissions);
+        // If you also want to include permissions directly assigned to the user
+        $mergedPermissions = $mergedPermissions->merge($user->permissions);
+        return view('users.permissions', ['mergedPermissions' => $mergedPermissions, 'role' => $role, 'user' => $user]);
+    }
+    public function update_permissions(Request $request, User $user)
+    {
+        $user->syncPermissions($request->permissions);
+        return redirect()->back()->with(['message' => 'Permissions updated successfully']);
+    }
+    public function searchUsers(Request $request)
+    {
+        $query = $request->input('q');
+        $page = $request->input('page', 1);
+        $perPage = 10;
+        $users = Workspace::find(session()->get('workspace_id'))->users();
+        // If there is no query, return the first set of statuses
+
+        $users = $users->when($query, function ($queryBuilder) use ($query) {
+            $queryBuilder->where('first_name', 'like', '%' . $query . '%')
+                ->orWhere('last_name', 'like', '%' . $query . '%');
+        })
+            ->skip(($page - 1) * $perPage)
+            ->take($perPage)
+            ->get(['users.id', 'first_name', 'last_name']);
+
+        // Prepare response for Select2
+        $results = $users->map(function ($user) {
+            return ['id' => $user->id, 'text' => ucwords($user->first_name . ' ' . $user->last_name)];
+        });
+
+        // Flag for more results
+        $pagination = ['more' => $users->count() === $perPage];
+
+        return response()->json([
+            'items' => $results,
+            'pagination' => $pagination
+        ]);
+    }
+}

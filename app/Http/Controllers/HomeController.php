@@ -1,0 +1,1152 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Carbon\Carbon;
+use App\Models\Task;
+use App\Models\User;
+use App\Models\Client;
+use App\Models\Status;
+use App\Models\Expense;
+use App\Models\Project;
+use App\Models\Workspace;
+use App\Models\LeaveRequest;
+use Illuminate\Http\Request;
+use App\Models\EstimatesInvoice;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Laravel\Sanctum\Sanctum;
+
+class HomeController extends Controller
+{
+    protected $workspace;
+    protected $user;
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // Detect if request expects JSON (API)
+            if ($request->expectsJson()) {
+                // Get from header for API requests
+                $workspaceId = $request->header('workspace_id');
+            } else {
+                // Get from session for web requests
+                $workspaceId = session()->get('workspace_id');
+            }
+
+            $this->workspace = Workspace::find($workspaceId);
+            $this->user = getAuthenticatedUser();
+
+            return $next($request);
+        });
+    }
+
+    public function index(Request $request)
+    {
+
+        $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects ?? [] : $this->user->projects ?? [];
+        $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks ?? [] : $this->user->tasks() ?? [];
+        $tasks = $tasks ? $tasks->count() : 0;
+        $users = $this->workspace->users ?? [];
+        $clients = $this->workspace->clients ?? [];
+        $todos = $this->user->todos()->orderBy('id', 'desc')->paginate(5);
+        $total_todos = $this->user->todos;
+        $meetings = $this->user->meetings;
+        if ($this->workspace) {
+            $activities = $this->workspace->activity_logs()->orderBy('id', 'desc')->limit(10)->get();
+        } else {
+            $activities = collect(); // Return an empty collection to avoid errors
+        }
+        $statuses = Status::where("admin_id", getAdminIdByUserRole())->orWhereNull('admin_id')->get();
+        return view('dashboard', ['users' => $users, 'clients' => $clients, 'projects' => $projects, 'tasks' => $tasks, 'todos' => $todos, 'total_todos' => $total_todos, 'meetings' => $meetings, 'auth_user' => $this->user, 'statuses' => $statuses, 'activities' => $activities]);
+    }
+
+
+  /**
+ * Get users with upcoming birthdays within a specified number of days.
+ *
+ * This endpoint fetches users in the current workspace who have birthdays
+ * coming up within the next `upcoming_days` days (default is 30).
+ *
+ * @group Dashboard
+ *
+ * @queryParam isApi boolean Optional. Specify if the request is from API (true) or web (false). Default false.
+ * @queryParam upcoming_days integer Optional. Number of days ahead to check for upcoming birthdays. Default 30.
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Upcoming birthdays fetched successfully.",
+ *   "data": [
+ *     {
+ *       "id": 2,
+ *       "name": "herry porter",
+ *       "dob": "1995-06-15",
+ *       "days_left": 12,
+ *       "age": 29,
+ *       "photo": "http://localhost:8000/storage/photos/no-image.jpg",
+ *       "profile_url": "http://localhost:8000/master-panel/users/profile/2"
+ *     },
+ *     {
+ *       "id": 5,
+ *       "name": "test test",
+ *       "dob": "2025-07-03",
+ *       "days_left": 30,
+ *       "age": 0,
+ *       "photo": "http://localhost:8000/storage/photos/no-image.jpg",
+ *       "profile_url": "http://localhost:8000/master-panel/users/profile/5"
+ *     }
+ *   ],
+ *   "total": 2
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Internal Server Error: {error_message}",
+ *   "data": []
+ * }
+ *
+ * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
+ */
+
+
+
+    public function upcoming_birthdays(Request $request)
+    {
+        $isApi = $request->get('isApi', false);
+
+        try {
+            $upcoming_days = (int) $request->input('upcoming_days', 30);
+
+            $workspace = $this->workspace;
+            $now = today();
+             $users = $workspace->users;
+            $usersWithDob = $users->filter(fn($u) => $u->dob !== null);
+            $filtered = $usersWithDob->filter(function ($user) use ($now) {
+                $dob = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
+                $birthday = $dob->copy()->year($now->year);
+                if ($birthday->lt($now)) $birthday->addYear();
+                return $now->diffInDays($birthday) <= 30;
+            });
+
+            $result = $filtered->map(function ($user) use ($now) {
+                $dob = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
+                $birthday = $dob->copy()->year($now->year);
+                if ($birthday->lt($now)) {
+                    $birthday->addYear();
+                }
+                $daysLeft = $now->diffInDays($birthday);
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->first_name . ' ' . $user->last_name,
+                    'dob' => $user->dob,
+                    'days_left' => $daysLeft,
+                    'age' => $now->diffInYears($dob),
+                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
+                    'profile_url' => route('users.show', ['id' => $user->id]),
+                ];
+            })->values();
+
+            if ($isApi) {
+
+                return formatApiResponse(false, 'Upcoming birthdays fetched successfully.', ['data' => $result, 'total' => $result->count()]);
+            } else {
+                return view('users.upcoming_birthdays', ['users' => $result, 'total' => $result->count()]);
+            }
+        } catch (\Exception $e) {
+            // dd($e);
+            if ($isApi) {
+                return formatApiResponse(true, 'Internal Server Error: ' . $e->getMessage(), [], 500);
+            } else {
+                return redirect()->back()->withErrors(['error' => 'Internal Server Error: ' . $e->getMessage()]);
+            }
+        }
+    }
+
+    /**
+     * Get Upcoming Work Anniversaries
+     *
+     * Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
+     * This endpoint supports filtering, sorting, searching, and pagination.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam search string Optional. Search term to filter users by first name, last name, full name, or date of joining. Example: John
+     * @queryParam sort string Optional. Field to sort by. Default is "doj". Example: doj
+     * @queryParam order string Optional. Sort order: ASC or DESC. Default is "ASC". Example: ASC
+     * @queryParam upcoming_days integer Optional. Number of upcoming days to check. Default is 30. Example: 30
+     * @queryParam user_id integer Optional. Filter by a specific user ID. Example: 15
+     * @queryParam limit integer Optional. Number of results per page. Default is 15. Example: 10
+     *
+     * @response 200 {
+     *   "rows": [
+     *     {
+     *       "id": 1,
+     *       "member": "Alice Smith 🥳<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='http://example.com/users/1' target='_blank'><li class='avatar avatar-sm pull-up' title='Alice Smith'><img src='http://example.com/storage/photos/alice.jpg' alt='Avatar' class='rounded-circle'>",
+     *       "wa_date": "2025-05-19 <span class='badge bg-success'>Today</span>",
+     *       "days_left": 0
+     *     }
+     *   ],
+     *   "total": 25
+     * }
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "order": ["The selected order is invalid. Must be ASC or DESC."],
+     *     "sort": ["The selected sort field is invalid."],
+     *     "upcoming_days": ["The upcoming_days must be an integer."],
+     *     "limit": ["The limit must be a positive integer."]
+     *   }
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+
+
+public function upcoming_work_anniversaries(Request $request)
+{
+    $isApi = $request->get('isApi', true); // default true for API
+
+    try {
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'doj');
+        $order = $request->get('order', 'ASC');
+        $upcoming_days = $request->get('upcoming_days', 30);
+        $user_id = $request->get('user_id', null);
+
+        $workspace = $this->workspace;
+
+        // Start query for users with non-null doj
+        $usersQuery = $workspace->users()->whereNotNull('doj');
+
+        // Filter by user_id if provided
+        if (!empty($user_id)) {
+            $usersQuery->where('users.id', '=', (int)$user_id);
+        }
+
+        // Search filter on name or doj
+        if (!empty($search)) {
+            $usersQuery->where(function ($q) use ($search) {
+                $q->where('first_name', 'LIKE', "%$search%")
+                  ->orWhere('last_name', 'LIKE', "%$search%")
+                  ->orWhere('doj', 'LIKE', "%$search%")
+                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+            });
+        }
+
+        // Date filtering logic in SQL for upcoming anniversaries
+        // Using raw SQL to find upcoming anniversary dates between today and upcoming_days from today
+        $currentDate = today();
+        $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+
+        $currentDateString = $currentDate->format('Y-m-d');
+        $upcomingDateString = $upcomingDate->format('Y-m-d');
+
+        $usersQuery->whereRaw("
+            DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'),
+            INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) +
+            IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0)
+            YEAR)
+            BETWEEN ? AND ?
+            AND DATEDIFF(
+                DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'),
+                INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) +
+                IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0) YEAR
+            ), CURRENT_DATE()) <= ?",
+            [$currentDateString, $upcomingDateString, $upcoming_days]
+        );
+
+        // Count total matched records
+        $total = $usersQuery->count();
+
+        // Fetch paginated users sorted
+        $paginatedUsers = $usersQuery->orderBy($sort, $order)
+            ->paginate($request->get('limit', 15)); // default 15
+
+        $paginatedUsers->getCollection()->transform(function ($user) use ($currentDate) {
+            $doj = \Carbon\Carbon::createFromFormat('Y-m-d', $user->doj);
+            $doj->year = $currentDate->year;
+            if ($doj->lt($currentDate)) {
+                $doj->year += 1;
+            }
+
+            $daysLeft = $currentDate->diffInDays($doj);
+            $label = '';
+            $emoji = '';
+
+            if ($daysLeft === 0) {
+                $emoji = ' 🥳';
+                $label = ' <span class="badge bg-success">' . get_label('today', 'Today') . '</span>';
+            } elseif ($daysLeft === 1) {
+                $label = ' <span class="badge bg-primary">' . get_label('tomorrow', 'Tomorrow') . '</span>';
+            } elseif ($daysLeft === 2) {
+                $label = ' <span class="badge bg-warning">' . get_label('day_after_tomorrow', 'Day after tomorrow') . '</span>';
+            }
+
+            return [
+                'id' => $user->id,
+                'member' => $user->first_name . ' ' . $user->last_name . $emoji . "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='" . route('users.show', ['id' => $user->id]) . "' target='_blank'><li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
+                    <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>",
+                'wa_date' => format_date($doj) . $label,
+                'days_left' => $daysLeft,
+            ];
+        });
+
+        $data = [
+            'total' => $total,
+            'rows' => $paginatedUsers->items(),
+        ];
+
+        return $isApi
+            ? formatApiResponse(false, 'Upcoming work anniversaries fetched successfully.', $data)
+            : response()->json(['error' => false, 'message' => 'Success', 'data' => $data]);
+    } catch (\Exception $e) {
+        $errorData = [
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'error' => $e->getMessage()
+        ];
+
+        return $isApi
+            ? formatApiResponse(true, 'Something went wrong while fetching data.', $errorData, 500)
+            : response()->json(['error' => true, 'message' => 'Error occurred'] + $errorData, 500);
+    }
+}
+
+
+    /**
+     * Get Members on Leave (Filtered & Paginated)
+     *
+     * Returns a paginated list of users who are currently on leave or scheduled to be on leave
+     * within a specified number of upcoming days. Supports filtering by search term, sorting,
+     * user ID, and respects permission-based visibility for the requesting user.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam search string Optional. Search by first name or last name. Example: Jane
+     * @queryParam sort string Optional. Field to sort by. Default is `from_date`. Example: from_date
+     * @queryParam order string Optional. Sort direction. Must be "ASC" or "DESC". Default is "ASC". Example: DESC
+     * @queryParam upcoming_days integer Optional. Number of upcoming days to include. Default is 30. Example: 15
+     * @queryParam user_id integer Optional. Filter by a specific user ID. Example: 5
+     * @queryParam limit integer Optional. Number of records per page. Default is 15. Example: 10
+     *
+     * @response 200 {
+     *   "rows": [
+     *     {
+     *       "id": 12,
+     *       "member": "John Doe <ul class='list-unstyled users-list ...'>...</ul>",
+     *       "from_date": "Mon, May 20, 2025",
+     *       "to_date": "Tue, May 21, 2025",
+     *       "type": "<span class='badge bg-primary'>Full</span>",
+     *       "duration": "2 days",
+     *       "days_left": 1
+     *     }
+     *   ],
+     *   "total": 15
+     * }
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "order": ["The selected order is invalid. Allowed values are ASC or DESC."],
+     *     "sort": ["The selected sort field is invalid."],
+     *     "upcoming_days": ["The upcoming_days must be an integer."],
+     *     "limit": ["The limit must be a positive integer."]
+     *   }
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+
+    public function members_on_leave()
+    {
+        $search = request('search');
+        $sort = request('sort') ?: "from_date";
+        $order = request('order') ?: "ASC";
+        $upcoming_days = request('upcoming_days') ?: 30;
+        $user_id = request('user_id') ?: "";
+
+        // Calculate the current date
+        $currentDate = today();
+
+        // Calculate the range for upcoming leaves (e.g., 30 days from today)
+        $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+
+        // Query members on leave based on 'from_date' and 'to_date' in the 'leave_requests' table
+        $leaveUsers = DB::table('leave_requests')
+            ->selectRaw('*, leave_requests.user_id as UserId')
+            ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
+            ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
+            ->where(function ($query) use ($currentDate, $upcomingDate) {
+                $query->where('from_date', '<=', $upcomingDate)
+                    ->where('to_date', '>=', $currentDate);
+            })
+            ->where('leave_requests.status', 'approved')
+            ->where('workspace_id', $this->workspace->id);
+
+        if (!is_admin_or_leave_editor()) {
+            $leaveUsers->where(function ($query) {
+                $query->where('leave_requests.user_id', $this->user->id)
+                    ->orWhere('leave_request_visibility.user_id', $this->user->id)
+                    ->orWhere('leave_requests.visible_to_all', 1);
+            });
+        }
+
+        if (!empty($search)) {
+            $leaveUsers->where(function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+            });
+        }
+
+        if (!empty($user_id)) {
+            $leaveUsers->where('leave_requests.user_id', $user_id);
+        }
+
+        $total = $leaveUsers->count();
+        $timezone = config('app.timezone');
+
+        $leaveUsers = $leaveUsers->orderBy($sort, $order)
+            ->paginate(request("limit"))
+            ->through(function ($user) use ($currentDate, $timezone) {
+
+                $fromDateForDuration = \Carbon\Carbon::createFromFormat('Y-m-d', $user->from_date);
+                $toDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->to_date);
+
+                // Set the year to current year for diff calculation
+                $fromDateForDiff = $fromDateForDuration->copy()->year($currentDate->year);
+
+                // Calculate days left until the user's return from leave
+                $daysLeft = $currentDate->diffInDays($fromDateForDiff, false);
+                if ($daysLeft < 0) {
+                    $daysLeft = 0;
+                }
+
+                $currentDateTime = \Carbon\Carbon::now()->tz($timezone);
+                $currentTime = $currentDateTime->format('H:i:s');
+
+                $label = '';
+                if ($daysLeft === 0 && $user->from_time && $user->to_time && $user->from_time <= $currentTime && $user->to_time >= $currentTime) {
+                    $label = ' <span class="badge bg-info">' . get_label('on_partial_leave', 'On Partial Leave') . '</span>';
+                } elseif (($daysLeft === 0 && (!$user->from_time && !$user->to_time)) ||
+                    ($daysLeft === 0 && $user->from_time <= $currentTime && $user->to_time >= $currentTime)
+                ) {
+                    $label = ' <span class="badge bg-success">' . get_label('on_leave', 'On leave') . '</span>';
+                } elseif ($daysLeft === 1) {
+                    $langLabel = $user->from_time && $user->to_time
+                        ? get_label('on_partial_leave_tomorrow', 'On partial leave from tomorrow')
+                        : get_label('on_leave_tomorrow', 'On leave from tomorrow');
+                    $label = ' <span class="badge bg-primary">' . $langLabel . '</span>';
+                } elseif ($daysLeft === 2) {
+                    $langLabel = $user->from_time && $user->to_time
+                        ? get_label('on_partial_leave_day_after_tomorow', 'On partial leave from day after tomorrow')
+                        : get_label('on_leave_day_after_tomorow', 'On leave from day after tomorrow');
+                    $label = ' <span class="badge bg-warning">' . $langLabel . '</span>';
+                }
+
+                // Calculate duration safely
+                if ($user->from_time && $user->to_time) {
+                    $duration = 0;
+                    $tempFromDate = $fromDateForDuration->copy();
+
+                    // Use lte (less than or equal) instead of lessThanOrEqualTo
+                    while ($tempFromDate->lte($toDate)) {
+                        $fromDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->from_time);
+                        $toDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->to_time);
+
+                        $diffMinutes = $fromDateTime->diffInMinutes($toDateTime);
+
+                        if ($diffMinutes > 0) {
+                            $duration += $diffMinutes / 60; // duration in hours
+                        }
+                        $tempFromDate->addDay();
+                    }
+                } else {
+                    // Calculate the inclusive duration in days
+                    $duration = $fromDateForDuration->diffInDays($toDate) + 1;
+                }
+
+                $fromDateDayOfWeek = $fromDateForDuration->format('D');
+                $toDateDayOfWeek = $toDate->format('D');
+
+                return [
+                    'id' => $user->UserId,
+                    'member' => $user->first_name . ' ' . $user->last_name . ' ' . $label .
+                        "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'>
+                        <a href='/users/profile/" . $user->UserId . "' target='_blank'>
+                            <li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
+                                <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                            </li>
+                        </a>
+                    </ul>",
+                    'from_date' => $fromDateDayOfWeek . ', ' . ($user->from_time ? format_date($user->from_date . ' ' . $user->from_time, true, null, null, false) : format_date($user->from_date)),
+                    'to_date' => $toDateDayOfWeek . ', ' . ($user->to_time ? format_date($user->to_date . ' ' . $user->to_time, true, null, null, false) : format_date($user->to_date)),
+                    'type' => $user->from_time && $user->to_time ? '<span class="badge bg-info">' . get_label('partial', 'Partial') . '</span>' : '<span class="badge bg-primary">' . get_label('full', 'Full') . '</span>',
+                    'duration' => $user->from_time && $user->to_time ? $duration . ' hour' . ($duration > 1 ? 's' : '') : $duration . ' day' . ($duration > 1 ? 's' : ''),
+                    'days_left' => $daysLeft,
+                ];
+            });
+
+        return response()->json([
+            "rows" => $leaveUsers->items(),
+            "total" => $total,
+        ]);
+    }
+
+    /**
+     * Get Upcoming Birthdays in Calendar Format
+     *
+     * Returns a list of users whose birthdays fall within the specified date range.
+     * Birthdays are adjusted to the current or next year based on the current date,
+     * and formatted for calendar display with colors for styling.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam startDate date required Start date of the range (YYYY-MM-DD). Example: 2025-05-01
+     * @queryParam endDate date required End date of the range (YYYY-MM-DD). Example: 2025-05-31
+     *
+     * @response 200 [
+     *   {
+     *     "userId": 1,
+     *     "title": "Jane Doe's Birthday",
+     *     "start": "2025-05-15",
+     *     "backgroundColor": "#007bff",
+     *     "borderColor": "#007bff",
+     *     "textColor": "#ffffff"
+     *   }
+     * ]
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "startDate": ["The startDate field is required.", "The startDate is not a valid date."],
+     *     "endDate": ["The endDate field is required.", "The endDate is not a valid date."]
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "message": "Invalid date range. The endDate must be after the startDate."
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function upcoming_birthdays_calendar(Request $request)
+    {
+        $startDate = Carbon::parse($request->startDate)->startOfDay();
+        $endDate = Carbon::parse($request->endDate)->endOfDay();
+
+        $users = $this->workspace->users()->get();
+        $currentDate = today();
+
+        $events = [];
+
+        foreach ($users as $user) {
+            if (!empty($user->dob)) {
+                // Format the birthday date
+                $birthdayDate = Carbon::createFromFormat('Y-m-d', $user->dob);
+
+                // Set the year to the current year
+                $birthdayDate->year = $currentDate->year;
+
+                if ($birthdayDate->lt($currentDate)) {
+                    // If the birthday has already passed this year, calculate for next year
+                    $birthdayDate->year = $currentDate->year + 1;
+                }
+
+                $birthdayStartDate = $birthdayDate->copy()->startOfDay();
+                $birthdayEndDate = $birthdayDate->copy()->endOfDay();
+
+                // Check if the birthday falls within the requested date range
+                if ($birthdayStartDate->between($startDate, $endDate)) {
+                    // Prepare the event data
+                    $event = [
+                        'userId' => $user->id,
+                        'title' => $user->first_name . ' ' . $user->last_name . '\'s Birthday',
+                        'start' => $birthdayStartDate->format('Y-m-d'),
+                        'backgroundColor' => '#007bff',
+                        'borderColor' => '#007bff',
+                        'textColor' => '#ffffff',
+                    ];
+
+                    // Add the event to the events array
+                    $events[] = $event;
+                }
+            }
+        }
+
+        return response()->json($events);
+    }
+    /**
+     * Get Upcoming Work Anniversaries (Calendar Format)
+     *
+     * Returns a list of users whose work anniversaries fall between the specified start and end dates.
+     * The response is formatted for display in a calendar interface, including links to employee profiles.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam startDate date required The start date of the calendar range (YYYY-MM-DD). Example: 2025-05-01
+     * @queryParam endDate date required The end date of the calendar range (YYYY-MM-DD). Example: 2025-05-31
+     *
+     * @response 200 [
+     *   {
+     *     "id": 1,
+     *     "title": "🎉 John Doe's 5th Work Anniversary",
+     *     "start": "2025-05-19",
+     *     "end": "2025-05-19",
+     *     "url": "/employee/1"
+     *   },
+     *   {
+     *     "id": 2,
+     *     "title": "🎉 Jane Smith's 3rd Work Anniversary",
+     *     "start": "2025-05-22",
+     *     "end": "2025-05-22",
+     *     "url": "/employee/2"
+     *   }
+     * ]
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "startDate": ["The startDate field is required.", "The startDate is not a valid date."],
+     *     "endDate": ["The endDate field is required.", "The endDate is not a valid date."]
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "message": "Invalid date range. The endDate must be a date after startDate."
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+
+    public function upcoming_work_anniversaries_calendar(Request $request)
+    {
+        $startDate = Carbon::parse($request->startDate)->startOfDay();
+        $endDate = Carbon::parse($request->endDate)->endOfDay();
+        $users = $this->workspace->users()->get();
+
+        // Calculate the current date
+        $currentDate = today();
+
+        $events = [];
+
+        foreach ($users as $user) {
+            if (!empty($user->doj)) {
+                // Format the start date in the required format for FullCalendar
+                $WADate = Carbon::createFromFormat('Y-m-d', $user->doj);
+
+                // Set the anniversary date to the current year
+                $WADate->year = $currentDate->year;
+
+                if ($WADate->lt($currentDate)) {
+                    // If the anniversary has already passed this year, calculate for next year
+                    $WADate->year = $currentDate->year + 1;
+                }
+
+                $anniversaryDate = $WADate->copy();
+
+                // Check if the anniversary falls within the requested date range
+                if ($anniversaryDate->between($startDate, $endDate)) {
+                    // Prepare the event data
+                    $event = [
+                        'userId' => $user->id,
+                        'title' => $user->first_name . ' ' . $user->last_name . '\'s Work Anniversary',
+                        'start' => $anniversaryDate->format('Y-m-d'),
+                        'backgroundColor' => '#007bff',
+                        'borderColor' => '#007bff',
+                        'textColor' => '#ffffff',
+                    ];
+
+                    // Add the event to the events array
+                    $events[] = $event;
+                }
+            }
+        }
+
+        return response()->json($events);
+    }
+
+    /**
+     * Get Members on Leave (Calendar Format)
+     *
+     * Returns a list of approved leave requests for users within a specified date range.
+     * The data is formatted for use in a calendar view. Users only see their own leave data
+     * unless they have admin or leave editor privileges.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam startDate date required The start date of the calendar view (YYYY-MM-DD). Example: 2025-05-01
+     * @queryParam endDate date required The end date of the calendar view (YYYY-MM-DD). Example: 2025-05-31
+     *
+     * @response 200 [
+     *   {
+     *     "userId": 1,
+     *     "title": "John Doe - 09:00 AM to 05:00 PM",
+     *     "start": "2025-05-19",
+     *     "end": "2025-05-19",
+     *     "startTime": "09:00:00",
+     *     "endTime": "17:00:00",
+     *     "backgroundColor": "#02C5EE",
+     *     "borderColor": "#02C5EE",
+     *     "textColor": "#ffffff"
+     *   },
+     *   {
+     *     "userId": 2,
+     *     "title": "Jane Smith",
+     *     "start": "2025-05-22",
+     *     "end": "2025-05-24",
+     *     "startTime": null,
+     *     "endTime": null,
+     *     "backgroundColor": "#007bff",
+     *     "borderColor": "#007bff",
+     *     "textColor": "#ffffff"
+     *   }
+     * ]
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "startDate": ["The startDate field is required.", "The startDate is not a valid date."],
+     *     "endDate": ["The endDate field is required.", "The endDate is not a valid date."]
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "message": "Invalid date range. The endDate must be after startDate."
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse JSON response containing formatted leave request events for the calendar.
+     */
+
+
+    public function members_on_leave_calendar(Request $request)
+    {
+        $startDate = Carbon::parse($request->startDate)->startOfDay();
+        $endDate = Carbon::parse($request->endDate)->endOfDay();
+        $currentDate = today();
+
+        $leaveRequests = DB::table('leave_requests')
+            ->selectRaw('*, leave_requests.user_id as UserId')
+            ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
+            ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
+            ->where('to_date', '>=', $currentDate)
+            ->where('leave_requests.status', '=', 'approved')
+            ->where('workspace_id', '=', $this->workspace->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('from_date', [$startDate, $endDate])
+                    ->orWhereBetween('to_date', [$startDate, $endDate])
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
+                        $query->where('from_date', '<=', $startDate)
+                            ->where('to_date', '>=', $endDate);
+                    });
+            });
+        // dd($leaveRequests);
+
+        // Add condition to restrict results based on user roles
+        if (!is_admin_or_leave_editor()) {
+            $leaveRequests->where(function ($query) {
+                $query->where('leave_requests.user_id', '=', $this->user->id)
+                    ->orWhere('leave_request_visibility.user_id', '=', $this->user->id);
+            });
+        }
+
+        $time_format = get_php_date_time_format(true);
+        $time_format = str_replace(':s', '', $time_format);
+
+        // Get leave requests and format for calendar
+        $events = $leaveRequests->get()->map(function ($leave) use ($time_format) {
+            $title = $leave->first_name . ' ' . $leave->last_name;
+            if ($leave->from_time && $leave->to_time) {
+                // If both start and end times are present, format them according to the desired format
+                $formattedStartTime = \Carbon\Carbon::createFromFormat('H:i:s', $leave->from_time)->format($time_format);
+                $formattedEndTime = \Carbon\Carbon::createFromFormat('H:i:s', $leave->to_time)->format($time_format);
+                $title .= ' - ' . $formattedStartTime . ' to ' . $formattedEndTime;
+                $backgroundColor = '#02C5EE';
+            } else {
+                $backgroundColor = '#007bff';
+            }
+            return [
+                'userId' => $leave->UserId,
+                'title' => $title,
+                'start' => $leave->from_date,
+                'end' => $leave->to_date,
+                'startTime' => $leave->from_time,
+                'endTime' => $leave->to_time,
+                'backgroundColor' => $backgroundColor,
+                'borderColor' => $backgroundColor,
+                'textColor' => '#ffffff'
+            ];
+        });
+
+        return response()->json($events);
+    }
+    /**
+     * Get Income vs Expense Data.
+     *
+     * Returns the total income (from fully paid invoices) and total expenses for a given date range.
+     * Data access is based on the user's role. Admins or users with full access can view all data,
+     * while others are restricted to their own records.
+     *
+     * @group Dashboard
+     * @authenticated
+     *
+     * @queryParam start_date date optional The start date for filtering data (YYYY-MM-DD). Example: 2025-05-01
+     * @queryParam end_date date optional The end date for filtering data (YYYY-MM-DD). Example: 2025-05-31
+     *
+     * @response 200 {
+     *   "total_income": "12000.00",
+     *   "total_expenses": "4500.00",
+     *   "date_label": "May 1, 2025 - May 31, 2025",
+     *   "currency_symbol": "$"
+     * }
+     *
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     *
+     * @response 422 {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "start_date": ["The start_date is not a valid date."],
+     *     "end_date": ["The end_date is not a valid date."]
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "message": "Invalid date range. The end_date must be after start_date."
+     * }
+     *
+     * @response 500 {
+     *   "status": false,
+     *   "message": "Internal server error. Please try again later."
+     * }
+     *
+     * @return \Illuminate\Http\JsonResponse JSON object containing total income, total expenses,
+     *                                       the date range label, and the currency symbol.
+     */
+
+
+    public function income_vs_expense_data(Request $request)
+    {
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+
+        // Determine whether the user has admin access or all data access
+        $estimates_invoices = isAdminOrHasAllDataAccess() ?
+            $this->workspace->estimates_invoices() :
+            $this->user->estimates_invoices();
+
+        // Start building the income query
+        $totalIncomeQuery = $estimates_invoices
+            ->where('status', 'fully_paid')
+            ->where('type', 'invoice');
+
+        // Apply date filtering if both start and end dates are provided
+        if ($startDate && $endDate) {
+            $totalIncomeQuery->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('from_date', [$startDate, $endDate])
+                    ->orWhereBetween('to_date', [$startDate, $endDate]);
+            });
+        }
+
+        // Calculate total income
+        $totalIncome = $totalIncomeQuery->sum('final_total');
+
+        // Start building the expenses query
+        $expenses = $this->workspace->expenses();
+
+        // If the user doesn't have admin access, apply user-based filtering to expenses
+        if (!isAdminOrHasAllDataAccess()) {
+            $expenses->where(function ($query) {
+                $query->where('expenses.created_by', isClient() ? 'c_' . $this->user->id : 'u_' . $this->user->id)
+                    ->orWhere('expenses.user_id', $this->user->id);
+            });
+        }
+
+        // Apply date filtering to expenses if both start and end dates are provided
+        if ($startDate && $endDate) {
+            $expenses->whereBetween('expense_date', [$startDate, $endDate]);
+        }
+
+        // Calculate total expenses
+        $totalExpenses = $expenses->sum('amount');
+
+        // Format numbers to 2 decimal places
+        $totalIncome = number_format($totalIncome, 2, '.', '');
+        $totalExpenses = number_format($totalExpenses, 2, '.', '');
+        $dateLabel = $startDate && $endDate
+            ? format_date(Carbon::parse($startDate))  . ' - ' . format_date(Carbon::parse($endDate))
+            : get_label('all_time', 'All Time');
+        // Return the income and expenses as JSON
+        return response()->json([
+            'total_income' => $totalIncome,
+            'total_expenses' => $totalExpenses,
+            'date_label' => $dateLabel,
+            'currency_symbol' => get_settings('general_settings')['currency_symbol'],
+        ]);
+    }
+
+    /**
+     * @group Dashboard
+     *
+     * Get Dashboard Summary
+     *
+     * This endpoint returns a summary and detailed breakdown of the authenticated user's dashboard. It includes counts and detailed data for users, clients, projects, tasks, todos, meetings, statuses, and recent activities within the selected workspace.
+     *
+     * @authenticated
+     *
+     * @header Authorization Bearer {token} Required. A valid Sanctum token for the authenticated user.
+     * @header workspace-id integer Required. The ID of the workspace to fetch dashboard data for.
+     *
+     * @response 200 {
+     *   "error": false,
+     *   "message": "Dashboard data fetched successfully.",
+     *   "data": {
+     *     "counts": {
+     *       "users_count": 5,
+     *       "clients_count": 3,
+     *       "projects_count": 4,
+     *       "tasks_count": 12,
+     *       "todos_count": 7,
+     *       "meetings_count": 2,
+     *       "statuses_count": 5,
+     *       "activities_count": 10
+     *     },
+     *     "users": [
+     *       {
+     *         "id": 1,
+     *         "name": "Jane Doe",
+     *         "email": "jane@example.com"
+     *       }
+     *     ],
+     *     "clients": [
+     *       {
+     *         "id": 1,
+     *         "name": "Acme Corp"
+     *       }
+     *     ],
+     *     "projects": [
+     *       {
+     *         "id": 1,
+     *         "name": "Project Apollo"
+     *       }
+     *     ],
+     *     "tasks": [
+     *       {
+     *         "id": 1,
+     *         "title": "Fix bug",
+     *         "status": "In Progress"
+     *       }
+     *     ],
+     *     "todos": {
+     *       "current_page": 1,
+     *       "data": [
+     *         {
+     *           "id": 1,
+     *           "title": "Call client",
+     *           "is_completed": false
+     *         }
+     *       ],
+     *       "per_page": 5,
+     *       "total": 7
+     *     },
+     *     "total_todos": [
+     *       {
+     *         "id": 1,
+     *         "title": "Call client"
+     *       }
+     *     ],
+     *     "meetings": [
+     *       {
+     *         "id": 1,
+     *         "title": "Team sync",
+     *         "scheduled_at": "2025-06-02T14:00:00Z"
+     *       }
+     *     ],
+     *     "auth_user": {
+     *       "id": 1,
+     *       "name": "Jane Doe",
+     *       "email": "jane@example.com"
+     *     },
+     *     "statuses": [
+     *       {
+     *         "id": 1,
+     *         "name": "In Progress"
+     *       }
+     *     ],
+     *     "activities": [
+     *       {
+     *         "id": 1,
+     *         "log": "User created a task"
+     *       }
+     *     ]
+     *   }
+     * }
+     *
+     * @response 400 {
+     *   "error": true,
+     *   "message": "Missing or invalid workspace-id header."
+     * }
+     *
+     * @response 401 {
+     *   "error": true,
+     *   "message": "Unauthorized: User not authenticated."
+     * }
+     *
+     * @response 404 {
+     *   "error": true,
+     *   "message": "Workspace not found."
+     * }
+     */
+    /**
+     * Get dashboard data for the authenticated user.
+     */
+    public function apiDashboard(Request $request)
+    {
+        $isApi = $request->get('isApi', true); // Default to true for API usage
+
+        try {
+            $user = auth('sanctum')->user(); // Explicitly using Sanctum
+
+            if (!$user) {
+                $message = 'Unauthorized: User not authenticated.';
+                return $isApi
+                    ? formatApiResponse(true, $message, [], 401)
+                    : response()->json(['error' => true, 'message' => $message], 401);
+            }
+
+            $workspaceId = $request->header('workspace-id') ?? session('workspace_id');
+
+            if (!$workspaceId) {
+                $message = 'Missing or invalid workspace-id header.';
+                return $isApi
+                    ? formatApiResponse(true, $message, [], 400)
+                    : response()->json(['error' => true, 'message' => $message], 400);
+            }
+
+            $workspace = Workspace::find($workspaceId);
+
+            if (!$workspace) {
+                $message = 'Workspace not found.';
+                return $isApi
+                    ? formatApiResponse(true, $message, [], 404)
+                    : response()->json(['error' => true, 'message' => $message], 404);
+            }
+
+            $isAdmin = isAdminOrHasAllDataAccess();
+
+            $projects = $isAdmin ? ($workspace->projects ?? []) : ($user->projects ?? []);
+            $tasks = $isAdmin ? ($workspace->tasks ?? []) : ($user->tasks ?? []);
+            $users = $workspace->users ?? [];
+            $clients = $workspace->clients ?? [];
+
+            $todos = $user->todos()->orderBy('id', 'desc')->paginate(5);
+            $totalTodos = $user->todos;
+            $meetings = $user->meetings;
+
+            $activities = $workspace
+                ? $workspace->activity_logs()->orderBy('id', 'desc')->limit(10)->get()
+                : collect();
+
+            $statuses = Status::where("admin_id", getAdminIdByUserRole())
+                ->orWhereNull('admin_id')
+                ->get();
+
+            $data = [
+                // Counts first
+                'counts' => [
+                    'users_count' => count($users),
+                    'clients_count' => count($clients),
+                    'projects_count' => count($projects),
+                    'tasks_count' => $tasks ? $tasks->count() : 0,
+                    'todos_count' => $totalTodos->count(),
+                    'meetings_count' => $meetings->count(),
+                    'statuses_count' => $statuses->count(),
+                    'activities_count' => $activities->count(),
+                ],
+
+                // Details after counts
+                'users' => $users,
+                'clients' => $clients,
+                'projects' => $projects,
+                'tasks' => $tasks,
+                'todos' => $todos,
+                'total_todos' => $totalTodos,
+                'meetings' => $meetings,
+                'auth_user' => $user,
+                'statuses' => $statuses,
+                'activities' => $activities,
+            ];
+
+            return $isApi
+                ? formatApiResponse(false, 'Dashboard data fetched successfully.', $data)
+                : response()->json(['error' => false, 'message' => 'Dashboard data fetched successfully.', 'data' => $data]);
+        } catch (\Exception $e) {
+            $message = 'Something went wrong.';
+            $errorData = [
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'error' => $e->getMessage()
+            ];
+
+            return $isApi
+                ? formatApiResponse(true, $message, $errorData, 500)
+                : response()->json(['error' => true, 'message' => $message] + $errorData, 500);
+        }
+    }
+}

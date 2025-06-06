@@ -1,0 +1,315 @@
+name: 'Task Comments'
+description: |-
+  This endpoint updates the content of an existing comment. It also detects user mentions
+  (e.g., @username) in the updated content and sends mention notifications accordingly.
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: 'api/master-panel/comments/{id}'
+    metadata:
+      groupName: 'Task Comments'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'get comments'
+      description: |-
+        This endpoint allows an authenticated user to add a comment to any commentable model (e.g., Task, Project).
+        Supports file attachments and user mentions within the comment content.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      model_type:
+        name: model_type
+        description: 'The fully qualified class name of the model being commented on (e.g., App\Models\Task).'
+        required: true
+        example: App\Models\Task
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      model_id:
+        name: model_id
+        description: 'The ID of the model instance being commented on.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      content:
+        name: content
+        description: 'The content of the comment. Mentions (e.g., @username) will be converted to user links.'
+        required: true
+        example: 'This is a test comment with @johndoe mentioned.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      parent_id:
+        name: parent_id
+        description: 'nullable The ID of the parent comment if this is a reply.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      attachments:
+        name: attachments
+        description: 'Optional array of files to attach to the comment (jpg, jpeg, png, pdf, xlsx, txt, docx, max 2MB each).'
+        required: false
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      model_type: App\Models\Task
+      model_id: 12
+      content: 'This is a test comment with @johndoe mentioned.'
+      parent_id: 5
+    fileParameters:
+      attachments:
+        - null
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "comment": {
+              "id": 20,
+              "commentable_type": "App\\Models\\Task",
+              "commentable_id": 12,
+              "content": "This is a test comment with <a href='/user/profile/5'>@johndoe</a>",
+              "user_id": 3,
+              "parent_id": null,
+              "created_at": "2025-05-28T12:45:00.000000Z",
+              "updated_at": "2025-05-28T12:45:00.000000Z",
+              "attachments": [
+                {
+                  "id": 1,
+                  "comment_id": 20,
+                  "file_name": "screenshot.png",
+                  "file_path": "comment_attachments/screenshot.png",
+                  "file_type": "image/png"
+                }
+              ]
+            },
+            "message": "Comment Added Successfully",
+            "user": {
+              "id": 3,
+              "name": "John Doe",
+              ...
+            },
+            "created_at": "just now"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "content": ["The content field is required."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/master-panel/comments/{id}'
+    metadata:
+      groupName: 'Task Comments'
+      groupDescription: |-
+        This endpoint updates the content of an existing comment. It also detects user mentions
+        (e.g., @username) in the updated content and sends mention notifications accordingly.
+      subgroup: ''
+      subgroupDescription: ''
+      title: "Update a comment's content."
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment_id:
+        name: comment_id
+        description: 'The ID of the comment to update.'
+        required: true
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      content:
+        name: content
+        description: 'The updated content of the comment. User mentions using @username will be parsed and linked.'
+        required: true
+        example: 'Updated comment mentioning @janedoe.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      comment_id: 15
+      content: 'Updated comment mentioning @janedoe.'
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Comment updated successfully.",
+            "id": 15,
+            "type": "project"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "error": true,
+            "message": "Comment couldn't updated."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/master-panel/comments/{id}'
+    metadata:
+      groupName: 'Task Comments'
+      groupDescription: |-
+        This endpoint deletes a comment by its ID, including all of its associated attachments
+        (files uploaded with the comment). Files will be removed from storage as well.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Permanently delete a comment and its attachments.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment_id:
+        name: comment_id
+        description: 'The ID of the comment to delete.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      comment_id: 12
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Comment deleted successfully.",
+            "id": 12,
+            "type": "project"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "error": true,
+            "message": "Comment couldn't deleted."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

@@ -1,0 +1,401 @@
+name: Dashboard
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/master-panel/upcoming-birthdays
+    metadata:
+      groupName: Dashboard
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get users with upcoming birthdays within a specified number of days.'
+      description: |-
+        This endpoint fetches users in the current workspace who have birthdays
+        coming up within the next `upcoming_days` days (default is 30).
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      isApi:
+        name: isApi
+        description: 'Optional. Specify if the request is from API (true) or web (false). Default false.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      upcoming_days:
+        name: upcoming_days
+        description: 'Optional. Number of days ahead to check for upcoming birthdays. Default 30.'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      isApi: false
+      upcoming_days: 17
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Upcoming birthdays fetched successfully.",
+            "data": [
+              {
+                "id": 2,
+                "name": "herry porter",
+                "dob": "1995-06-15",
+                "days_left": 12,
+                "age": 29,
+                "photo": "http://localhost:8000/storage/photos/no-image.jpg",
+                "profile_url": "http://localhost:8000/master-panel/users/profile/2"
+              },
+              {
+                "id": 5,
+                "name": "test test",
+                "dob": "2025-07-03",
+                "days_left": 30,
+                "age": 0,
+                "photo": "http://localhost:8000/storage/photos/no-image.jpg",
+                "profile_url": "http://localhost:8000/master-panel/users/profile/5"
+              }
+            ],
+            "total": 2
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Internal Server Error: {error_message}",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/master-panel/upcoming-work-anniversaries
+    metadata:
+      groupName: Dashboard
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Upcoming Work Anniversaries'
+      description: |-
+        Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
+        This endpoint supports filtering, sorting, searching, and pagination.
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      search:
+        name: search
+        description: 'Optional. Search term to filter users by first name, last name, full name, or date of joining.'
+        required: false
+        example: John
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'Optional. Field to sort by. Default is "doj".'
+        required: false
+        example: doj
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Optional. Sort order: ASC or DESC. Default is "ASC".'
+        required: false
+        example: ASC
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      upcoming_days:
+        name: upcoming_days
+        description: 'Optional. Number of upcoming days to check. Default is 30.'
+        required: false
+        example: 30
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      user_id:
+        name: user_id
+        description: 'Optional. Filter by a specific user ID.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      limit:
+        name: limit
+        description: 'Optional. Number of results per page. Default is 15.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      search: John
+      sort: doj
+      order: ASC
+      upcoming_days: 30
+      user_id: 15
+      limit: 10
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "rows": [
+              {
+                "id": 1,
+                "member": "Alice Smith 🥳<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='http://example.com/users/1' target='_blank'><li class='avatar avatar-sm pull-up' title='Alice Smith'><img src='http://example.com/storage/photos/alice.jpg' alt='Avatar' class='rounded-circle'>",
+                "wa_date": "2025-05-19 <span class='badge bg-success'>Today</span>",
+                "days_left": 0
+              }
+            ],
+            "total": 25
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 401
+        content: |-
+          {
+            "message": "Unauthenticated."
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "order": ["The selected order is invalid. Must be ASC or DESC."],
+              "sort": ["The selected sort field is invalid."],
+              "upcoming_days": ["The upcoming_days must be an integer."],
+              "limit": ["The limit must be a positive integer."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "Internal server error. Please try again later."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/master-panel/members-on-leave
+    metadata:
+      groupName: Dashboard
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Members on Leave (Filtered & Paginated)'
+      description: |-
+        Returns a paginated list of users who are currently on leave or scheduled to be on leave
+        within a specified number of upcoming days. Supports filtering by search term, sorting,
+        user ID, and respects permission-based visibility for the requesting user.
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      search:
+        name: search
+        description: 'Optional. Search by first name or last name.'
+        required: false
+        example: Jane
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'Optional. Field to sort by. Default is `from_date`.'
+        required: false
+        example: from_date
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Optional. Sort direction. Must be "ASC" or "DESC". Default is "ASC".'
+        required: false
+        example: DESC
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      upcoming_days:
+        name: upcoming_days
+        description: 'Optional. Number of upcoming days to include. Default is 30.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      user_id:
+        name: user_id
+        description: 'Optional. Filter by a specific user ID.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      limit:
+        name: limit
+        description: 'Optional. Number of records per page. Default is 15.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      search: Jane
+      sort: from_date
+      order: DESC
+      upcoming_days: 15
+      user_id: 5
+      limit: 10
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "rows": [
+              {
+                "id": 12,
+                "member": "John Doe <ul class='list-unstyled users-list ...'>...</ul>",
+                "from_date": "Mon, May 20, 2025",
+                "to_date": "Tue, May 21, 2025",
+                "type": "<span class='badge bg-primary'>Full</span>",
+                "duration": "2 days",
+                "days_left": 1
+              }
+            ],
+            "total": 15
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 401
+        content: |-
+          {
+            "message": "Unauthenticated."
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "order": ["The selected order is invalid. Allowed values are ASC or DESC."],
+              "sort": ["The selected sort field is invalid."],
+              "upcoming_days": ["The upcoming_days must be an integer."],
+              "limit": ["The limit must be a positive integer."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "status": false,
+            "message": "Internal server error. Please try again later."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

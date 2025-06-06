@@ -1,0 +1,1225 @@
+name: 'Project Managemant'
+description: |-
+  This endpoint retrieves one specific project if an ID is provided, or returns a paginated list of projects
+  based on applied filters such as status, users, clients, date range, search terms, and favorite flag.
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: 'api/master-panel/projects/{id?}'
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: |-
+        This endpoint retrieves one specific project if an ID is provided, or returns a paginated list of projects
+        based on applied filters such as status, users, clients, date range, search terms, and favorite flag.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get Project(s)'
+      description: 'Fetch a single project by ID or a list of projects with optional filters.'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'optional The ID of the project to retrieve. If provided, other filters are ignored.'
+        required: false
+        example: 23
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 23
+    queryParameters:
+      search:
+        name: search
+        description: 'optional Search by project title, description, or ID.'
+        required: false
+        example: redesign
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'optional Column to sort by. Default is `created_at`.'
+        required: false
+        example: title
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'optional Sort order. Accepts `asc` or `desc`. Default is `desc`.'
+        required: false
+        example: asc
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      limit:
+        name: limit
+        description: 'optional Number of results per page. Default is 10.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      offset:
+        name: offset
+        description: 'optional Offset for pagination. Default is 0.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      status:
+        name: status
+        description: 'optional Filter by status ID.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      user_id:
+        name: user_id
+        description: 'optional Filter by user ID (assigned user).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      client_id:
+        name: client_id
+        description: 'optional Filter by client ID.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      project_start_date_from:
+        name: project_start_date_from
+        description: 'date optional Filter by project start date from (YYYY-MM-DD).'
+        required: false
+        example: '2025-01-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      project_start_date_to:
+        name: project_start_date_to
+        description: 'date optional Filter by project start date to (YYYY-MM-DD).'
+        required: false
+        example: '2025-12-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      project_end_date_from:
+        name: project_end_date_from
+        description: 'date optional Filter by project end date from (YYYY-MM-DD).'
+        required: false
+        example: '2025-01-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      project_end_date_to:
+        name: project_end_date_to
+        description: 'date optional Filter by project end date to (YYYY-MM-DD).'
+        required: false
+        example: '2025-12-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      is_favorites:
+        name: is_favorites
+        description: 'optional Filter for favorite projects. Accepts 1 or 0.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      search: redesign
+      sort: title
+      order: asc
+      limit: 5
+      offset: 10
+      status: 1
+      user_id: 2
+      client_id: 1
+      project_start_date_from: '2025-01-01'
+      project_start_date_to: '2025-12-31'
+      project_end_date_from: '2025-01-01'
+      project_end_date_to: '2025-12-31'
+      is_favorites: true
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Project retrieved successfully",
+            "total": 1,
+            "data": [
+              {
+                "id": 23,
+                "title": "this is A projects",
+                "task_count": 0,
+                "status": "Open",
+                "status_id": 1,
+                "priority": "low",
+                "priority_id": 2,
+                "users": [
+                  {
+                    "id": 2,
+                    "first_name": "herry",
+                    "last_name": "porter",
+                    "email": "admin@gmail.com",
+                    "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                  }
+                ],
+                "user_id": [2],
+                "clients": [
+                  {
+                    "id": 1,
+                    "first_name": "jerry",
+                    "last_name": "ginny",
+                    "email": "jg@gmail.com",
+                    "photo": "http://localhost:8000/storage/photos/gqHsvgmDBCbtf843SRYx31e6Zl51amPZY8eG05FB.jpg"
+                  }
+                ],
+                "client_id": [1],
+                "tags": [
+                  {
+                    "id": 1,
+                    "title": ".first tag"
+                  }
+                ],
+                "tag_ids": [1],
+                "start_date": "2025-05-20",
+                "end_date": "2025-05-25",
+                "budget": "5000.00",
+                "task_accessibility": "private",
+                "description": "Project description here...",
+                "note": "Internal note",
+                "favorite": false,
+                "client_can_discuss": null,
+                "created_at": "2025-05-20",
+                "updated_at": "2025-05-20"
+              }
+            ]
+          }
+        headers: []
+        description: 'Single project found'
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "Project not found",
+            "total": 0,
+            "data": []
+          }
+        headers: []
+        description: 'Project not found'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Lead Couldn't Created.",
+            "error": "Some error message",
+            "line": 143,
+            "file": "/app/Http/Controllers/ProjectController.php"
+          }
+        headers: []
+        description: 'Unexpected error'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/master-panel/projects
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: |-
+        This endpoint allows creating a new project along with assigning users, clients, and tags.
+        The user must be authorized to set the selected status.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a new project'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        name: title
+        description: 'The title of the project.'
+        required: true
+        example: 'Website Redesign'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      status_id:
+        name: status_id
+        description: 'The status ID for the project. Must exist in statuses table.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      priority_id:
+        name: priority_id
+        description: 'The priority ID. Must exist in priorities table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      start_date:
+        name: start_date
+        description: 'The project start date in `Y-m-d` format. Must be before or equal to `end_date`.'
+        required: false
+        example: '2025-05-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      end_date:
+        name: end_date
+        description: 'The project end date in `Y-m-d` format. Must be after or equal to `start_date`.'
+        required: false
+        example: '2025-05-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      budget:
+        name: budget
+        description: 'The budget amount (formatted string or numeric).'
+        required: false
+        example: '5000'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_accessibility:
+        name: task_accessibility
+        description: 'Must be either `project_users` or `assigned_users`.'
+        required: true
+        example: project_users
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      description:
+        name: description
+        description: 'Project description (optional).'
+        required: false
+        example: 'A complete redesign of the company website.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      note:
+        name: note
+        description: 'Internal note (optional).'
+        required: false
+        example: 'Client prefers Figma for designs.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      enable_tasks_time_entries:
+        name: enable_tasks_time_entries
+        description: 'Whether time entries are enabled.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      user_id:
+        name: user_id
+        description: 'Array of user IDs to assign.'
+        required: false
+        example: '[1, 2, 3]'
+        type: 'array[int]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      client_id:
+        name: client_id
+        description: 'Array of client IDs to assign.'
+        required: false
+        example: '[1, 28]'
+        type: 'array[int]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      tag_ids:
+        name: tag_ids
+        description: 'Array of tag IDs to attach.'
+        required: false
+        example: '[1]'
+        type: 'array[int]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      isApi:
+        name: isApi
+        description: 'Optional flag to determine API-specific behavior.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      title: 'Website Redesign'
+      status_id: 1
+      priority_id: 1
+      start_date: '2025-05-01'
+      end_date: '2025-05-31'
+      budget: '5000'
+      task_accessibility: project_users
+      description: 'A complete redesign of the company website.'
+      note: 'Client prefers Figma for designs.'
+      enable_tasks_time_entries: true
+      user_id: '[1, 2, 3]'
+      client_id: '[1, 28]'
+      tag_ids: '[1]'
+      isApi: true
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Project created successfully.",
+            "id": 85,
+            "data": {
+              "id": 85,
+              "title": "Website Redesign",
+              "task_count": 0,
+              "status": "Open",
+              "status_id": 1,
+              "priority": "high",
+              "priority_id": 1,
+              "users": [
+                {
+                  "id": 1,
+                  "first_name": "super",
+                  "last_name": "Admin",
+                  "email": "superadmin@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                }
+              ],
+              "user_id": [1, 2, 3],
+              "clients": [
+                {
+                  "id": 1,
+                  "first_name": "jerry",
+                  "last_name": "ginny",
+                  "email": "jg@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/sample.jpg"
+                }
+              ],
+              "client_id": [1, 28],
+              "tags": [
+                {
+                  "id": 1,
+                  "title": ".first tag"
+                }
+              ],
+              "tag_ids": [1],
+              "start_date": "2025-05-01",
+              "end_date": "2025-05-31",
+              "budget": "5000",
+              "task_accessibility": "project_users",
+              "description": "A complete redesign of the company website.",
+              "note": "Client prefers Figma for designs.",
+              "favorite": false,
+              "client_can_discuss": null,
+              "created_at": "2025-05-30",
+              "updated_at": "2025-05-30"
+            }
+          }
+        headers: []
+        description: Success
+        custom: []
+      -
+        status: 403
+        content: |-
+          {
+            "error": true,
+            "message": "You are not authorized to set this status.",
+            "data": [],
+            "code": 403
+          }
+        headers: []
+        description: 'Unauthorized status change'
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "title": ["The title field is required."],
+              "status_id": ["The status field is required."],
+              "start_date": ["The start date must be before end date."],
+              "budget": ["The budget format is invalid."]
+            }
+          }
+        headers: []
+        description: 'Validation errors'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Something went wrong while creating the project.",
+            "code": 500
+          }
+        headers: []
+        description: 'Unexpected server error'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/master-panel/projects/{project}'
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update an existing project.'
+      description: |-
+        This endpoint updates a project with the given information, such as title, status, budget, participants, and other metadata.
+        It also handles status transitions with validation, updates relationships (users, clients, tags),
+        and sends notifications to affected users/clients.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        name: project
+        description: 'The project.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      project: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The ID of the project to update.'
+        required: true
+        example: 85
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      title:
+        name: title
+        description: 'The title of the project.'
+        required: true
+        example: 'Marketing Campaign Q3'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      status_id:
+        name: status_id
+        description: 'The status ID of the project.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      priority_id:
+        name: priority_id
+        description: 'The priority ID of the project (nullable).'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      budget:
+        name: budget
+        description: 'The budget allocated for the project (nullable).'
+        required: false
+        example: 15000.0
+        type: number
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      start_date:
+        name: start_date
+        description: 'The project start date (must be before or equal to end date). Format: Y-m-d.'
+        required: true
+        example: '2025-07-01'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      end_date:
+        name: end_date
+        description: 'The project end date. Format: Y-m-d.'
+        required: true
+        example: '2025-07-31'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_accessibility:
+        name: task_accessibility
+        description: 'Who can access tasks in this project. Accepted values: "project_users", "assigned_users".'
+        required: true
+        example: assigned_users
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      description:
+        name: description
+        description: 'The project description (nullable).'
+        required: false
+        example: 'A full-scale marketing campaign for the third quarter.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      note:
+        name: note
+        description: 'Any internal notes about the project (nullable).'
+        required: false
+        example: 'Focus on digital channels.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      user_id:
+        name: user_id
+        description: 'List of user IDs to assign to the project.'
+        required: false
+        example:
+          - 2
+          - 5
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      client_id:
+        name: client_id
+        description: 'List of client IDs to associate with the project.'
+        required: false
+        example:
+          - 1
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      tag_ids:
+        name: tag_ids
+        description: 'List of tag IDs to assign to the project.'
+        required: false
+        example:
+          - 1
+          - 2
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      enable_tasks_time_entries:
+        name: enable_tasks_time_entries
+        description: 'Indicates if time entries are enabled for project tasks.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      id: 85
+      title: 'Marketing Campaign Q3'
+      status_id: 1
+      priority_id: 1
+      budget: 15000.0
+      start_date: '2025-07-01'
+      end_date: '2025-07-31'
+      task_accessibility: assigned_users
+      description: 'A full-scale marketing campaign for the third quarter.'
+      note: 'Focus on digital channels.'
+      user_id:
+        - 2
+        - 5
+      client_id:
+        - 1
+      tag_ids:
+        - 1
+        - 2
+      enable_tasks_time_entries: true
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "project updated successfully.",
+            "id": 85,
+            "data": {
+              "id": 85,
+              "title": "this is updated",
+              "task_count": 0,
+              "status": "Open",
+              "status_id": 1,
+              "priority": "high",
+              "priority_id": 1,
+              "users": [
+                {
+                  "id": 2,
+                  "first_name": "herry",
+                  "last_name": "porter",
+                  "email": "admin@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                }
+              ],
+              "user_id": [2],
+              "clients": [],
+              "client_id": [],
+              "tags": [{"id": 1, "title": ".first tag"}],
+              "tag_ids": [1],
+              "start_date": "2025-07-01",
+              "end_date": "2025-07-31",
+              "budget": 15000,
+              "task_accessibility": "assigned_users",
+              "description": "A full-scale marketing campaign for the third quarter.",
+              "note": "Focus on digital channels.",
+              "favorite": false,
+              "client_can_discuss": null,
+              "created_at": "2025-05-30",
+              "updated_at": "2025-05-30"
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "title": ["The title field is required."]
+            }
+          }
+        headers: []
+        description: 'Validation error'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An error occurred while updating the project."
+          }
+        headers: []
+        description: 'Unexpected error'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/master-panel/projects/{project}'
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a project.'
+      description: |-
+        This endpoint deletes a project by its ID. It also removes all associated comments and their attachments.
+        Files are permanently removed from the public storage disk.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      project:
+        name: project
+        description: 'The project.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      id:
+        name: id
+        description: 'The ID of the project to delete.'
+        required: true
+        example: 85
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      project: consequatur
+      id: 85
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Project deleted successfully.",
+            "id": "85",
+            "title": "this is updated",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "Project not found.",
+            "data": []
+          }
+        headers: []
+        description: 'Project not found'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An unexpected error occurred while deleting the project.",
+            "exception": "Exception message",
+            "line": 123,
+            "file": "path/to/file"
+          }
+        headers: []
+        description: 'Unexpected error'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: api/master-panel/destroy-multiple-projects
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete multiple projects.'
+      description: |-
+        This endpoint allows you to delete multiple projects by providing their IDs.
+        All related comments and attachments will also be permanently deleted.
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      ids:
+        name: ids
+        description: 'An array of project IDs to delete.'
+        required: true
+        example:
+          - 1
+          - 2
+          - 3
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      'ids.*':
+        name: 'ids.*'
+        description: 'Each ID must exist in the projects table.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      ids:
+        - 1
+        - 2
+        - 3
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Project(s) deleted successfully.",
+            "ids": [1, 2, 3],
+            "titles": ["Project A", "Project B", "Project C"]
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "ids": ["The ids field is required."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/master-panel/update_favorite/{id}'
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update the favorite status of a project.'
+      description: 'This endpoint updates whether a project is marked as a favorite or not. The user must be authenticated to perform this action.'
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the project to update.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 17
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      is_favorite:
+        name: is_favorite
+        description: 'Indicates whether the project is a favorite. Use 1 for true and 0 for false.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      is_favorite: 17
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+          "error": false,
+          "message": "Project favorite status updated successfully",
+          "data": {
+          "id": 438,
+          "title": "Res Test",
+          "status": "Default",
+          "priority": "dsfdsf",
+          "users": [
+          {
+          "id": 7,
+          "first_name": "Madhavan",
+          "last_name": "Vaidya",
+          "photo": "https://test-taskify.infinitietech.com/storage/photos/yxNYBlFLALdLomrL0JzUY2USPLILL9Ocr16j4n2o.png"
+          }
+          ],
+          "clients": [
+          {
+          "id": 103,
+          "first_name": "Test",
+          "last_name": "Test",
+          "photo": "https://test-taskify.infinitietech.com/storage/photos/no-image.jpg"
+          }
+          ],
+          "tags": [
+          {
+          "id": 45,
+          "title": "Tag from update project"
+          }
+          ],
+          "start_date": null,
+          "end_date": null,
+          "budget": "1000.00",
+          "task_accessibility": "assigned_users",
+          "description": null,
+          "note": null,
+          "favorite": 1,
+          "created_at": "07-08-2024 14:38:51",
+          "updated_at": "12-08-2024 13:36:10"
+          }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 200
+        content: |-
+          {
+            "error": true,
+            "message": "Project not found",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": "Validation errors occurred",
+            "errors": {
+              "is_favorite": [
+                "The is favorite field must be either 0 or 1."
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An error occurred while updating the favorite status."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/master-panel/projects/{id}/duplicate'
+    metadata:
+      groupName: 'Project Managemant'
+      groupDescription: |-
+        This endpoint duplicates a project and its related data such as users, clients, tasks, and tags.
+        Optionally, a new title can be provided for the duplicated project.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Duplicate a project.'
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the project to duplicate.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 12
+    queryParameters:
+      title:
+        name: title
+        description: 'Optional. A new title for the duplicated project.'
+        required: false
+        example: 'New Project Copy'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      reload:
+        name: reload
+        description: 'Optional. If true, flashes a session message.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      title: 'New Project Copy'
+      reload: true
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Project duplicated successfully.",
+            "id": 12
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 400
+        content: |-
+          {
+            "error": true,
+            "message": "Project duplication failed."
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
