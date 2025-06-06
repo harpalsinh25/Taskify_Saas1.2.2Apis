@@ -20,7 +20,7 @@ class LeaveRequest extends Model
         'status',
         'visible_to_all',
         'action_by' ,
-        'admin_id',       
+        'admin_id',
     ];
     public function visibleToUsers()
     {
@@ -30,4 +30,8 @@ class LeaveRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function actionBy()
+{
+    return $this->belongsTo(User::class, 'action_by');
+}
 }

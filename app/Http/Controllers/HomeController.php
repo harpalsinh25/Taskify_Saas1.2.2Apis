@@ -211,9 +211,6 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-
-
-
 public function upcoming_work_anniversaries(Request $request)
 {
     $isApi = $request->get('isApi', true); // default true for API
@@ -246,7 +243,6 @@ public function upcoming_work_anniversaries(Request $request)
         }
 
         // Date filtering logic in SQL for upcoming anniversaries
-        // Using raw SQL to find upcoming anniversary dates between today and upcoming_days from today
         $currentDate = today();
         $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
 
@@ -274,6 +270,7 @@ public function upcoming_work_anniversaries(Request $request)
         $paginatedUsers = $usersQuery->orderBy($sort, $order)
             ->paginate($request->get('limit', 15)); // default 15
 
+        // Transform collection for response
         $paginatedUsers->getCollection()->transform(function ($user) use ($currentDate) {
             $doj = \Carbon\Carbon::createFromFormat('Y-m-d', $user->doj);
             $doj->year = $currentDate->year;
@@ -311,6 +308,7 @@ public function upcoming_work_anniversaries(Request $request)
         return $isApi
             ? formatApiResponse(false, 'Upcoming work anniversaries fetched successfully.', $data)
             : response()->json(['error' => false, 'message' => 'Success', 'data' => $data]);
+
     } catch (\Exception $e) {
         $errorData = [
             'line' => $e->getLine(),
@@ -320,9 +318,11 @@ public function upcoming_work_anniversaries(Request $request)
 
         return $isApi
             ? formatApiResponse(true, 'Something went wrong while fetching data.', $errorData, 500)
-            : response()->json(['error' => true, 'message' => 'Error occurred'] + $errorData, 500);
+            : response()->json(array_merge(['error' => true, 'message' => 'Error occurred'], $errorData), 500);
     }
 }
+
+
 
 
     /**

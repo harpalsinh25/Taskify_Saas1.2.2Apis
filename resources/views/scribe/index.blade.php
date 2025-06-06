@@ -101,9 +101,6 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-master-panel-todo-update-status">
                                 <a href="#endpoints-POSTapi-master-panel-todo-update-status">Update the completion status of a Todo.</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-master-panel-meeting--id-">
-                                <a href="#endpoints-DELETEapi-master-panel-meeting--id-">Delete a Meeting</a>
-                            </li>
                                                                         </ul>
                             </ul>
                     <ul id="tocify-header-user-authentication" class="tocify-header">
@@ -457,6 +454,34 @@ Requires a `workspace_id` header to identify the current workspace context.</a>
                                                                                 <li class="tocify-item level-2" data-unique="meeting-managemant-PUTapi-master-panel-meeting--id-">
                                 <a href="#meeting-managemant-PUTapi-master-panel-meeting--id-">Update a Meeting</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="meeting-managemant-DELETEapi-master-panel-meeting--id-">
+                                <a href="#meeting-managemant-DELETEapi-master-panel-meeting--id-">Delete a Meeting</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
+                    <ul id="tocify-header-note-managemant" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="note-managemant">
+                    <a href="#note-managemant">note Managemant</a>
+                </li>
+                                    <ul id="tocify-subheader-note-managemant" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="note-managemant-POSTapi-master-panel-note">
+                                <a href="#note-managemant-POSTapi-master-panel-note">Create a new note.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="note-managemant-PUTapi-master-panel-note--id-">
+                                <a href="#note-managemant-PUTapi-master-panel-note--id-">Update an existing note.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="note-managemant-DELETEapi-master-panel-note--id-">
+                                <a href="#note-managemant-DELETEapi-master-panel-note--id-">Delete a Note</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="note-managemant-GETapi-master-panel-note--id--">
+                                <a href="#note-managemant-GETapi-master-panel-note--id--">Get All Notes or a Specific Note
+
+This endpoint retrieves either:
+- A list of all notes (if no ID is provided), or
+- A single note by its ID (if provided).
+
+Notes are filtered by the current workspace and admin context.</a>
+                            </li>
                                                                         </ul>
                             </ul>
                     <ul id="tocify-header-project-management" class="tocify-header">
@@ -469,6 +494,29 @@ Requires a `workspace_id` header to identify the current workspace context.</a>
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-leaverequest-managemant" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="leaverequest-managemant">
+                    <a href="#leaverequest-managemant">leaverequest Managemant</a>
+                </li>
+                                    <ul id="tocify-subheader-leaverequest-managemant" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="leaverequest-managemant-POSTapi-master-panel-leaverequest">
+                                <a href="#leaverequest-managemant-POSTapi-master-panel-leaverequest">Create a Leave Request</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="leaverequest-managemant-GETapi-master-panel-leaverequest--id--">
+                                <a href="#leaverequest-managemant-GETapi-master-panel-leaverequest--id--">List Leave Requests (all or by ID)
+
+This API returns either a paginated list of leave requests based on filters or a single leave request if an ID is provided.
+
+Requires authentication. Workspace must be set via header `workspace-id`.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="leaverequest-managemant-PUTapi-master-panel-leaverequest--id-">
+                                <a href="#leaverequest-managemant-PUTapi-master-panel-leaverequest--id-">Update Leave Request</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="leaverequest-managemant-DELETEapi-master-panel-leaverequest--id-">
+                                <a href="#leaverequest-managemant-DELETEapi-master-panel-leaverequest--id-">Delete a leave request by ID.</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
             </div>
 
     <ul class="toc-footer" id="toc-footer">
@@ -478,7 +526,7 @@ Requires a `workspace_id` header to identify the current workspace context.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 5, 2025</li>
+        <li>Last updated: June 6, 2025</li>
     </ul>
 </div>
 
@@ -2067,160 +2115,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>optional Whether the request is API-based. Example: <code>true</code></p>
         </div>
         </form>
-
-                    <h2 id="endpoints-DELETEapi-master-panel-meeting--id-">Delete a Meeting</h2>
-
-<p>
-</p>
-
-<p>This endpoint allows you to delete a meeting by its ID. Only users with proper permissions can delete meetings.</p>
-
-<span id="example-requests-DELETEapi-master-panel-meeting--id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/master-panel/meeting/15" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/meeting/15"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-fetch(url, {
-    method: "DELETE",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-DELETEapi-master-panel-meeting--id-">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-  &quot;success&quot;: true,
-  &quot;message&quot;: &quot;Meeting deleted successfully.&quot;,
-  &quot;data&quot;: {
-    &quot;id&quot;: 15
-&quot;data&quot;:[]
-  }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (404):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Meeting not found.&quot;
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (500):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;An error occurred while deleting the meeting.&quot;
-}</code>
- </pre>
-    </span>
-<span id="execution-results-DELETEapi-master-panel-meeting--id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-DELETEapi-master-panel-meeting--id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-meeting--id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-DELETEapi-master-panel-meeting--id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-DELETEapi-master-panel-meeting--id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-DELETEapi-master-panel-meeting--id-" data-method="DELETE"
-      data-path="api/master-panel/meeting/{id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-meeting--id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-DELETEapi-master-panel-meeting--id-"
-                    onclick="tryItOut('DELETEapi-master-panel-meeting--id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-DELETEapi-master-panel-meeting--id-"
-                    onclick="cancelTryOut('DELETEapi-master-panel-meeting--id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-DELETEapi-master-panel-meeting--id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-red">DELETE</small>
-            <b><code>api/master-panel/meeting/{id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-meeting--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="DELETEapi-master-panel-meeting--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-meeting--id-"
-               value="15"
-               data-component="url">
-    <br>
-<p>The ID of the meeting to delete. Example: <code>15</code></p>
-            </div>
-                    </form>
 
                 <h1 id="user-authentication">User Authentication</h1>
 
@@ -5604,7 +5498,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpDEE5.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpE92D.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5795,7 +5689,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpDEE5.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpE92D.tmp</code></p>
         </div>
         </form>
 
@@ -7331,7 +7225,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=17"\
     --form "content=consequatur"\
     --form "parent_id=17"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpE0BC.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpED46.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7555,7 +7449,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpE0BC.tmp</code></p>
+<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpED46.tmp</code></p>
         </div>
         </form>
 
@@ -10257,7 +10151,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpE3DB.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF101.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -10996,7 +10890,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpE515.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF18F.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11235,7 +11129,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpE1C7.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpEE8F.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13621,7 +13515,7 @@ profile photo upload, email verification logic, and account creation emails.</p>
     --form "internal_purpose=consequatur"\
     --form "status=17"\
     --form "require_ev=17"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpE70A.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpF2E7.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14012,7 +13906,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpE70A.tmp</code></p>
+<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpF2E7.tmp</code></p>
         </div>
         </form>
 
@@ -15439,7 +15333,7 @@ sends email notifications if configured.</p>
     --form "country_iso_code=IN"\
     --form "require_ev="\
     --form "status="\
-    --form "profile=@C:\Users\Dikshita\AppData\Local\Temp\phpE814.tmp" </code></pre></div>
+    --form "profile=@C:\Users\Dikshita\AppData\Local\Temp\phpF3B3.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15789,7 +15683,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>The user's profile image. JPEG, JPG, PNG. Max 2MB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpE814.tmp</code></p>
+<p>The user's profile image. JPEG, JPG, PNG. Max 2MB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpF3B3.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>require_ev</code></b>&nbsp;&nbsp;
@@ -15867,7 +15761,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "country_iso_code=US"\
     --form "status="\
     --form "role=consequatur"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpE844.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpF3E3.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16182,7 +16076,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>image nullable User profile image (jpeg, jpg, png). Max size 2048 KB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpE844.tmp</code></p>
+<p>image nullable User profile image (jpeg, jpg, png). Max size 2048 KB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpF3E3.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -19579,6 +19473,1035 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="meeting-managemant-DELETEapi-master-panel-meeting--id-">Delete a Meeting</h2>
+
+<p>
+</p>
+
+<p>This endpoint allows you to delete a meeting by its ID. Only users with proper permissions can delete meetings.</p>
+
+<span id="example-requests-DELETEapi-master-panel-meeting--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8000/api/master-panel/meeting/15" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/meeting/15"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-master-panel-meeting--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Meeting deleted successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 15,
+        &quot;data&quot;: []
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Meeting not found.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An error occurred while deleting the meeting.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-master-panel-meeting--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-master-panel-meeting--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-meeting--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-master-panel-meeting--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-master-panel-meeting--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-master-panel-meeting--id-" data-method="DELETE"
+      data-path="api/master-panel/meeting/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-meeting--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-master-panel-meeting--id-"
+                    onclick="tryItOut('DELETEapi-master-panel-meeting--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-master-panel-meeting--id-"
+                    onclick="cancelTryOut('DELETEapi-master-panel-meeting--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-master-panel-meeting--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/master-panel/meeting/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-meeting--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-meeting--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-meeting--id-"
+               value="15"
+               data-component="url">
+    <br>
+<p>The ID of the meeting to delete. Example: <code>15</code></p>
+            </div>
+                    </form>
+
+                <h1 id="note-managemant">note Managemant</h1>
+
+    <p>This endpoint allows you to delete a note by its ID.
+It performs a lookup for the note, deletes it using the DeletionService,
+and returns a formatted API response.</p>
+
+                                <h2 id="note-managemant-POSTapi-master-panel-note">Create a new note.</h2>
+
+<p>
+</p>
+
+<p>This endpoint allows you to create a new note of type <code>text</code> or <code>drawing</code>. If the note type is <code>drawing</code>,
+you must provide valid <code>drawing_data</code> in base64-encoded SVG format. The note is associated with the current
+workspace and the authenticated user (either client or user).</p>
+
+<span id="example-requests-POSTapi-master-panel-note">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/master-panel/note" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"note_type\": \"text\",
+    \"title\": \"Project Kickoff Notes\",
+    \"color\": \"#ffcc00\",
+    \"description\": \"Discussed project milestones and timelines.\",
+    \"drawing_data\": \"PHN2ZyB...\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/note"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "note_type": "text",
+    "title": "Project Kickoff Notes",
+    "color": "#ffcc00",
+    "description": "Discussed project milestones and timelines.",
+    "drawing_data": "PHN2ZyB..."
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-master-panel-note">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+  &quot;error&quot;: false,
+  &quot;message&quot;: &quot;Note created successfully.&quot;,
+  &quot;data&quot;: {
+    &quot;id&quot;: 12,
+    &quot;data&quot;: {
+      &quot;id&quot;: 12,
+      &quot;title&quot;: &quot;Project Kickoff Notes&quot;,
+      &quot;note_type&quot;: &quot;text&quot;,
+      &quot;color&quot;: &quot;#ffcc00&quot;,
+      &quot;description&quot;: &quot;Discussed project milestones and timelines.&quot;,
+      &quot;creator_id&quot;: &quot;u_1&quot;,
+      &quot;workspace_id&quot;: 3,
+      ...
+    }
+  }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;note_type&quot;: [
+            &quot;The note type field is required.&quot;
+        ],
+        &quot;title&quot;: [
+            &quot;The title field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An error occurred while creating the note.&quot;,
+    &quot;data&quot;: {
+        &quot;error&quot;: &quot;Exception message here&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-master-panel-note" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-master-panel-note"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-note"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-master-panel-note" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-master-panel-note">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-master-panel-note" data-method="POST"
+      data-path="api/master-panel/note"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-note', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-master-panel-note"
+                    onclick="tryItOut('POSTapi-master-panel-note');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-master-panel-note"
+                    onclick="cancelTryOut('POSTapi-master-panel-note');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-master-panel-note"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/master-panel/note</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-note"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-master-panel-note"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>note_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="note_type"                data-endpoint="POSTapi-master-panel-note"
+               value="text"
+               data-component="body">
+    <br>
+<p>The type of note. Must be either <code>text</code> or <code>drawing</code>. Example: <code>text</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="POSTapi-master-panel-note"
+               value="Project Kickoff Notes"
+               data-component="body">
+    <br>
+<p>The title of the note. Example: <code>Project Kickoff Notes</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>color</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="color"                data-endpoint="POSTapi-master-panel-note"
+               value="#ffcc00"
+               data-component="body">
+    <br>
+<p>Color code or name for the note. Example: <code>#ffcc00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="POSTapi-master-panel-note"
+               value="Discussed project milestones and timelines."
+               data-component="body">
+    <br>
+<p>The description or body content of the note (required for text notes). Example: <code>Discussed project milestones and timelines.</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>drawing_data</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="drawing_data"                data-endpoint="POSTapi-master-panel-note"
+               value="PHN2ZyB..."
+               data-component="body">
+    <br>
+<p>The base64-encoded SVG content (required if note_type is <code>drawing</code>). Example: <code>PHN2ZyB...</code></p>
+        </div>
+        </form>
+
+                    <h2 id="note-managemant-PUTapi-master-panel-note--id-">Update an existing note.</h2>
+
+<p>
+</p>
+
+<p>Updates the note identified by <code>id</code> with the provided data.
+Supports notes of type <code>text</code> or <code>drawing</code>. For <code>drawing</code> type,
+the <code>drawing_data</code> must be a base64-encoded string, which will be decoded.</p>
+
+<span id="example-requests-PUTapi-master-panel-note--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8000/api/master-panel/note/consequatur" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"id\": 12,
+    \"note_type\": \"text\",
+    \"title\": \"Meeting notes\",
+    \"color\": \"#FF5733\",
+    \"description\": \"Detailed notes from the meeting\",
+    \"drawing_data\": \"consequatur\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/note/consequatur"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "id": 12,
+    "note_type": "text",
+    "title": "Meeting notes",
+    "color": "#FF5733",
+    "description": "Detailed notes from the meeting",
+    "drawing_data": "consequatur"
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-master-panel-note--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+   &quot;error&quot;: false,
+   &quot;message&quot;: &quot;Note updated successfully.&quot;,
+   &quot;data&quot;: {
+      &quot;id&quot;: 12,
+      &quot;data&quot;: {
+         &quot;id&quot;: 12,
+         &quot;note_type&quot;: &quot;text&quot;,
+         &quot;title&quot;: &quot;Meeting notes&quot;,
+         &quot;color&quot;: &quot;#FF5733&quot;,
+         &quot;description&quot;: &quot;Detailed notes from the meeting&quot;,
+         &quot;drawing_data&quot;: null,
+         // ... other formatted note fields
+      }
+   }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;title&quot;: [
+            &quot;The title field is required.&quot;
+        ],
+        &quot;note_type&quot;: [
+            &quot;The selected note type is invalid.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: &quot;Detailed error message here&quot;,
+    &quot;message&quot;: &quot;An error occurred while updating the note.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-PUTapi-master-panel-note--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-master-panel-note--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-note--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-master-panel-note--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-master-panel-note--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-master-panel-note--id-" data-method="PUT"
+      data-path="api/master-panel/note/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-note--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-master-panel-note--id-"
+                    onclick="tryItOut('PUTapi-master-panel-note--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-master-panel-note--id-"
+                    onclick="cancelTryOut('PUTapi-master-panel-note--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-master-panel-note--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/master-panel/note/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>The ID of the note. Example: <code>consequatur</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="12"
+               data-component="body">
+    <br>
+<p>The ID of the note to update. Example: <code>12</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>note_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="note_type"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="text"
+               data-component="body">
+    <br>
+<p>The type of note, either <code>text</code> or <code>drawing</code>. Example: <code>text</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="Meeting notes"
+               data-component="body">
+    <br>
+<p>The title of the note. Example: <code>Meeting notes</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>color</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="color"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="#FF5733"
+               data-component="body">
+    <br>
+<p>The color associated with the note. Example: <code>#FF5733</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="Detailed notes from the meeting"
+               data-component="body">
+    <br>
+<p>nullable Optional description for the note. Example: <code>Detailed notes from the meeting</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>drawing_data</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="drawing_data"                data-endpoint="PUTapi-master-panel-note--id-"
+               value="consequatur"
+               data-component="body">
+    <br>
+<p>required_if:note_type,drawing Base64-encoded SVG data for drawing notes. Example: <code>consequatur</code></p>
+        </div>
+        </form>
+
+                    <h2 id="note-managemant-DELETEapi-master-panel-note--id-">Delete a Note</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-master-panel-note--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8000/api/master-panel/note/7" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/note/7"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-master-panel-note--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Note deleted successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 7,
+        &quot;title&quot;: &quot;Project Kickoff Notes&quot;,
+        &quot;content&quot;: &quot;Initial project meeting details...&quot;,
+        &quot;user_id&quot;: 3,
+        &quot;workspace_id&quot;: 2,
+        &quot;created_at&quot;: &quot;2024-05-24T08:12:54.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2024-06-01T10:20:41.000000Z&quot;
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\Note] 99&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Something went wrong while deleting the note.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-master-panel-note--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-master-panel-note--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-note--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-master-panel-note--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-master-panel-note--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-master-panel-note--id-" data-method="DELETE"
+      data-path="api/master-panel/note/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-note--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-master-panel-note--id-"
+                    onclick="tryItOut('DELETEapi-master-panel-note--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-master-panel-note--id-"
+                    onclick="cancelTryOut('DELETEapi-master-panel-note--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-master-panel-note--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/master-panel/note/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-note--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-note--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-note--id-"
+               value="7"
+               data-component="url">
+    <br>
+<p>The ID of the note to delete. Example: <code>7</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="note-managemant-GETapi-master-panel-note--id--">Get All Notes or a Specific Note
+
+This endpoint retrieves either:
+- A list of all notes (if no ID is provided), or
+- A single note by its ID (if provided).
+
+Notes are filtered by the current workspace and admin context.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-master-panel-note--id--">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/note/3" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/note/3"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-note--id--">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Notes retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;total&quot;: 2,
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;title&quot;: &quot;Sprint Planning&quot;,
+                &quot;note_type&quot;: &quot;text&quot;,
+                &quot;color&quot;: &quot;#ffffff&quot;,
+                &quot;workspace_id&quot;: 1,
+                &quot;admin_id&quot;: 1,
+                &quot;creator_id&quot;: &quot;u_3&quot;,
+                &quot;created_at&quot;: &quot;2025-06-01T12:00:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-01T12:30:00.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;title&quot;: &quot;UI Wireframe&quot;,
+                &quot;note_type&quot;: &quot;drawing&quot;,
+                &quot;color&quot;: &quot;#000000&quot;,
+                &quot;workspace_id&quot;: 1,
+                &quot;admin_id&quot;: 1,
+                &quot;creator_id&quot;: &quot;u_3&quot;,
+                &quot;created_at&quot;: &quot;2025-06-02T08:45:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-02T09:15:00.000000Z&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Note retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;total&quot;: 1,
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 3,
+                &quot;title&quot;: &quot;Design Plan&quot;,
+                &quot;note_type&quot;: &quot;drawing&quot;,
+                &quot;color&quot;: &quot;#ffdd00&quot;,
+                &quot;workspace_id&quot;: 1,
+                &quot;admin_id&quot;: 1,
+                &quot;creator_id&quot;: &quot;u_5&quot;,
+                &quot;created_at&quot;: &quot;2025-06-03T10:00:00.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-03T10:30:00.000000Z&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Note not found.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Failed to retrieve notes.&quot;,
+    &quot;data&quot;: {
+        &quot;error&quot;: &quot;SQLSTATE[42S02]: Base table or view not found: 1146 Table &#039;notes&#039; doesn&#039;t exist&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-note--id--" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-note--id--"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-note--id--"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-note--id--" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-note--id--">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-note--id--" data-method="GET"
+      data-path="api/master-panel/note/{id?}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-note--id--', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-note--id--"
+                    onclick="tryItOut('GETapi-master-panel-note--id--');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-note--id--"
+                    onclick="cancelTryOut('GETapi-master-panel-note--id--');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-note--id--"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/note/{id?}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-note--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-note--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-master-panel-note--id--"
+               value="3"
+               data-component="url">
+    <br>
+<p>optional The ID of the note to retrieve. Example: <code>3</code></p>
+            </div>
+                    </form>
+
                 <h1 id="project-management">Project Management</h1>
 
     
@@ -19834,6 +20757,1277 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Optional flag (true/false) indicating if the request expects an API-formatted response. Default is false. Example: <code>false</code></p>
         </div>
         </form>
+
+                <h1 id="leaverequest-managemant">leaverequest Managemant</h1>
+
+    <p>This endpoint allows a user, admin, or leave editor to create a leave request.</p>
+
+                                <h2 id="leaverequest-managemant-POSTapi-master-panel-leaverequest">Create a Leave Request</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-master-panel-leaverequest">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/master-panel/leaverequest" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"reason\": \"Family function\",
+    \"from_date\": \"2025-06-10\",
+    \"to_date\": \"2025-06-12\",
+    \"partialLeave\": true,
+    \"from_time\": \"10:00\",
+    \"to_time\": \"14:00\",
+    \"status\": \"pending\",
+    \"leaveVisibleToAll\": true,
+    \"visible_to_ids\": [
+        3,
+        5,
+        7
+    ],
+    \"user_id\": 9,
+    \"isApi\": true
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/leaverequest"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "reason": "Family function",
+    "from_date": "2025-06-10",
+    "to_date": "2025-06-12",
+    "partialLeave": true,
+    "from_time": "10:00",
+    "to_time": "14:00",
+    "status": "pending",
+    "leaveVisibleToAll": true,
+    "visible_to_ids": [
+        3,
+        5,
+        7
+    ],
+    "user_id": 9,
+    "isApi": true
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-master-panel-leaverequest">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+ &quot;error&quot;: false,
+ &quot;message&quot;: &quot;Leave request created successfully.&quot;,
+ &quot;id&quot;: 13,
+ &quot;type&quot;: &quot;leave_request&quot;,
+ &quot;data&quot;: {
+   &quot;id&quot;: 13,
+   &quot;user_id&quot;: 9,
+   &quot;reason&quot;: &quot;Family function&quot;,
+   &quot;from_date&quot;: &quot;2025-06-10&quot;,
+   &quot;to_date&quot;: &quot;2025-06-12&quot;,
+   &quot;from_time&quot;: null,
+   &quot;to_time&quot;: null,
+   &quot;status&quot;: &quot;pending&quot;,
+   &quot;visible_to_all&quot;: true,
+   ...
+ }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;reason&quot;: [
+            &quot;The reason field is required.&quot;
+        ],
+        &quot;from_date&quot;: [
+            &quot;The from date field is required.&quot;
+        ],
+        &quot;to_date&quot;: [
+            &quot;The to date field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: &quot;Exception message&quot;,
+    &quot;message&quot;: &quot;leave request culd not created&quot;,
+    &quot;line&quot;: 125,
+    &quot;file&quot;: &quot;app/Http/Controllers/LeaveRequestController.php&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-master-panel-leaverequest" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-master-panel-leaverequest"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-leaverequest"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-master-panel-leaverequest" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-master-panel-leaverequest">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-master-panel-leaverequest" data-method="POST"
+      data-path="api/master-panel/leaverequest"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-leaverequest', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-master-panel-leaverequest"
+                    onclick="tryItOut('POSTapi-master-panel-leaverequest');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-master-panel-leaverequest"
+                    onclick="cancelTryOut('POSTapi-master-panel-leaverequest');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-master-panel-leaverequest"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/master-panel/leaverequest</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>reason</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="reason"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="Family function"
+               data-component="body">
+    <br>
+<p>The reason for the leave. Example: <code>Family function</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>from_date</code></b>&nbsp;&nbsp;
+<small>date</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from_date"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="2025-06-10"
+               data-component="body">
+    <br>
+<p>The start date of the leave in the format Y-m-d. Example: <code>2025-06-10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>to_date</code></b>&nbsp;&nbsp;
+<small>date</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to_date"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="2025-06-12"
+               data-component="body">
+    <br>
+<p>The end date of the leave in the format Y-m-d. If partialLeave is on, this must match from_date. Example: <code>2025-06-12</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>partialLeave</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="partialLeave"
+                   value="true"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="partialLeave"
+                   value="false"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>optional If set to &quot;on&quot;, indicates a partial day leave. Example: <code>true</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>from_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="from_time"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="10:00"
+               data-component="body">
+    <br>
+<p>required_if:partialLeave,on The start time for a partial leave (24-hour format). Example: <code>10:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>to_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="to_time"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="14:00"
+               data-component="body">
+    <br>
+<p>required_if:partialLeave,on The end time for a partial leave (24-hour format). Example: <code>14:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="pending"
+               data-component="body">
+    <br>
+<p>optional Only admins or leave editors can set status to 'approved' or 'rejected'. Default is 'pending'. Example: <code>pending</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>leaveVisibleToAll</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="leaveVisibleToAll"
+                   value="true"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="leaveVisibleToAll"
+                   value="false"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>optional If set to &quot;on&quot;, the leave is visible to all workspace users. Example: <code>true</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>visible_to_ids</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="visible_to_ids[0]"                data-endpoint="POSTapi-master-panel-leaverequest"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="visible_to_ids[1]"                data-endpoint="POSTapi-master-panel-leaverequest"
+               data-component="body">
+    <br>
+<p>optional Required if leaveVisibleToAll is not set. An array of user IDs who can view the leave.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="9"
+               data-component="body">
+    <br>
+<p>optional Only admins or leave editors can create leave requests on behalf of another user. Example: <code>9</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="isApi"
+                   value="true"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="POSTapi-master-panel-leaverequest" style="display: none">
+            <input type="radio" name="isApi"
+                   value="false"
+                   data-endpoint="POSTapi-master-panel-leaverequest"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>optional Indicates if this is an API request. Defaults to true. Example: <code>true</code></p>
+        </div>
+        </form>
+
+                    <h2 id="leaverequest-managemant-GETapi-master-panel-leaverequest--id--">List Leave Requests (all or by ID)
+
+This API returns either a paginated list of leave requests based on filters or a single leave request if an ID is provided.
+
+Requires authentication. Workspace must be set via header `workspace-id`.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-master-panel-leaverequest--id--">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/leaverequest/17?isApi=&amp;search=consequatur&amp;sort=consequatur&amp;order=consequatur&amp;user_ids[]=consequatur&amp;action_by_ids[]=consequatur&amp;types[]=consequatur&amp;statuses[]=consequatur&amp;start_date_from=consequatur&amp;start_date_to=consequatur&amp;end_date_from=consequatur&amp;end_date_to=consequatur&amp;limit=17" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/leaverequest/17"
+);
+
+const params = {
+    "isApi": "0",
+    "search": "consequatur",
+    "sort": "consequatur",
+    "order": "consequatur",
+    "user_ids[0]": "consequatur",
+    "action_by_ids[0]": "consequatur",
+    "types[0]": "consequatur",
+    "statuses[0]": "consequatur",
+    "start_date_from": "consequatur",
+    "start_date_to": "consequatur",
+    "end_date_from": "consequatur",
+    "end_date_to": "consequatur",
+    "limit": "17",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-leaverequest--id--">
+            <blockquote>
+            <p>Example response (200, Single Leave Request Found):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Leave request retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;total&quot;: 1,
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 14,
+                &quot;user_name&quot;: &quot;John Doe&quot;,
+                &quot;action_by&quot;: &quot;Jane Smith&quot;,
+                &quot;from_date&quot;: &quot;Mon, 2024-06-01&quot;,
+                &quot;to_date&quot;: &quot;Tue, 2024-06-02&quot;,
+                &quot;type&quot;: &quot;Full&quot;,
+                &quot;duration&quot;: &quot;2 days&quot;,
+                &quot;reason&quot;: &quot;Medical leave&quot;,
+                &quot;status&quot;: &quot;&lt;span class=&#039;badge bg-warning&#039;&gt;Pending&lt;/span&gt;&quot;,
+                &quot;visible_to&quot;: &quot;All&quot;,
+                &quot;created_at&quot;: &quot;2024-05-15 10:30 AM&quot;,
+                &quot;updated_at&quot;: &quot;2024-05-16 09:20 AM&quot;,
+                &quot;actions&quot;: &quot;&lt;a href=...&gt;Edit&lt;/a&gt; &lt;button&gt;Delete&lt;/button&gt;&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (200, List of Leave Requests):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Leave requests retrieved successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;total&quot;: 5,
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;user_name&quot;: &quot;John Doe&quot;,
+                &quot;action_by&quot;: &quot;Jane Smith&quot;,
+                &quot;from_date&quot;: &quot;Mon, 2024-06-01&quot;,
+                &quot;to_date&quot;: &quot;Tue, 2024-06-02&quot;,
+                &quot;type&quot;: &quot;Full&quot;,
+                &quot;duration&quot;: &quot;2 days&quot;,
+                &quot;reason&quot;: &quot;Annual Leave&quot;,
+                &quot;status&quot;: &quot;&lt;span class=&#039;badge bg-success&#039;&gt;Approved&lt;/span&gt;&quot;,
+                &quot;visible_to&quot;: &quot;All&quot;,
+                &quot;created_at&quot;: &quot;2024-05-01 08:00 AM&quot;,
+                &quot;updated_at&quot;: &quot;2024-05-02 09:00 AM&quot;,
+                &quot;actions&quot;: &quot;&lt;a href=...&gt;Edit&lt;/a&gt; &lt;button&gt;Delete&lt;/button&gt;&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404, Leave request not found):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Unable to retrieve leave requests.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500, Server error or internal exception):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Unable to retrieve leave requests.&quot;,
+    &quot;data&quot;: [],
+    &quot;error&quot;: &quot;Call to undefined relationship [actionBy] on model [App\\Models\\LeaveRequest].&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-leaverequest--id--" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-leaverequest--id--"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-leaverequest--id--"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-leaverequest--id--" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-leaverequest--id--">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-leaverequest--id--" data-method="GET"
+      data-path="api/master-panel/leaverequest/{id?}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-leaverequest--id--', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-leaverequest--id--"
+                    onclick="tryItOut('GETapi-master-panel-leaverequest--id--');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-leaverequest--id--"
+                    onclick="cancelTryOut('GETapi-master-panel-leaverequest--id--');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-leaverequest--id--"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/leaverequest/{id?}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="17"
+               data-component="url">
+    <br>
+<p>Optional. Leave request ID. If provided, returns only that leave request. Example: <code>17</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="GETapi-master-panel-leaverequest--id--" style="display: none">
+            <input type="radio" name="isApi"
+                   value="1"
+                   data-endpoint="GETapi-master-panel-leaverequest--id--"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-master-panel-leaverequest--id--" style="display: none">
+            <input type="radio" name="isApi"
+                   value="0"
+                   data-endpoint="GETapi-master-panel-leaverequest--id--"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Optional. Set to <code>true</code> for API mode. Default: true Example: <code>false</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>Optional. Search by leave reason or ID. Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>sort</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="sort"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>Optional. Column to sort by. Default: id Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>order</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="order"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>Optional. Sort direction: ASC or DESC. Default: DESC Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>user_ids</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="user_ids[0]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+        <input type="text" style="display: none"
+               name="user_ids[1]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+    <br>
+<p>Optional. Filter by one or more user IDs.</p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>action_by_ids</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="action_by_ids[0]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+        <input type="text" style="display: none"
+               name="action_by_ids[1]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+    <br>
+<p>Optional. Filter by action_by user IDs.</p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>types</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="types[0]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+        <input type="text" style="display: none"
+               name="types[1]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+    <br>
+<p>Optional. Filter by types: full or partial.</p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>statuses</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="statuses[0]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+        <input type="text" style="display: none"
+               name="statuses[1]"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               data-component="query">
+    <br>
+<p>Optional. Filter by status: pending, approved, rejected.</p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>start_date_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="start_date_from"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>date Optional. Start range for from_date filter. Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>start_date_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="start_date_to"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>date Optional. End range for from_date filter. Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>end_date_from</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="end_date_from"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>date Optional. Start range for to_date filter. Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>end_date_to</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="end_date_to"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="consequatur"
+               data-component="query">
+    <br>
+<p>date Optional. End range for to_date filter. Example: <code>consequatur</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="limit"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="17"
+               data-component="query">
+    <br>
+<p>Optional. Results per page. Default: 10 Example: <code>17</code></p>
+            </div>
+                </form>
+
+                    <h2 id="leaverequest-managemant-PUTapi-master-panel-leaverequest--id-">Update Leave Request</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>This endpoint allows authorized users to update an existing leave request.
+Only admins or leave editors can change the status. Team members cannot approve their own leaves.
+Leave requests already actioned (approved/rejected) can only be modified by an admin.</p>
+
+<span id="example-requests-PUTapi-master-panel-leaverequest--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8000/api/master-panel/leaverequest/consequatur" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"id\": 12,
+    \"reason\": \"Family emergency\",
+    \"from_date\": \"2025-06-10\",
+    \"to_date\": \"2025-06-12\",
+    \"from_time\": \"09:00\",
+    \"to_time\": \"13:00\",
+    \"partialLeave\": \"on\",
+    \"leaveVisibleToAll\": \"on\",
+    \"visible_to_ids\": [
+        2,
+        3,
+        4
+    ],
+    \"status\": \"approved\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/leaverequest/consequatur"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "id": 12,
+    "reason": "Family emergency",
+    "from_date": "2025-06-10",
+    "to_date": "2025-06-12",
+    "from_time": "09:00",
+    "to_time": "13:00",
+    "partialLeave": "on",
+    "leaveVisibleToAll": "on",
+    "visible_to_ids": [
+        2,
+        3,
+        4
+    ],
+    "status": "approved"
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-master-panel-leaverequest--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Leave request updated successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 12,
+        &quot;data&quot;: {
+            &quot;id&quot;: 12,
+            &quot;user_id&quot;: 3,
+            &quot;reason&quot;: &quot;Family emergency&quot;,
+            &quot;from_date&quot;: &quot;2025-06-10&quot;,
+            &quot;to_date&quot;: &quot;2025-06-12&quot;,
+            &quot;from_time&quot;: &quot;09:00&quot;,
+            &quot;to_time&quot;: &quot;13:00&quot;,
+            &quot;status&quot;: &quot;approved&quot;,
+            &quot;action_by&quot;: 1,
+            &quot;visible_to_all&quot;: 1,
+            &quot;created_at&quot;: &quot;2025-06-01T12:30:00.000000Z&quot;,
+            &quot;updated_at&quot;: &quot;2025-06-06T10:45:00.000000Z&quot;
+        },
+        &quot;type&quot;: &quot;leave_request&quot;
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (400):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Missing or invalid input.&quot;,
+    &quot;details&quot;: {
+        &quot;from_date&quot;: [
+            &quot;The from date field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (403):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;You cannot approve your own leave request.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (403):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Once actioned only admin can update leave request.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (403):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;You cannot set the status to pending if it has already been approved or rejected.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Validation failed.&quot;,
+    &quot;details&quot;: {
+        &quot;status&quot;: [
+            &quot;The selected status is invalid.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An error occurred while updating the leave request.&quot;,
+    &quot;details&quot;: &quot;SQLSTATE[23000]: Integrity constraint violation...&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-PUTapi-master-panel-leaverequest--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-master-panel-leaverequest--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-leaverequest--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-master-panel-leaverequest--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-master-panel-leaverequest--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-master-panel-leaverequest--id-" data-method="PUT"
+      data-path="api/master-panel/leaverequest/{id}"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-leaverequest--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-master-panel-leaverequest--id-"
+                    onclick="tryItOut('PUTapi-master-panel-leaverequest--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-master-panel-leaverequest--id-"
+                    onclick="cancelTryOut('PUTapi-master-panel-leaverequest--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-master-panel-leaverequest--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/master-panel/leaverequest/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>The ID of the leaverequest. Example: <code>consequatur</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="12"
+               data-component="body">
+    <br>
+<p>The ID of the leave request to update. Example: <code>12</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>reason</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="reason"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="Family emergency"
+               data-component="body">
+    <br>
+<p>Reason for leave. Example: <code>Family emergency</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>from_date</code></b>&nbsp;&nbsp;
+<small>date</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="from_date"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="2025-06-10"
+               data-component="body">
+    <br>
+<p>Start date of leave (in Y-m-d format). Must be before or equal to <code>to_date</code>. Example: <code>2025-06-10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>to_date</code></b>&nbsp;&nbsp;
+<small>date</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="to_date"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="2025-06-12"
+               data-component="body">
+    <br>
+<p>End date of leave (in Y-m-d format). Example: <code>2025-06-12</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>from_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="from_time"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="09:00"
+               data-component="body">
+    <br>
+<p>Optional. Required if partial leave is selected. Format: HH:MM. Example: <code>09:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>to_time</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="to_time"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="13:00"
+               data-component="body">
+    <br>
+<p>Optional. Required if partial leave is selected. Format: HH:MM. Example: <code>13:00</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>partialLeave</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="partialLeave"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="on"
+               data-component="body">
+    <br>
+<p>Optional. If &quot;on&quot;, indicates it's a partial leave. Example: <code>on</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>leaveVisibleToAll</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="leaveVisibleToAll"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="on"
+               data-component="body">
+    <br>
+<p>Optional. If &quot;on&quot;, the leave will be visible to all users. Example: <code>on</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>visible_to_ids</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="visible_to_ids[0]"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="visible_to_ids[1]"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               data-component="body">
+    <br>
+<p>Optional. List of user IDs who can view this leave (if leaveVisibleToAll is not set).</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="approved"
+               data-component="body">
+    <br>
+<p>optional New status of the leave. Allowed values: pending, approved, rejected. Required if user is admin or leave editor. Example: <code>approved</code></p>
+        </div>
+        </form>
+
+                    <h2 id="leaverequest-managemant-DELETEapi-master-panel-leaverequest--id-">Delete a leave request by ID.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-master-panel-leaverequest--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8000/api/master-panel/leaverequest/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/leaverequest/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-master-panel-leaverequest--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Leave request deleted successfully.&quot;,
+    &quot;id&quot;: 1,
+    &quot;type&quot;: &quot;leave_request&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Leave request not found.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An error occurred while deleting the leave request.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-master-panel-leaverequest--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-master-panel-leaverequest--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-leaverequest--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-master-panel-leaverequest--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-master-panel-leaverequest--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-master-panel-leaverequest--id-" data-method="DELETE"
+      data-path="api/master-panel/leaverequest/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-leaverequest--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-master-panel-leaverequest--id-"
+                    onclick="tryItOut('DELETEapi-master-panel-leaverequest--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-master-panel-leaverequest--id-"
+                    onclick="cancelTryOut('DELETEapi-master-panel-leaverequest--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-master-panel-leaverequest--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/master-panel/leaverequest/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-leaverequest--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-leaverequest--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-leaverequest--id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the leave request to delete. Example: <code>1</code></p>
+            </div>
+                    </form>
 
             
 

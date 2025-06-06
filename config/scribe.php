@@ -294,9 +294,20 @@ return [
 
             ],
             'note Managemant' =>[
-                'POST /note'
+                'POST /note',
+                'PUT /note/{id}',
+                'DELETE /note/{id}',
+                'GET /note/{id?}',
+                 ],
+            'leaverequest Managemant '=>[
+                'POST /leaverequest',
+                'PUT /leaverequest/{id}',
+                'DELETE /leaverequest/{id}',
+                'GET /leaverequest/{id?}'
+                ],
 
-        ],
+
+
             ],
         ],
 

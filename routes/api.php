@@ -12,6 +12,7 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MeetingsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PriorityController;
@@ -180,7 +181,14 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
        Route::post('/note',[NotesController::class,'store'])->middleware('log.activity');
        Route::put('/note/{id}',[NotesController::class,'update'])->middleware('log.activity');
        Route::delete('/note/{id}',[NotesController::class,'destroy']);
-       Route::post('/note/{id?}',[NotesController::class,'apilist']);
+       Route::get('/note/{id?}',[NotesController::class,'apilist']);
+    //leave request
+    Route::middleware(['admin_or_user'])->group(function () {
+        Route::post('/leaverequest',[LeaveRequestController::class,'store']);
+        Route::get('/leaverequest/{id?}',[LeaveRequestController::class,'listapi']);
+        Route::put('/leaverequest/{id}',[LeaveRequestController::class,'update']);
+        Route::delete('/leaverequest/{id}',[LeaveRequestController::class,'destroy']);
 
+    });
 
 });

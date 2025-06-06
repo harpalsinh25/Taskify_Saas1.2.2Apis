@@ -221,12 +221,68 @@ public function __construct()
     }
 
 
+/**
+ * Delete a Note
+ *@group note Managemant
+ * This endpoint allows you to delete a note by its ID.
+ * It performs a lookup for the note, deletes it using the DeletionService,
+ * and returns a formatted API response.
+ *
+ * @urlParam id integer required The ID of the note to delete. Example: 7
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "message": "Note deleted successfully.",
+ *   "data": {
+ *     "id": 7,
+ *     "title": "Project Kickoff Notes",
+ *     "content": "Initial project meeting details...",
+ *     "user_id": 3,
+ *     "workspace_id": 2,
+ *     "created_at": "2024-05-24T08:12:54.000000Z",
+ *     "updated_at": "2024-06-01T10:20:41.000000Z"
+ *   }
+ * }
+ *
+ * @response 404 {
+ *   "success": false,
+ *   "message": "No query results for model [App\\Models\\Note] 99",
+ *   "data": []
+ * }
+ *
+ * @response 500 {
+ *   "success": false,
+ *   "message": "Something went wrong while deleting the note.",
+ *   "data": []
+ * }
+ */
+  public function destroy($id)
+{
+    $isApi = request()->get('isApi', true); // default to API mode
 
-    public function destroy($id)
-    {
+    try {
+        $note = Note::findOrFail($id);
+
         $response = DeletionService::delete(Note::class, $id, 'Note');
+
+        if ($isApi) {
+            return formatApiResponse(
+                true,
+                'Note deleted successfully.',
+                ['data' => []]
+            );
+        }
+
         return $response;
+    } catch (\Exception $e) {
+        if ($isApi) {
+            return formatApiResponse(false, $e->getMessage(), [], 500);
+        }
+
+        return back()->with('error', $e->getMessage());
     }
+}
+
     public function destroy_multiple(Request $request)
     {
         // Validate the incoming request
@@ -255,4 +311,122 @@ public function __construct()
             'titles' => $deletedTitles
         ]);
     }
+    /**
+ * @group note Managemant
+ *
+ * Get All Notes or a Specific Note
+ *
+ * This endpoint retrieves either:
+ * - A list of all notes (if no ID is provided), or
+ * - A single note by its ID (if provided).
+ *
+ * Notes are filtered by the current workspace and admin context.
+ *
+ * @urlParam id integer optional The ID of the note to retrieve. Example: 3
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "message": "Notes retrieved successfully.",
+ *   "data": {
+ *     "total": 2,
+ *     "data": [
+ *       {
+ *         "id": 1,
+ *         "title": "Sprint Planning",
+ *         "note_type": "text",
+ *         "color": "#ffffff",
+ *         "workspace_id": 1,
+ *         "admin_id": 1,
+ *         "creator_id": "u_3",
+ *         "created_at": "2025-06-01T12:00:00.000000Z",
+ *         "updated_at": "2025-06-01T12:30:00.000000Z"
+ *       },
+ *       {
+ *         "id": 2,
+ *         "title": "UI Wireframe",
+ *         "note_type": "drawing",
+ *         "color": "#000000",
+ *         "workspace_id": 1,
+ *         "admin_id": 1,
+ *         "creator_id": "u_3",
+ *         "created_at": "2025-06-02T08:45:00.000000Z",
+ *         "updated_at": "2025-06-02T09:15:00.000000Z"
+ *       }
+ *     ]
+ *   }
+ * }
+ *
+ * @response 200 {
+ *   "success": true,
+ *   "message": "Note retrieved successfully.",
+ *   "data": {
+ *     "total": 1,
+ *     "data": [
+ *       {
+ *         "id": 3,
+ *         "title": "Design Plan",
+ *         "note_type": "drawing",
+ *         "color": "#ffdd00",
+ *         "workspace_id": 1,
+ *         "admin_id": 1,
+ *         "creator_id": "u_5",
+ *         "created_at": "2025-06-03T10:00:00.000000Z",
+ *         "updated_at": "2025-06-03T10:30:00.000000Z"
+ *       }
+ *     ]
+ *   }
+ * }
+ *
+ * @response 404 {
+ *   "success": false,
+ *   "message": "Note not found.",
+ *   "data": []
+ * }
+ *
+ * @response 500 {
+ *   "success": false,
+ *   "message": "Failed to retrieve notes.",
+ *   "data": {
+ *     "error": "SQLSTATE[42S02]: Base table or view not found: 1146 Table 'notes' doesn't exist"
+ *   }
+ * }
+ */
+
+    public function apilist($id = null)
+{
+    $isApi = request()->get('isApi', true); // default to API
+    $adminId = getAdminIdByUserRole();
+
+    try {
+        $query = Note::query()
+            ->where('workspace_id', $this->workspace->id)
+            ->where('admin_id', $adminId);
+
+        // Fetch specific note
+        if ($id) {
+            $note = $query->where('id', $id)->first();
+
+            if (!$note) {
+                return formatApiResponse(false, 'Note not found.', [], 404);
+            }
+
+            return formatApiResponse(true, 'Note retrieved successfully.', [
+                'total' => 1,
+                'data' => [formatNote($note)]
+            ]);
+        }
+
+        // Fetch all notes
+        $notes = $query->latest()->get();
+
+        return formatApiResponse(true, 'Notes retrieved successfully.', [
+            'total' => $notes->count(),
+            'data' => $notes->map(fn($note) => formatNote($note))->toArray()
+        ]);
+    } catch (\Exception $e) {
+        return formatApiResponse(false, 'Failed to retrieve notes.', [
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 }

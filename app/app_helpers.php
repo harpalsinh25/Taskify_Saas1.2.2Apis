@@ -3641,6 +3641,48 @@ if (!function_exists('formatNote')) {
         ];
     }
 }
+if (!function_exists('formatLeaveRequest')) {
+    function formatLeaveRequest($leaveRequest)
+    {
+        if (!$leaveRequest) {
+            return null;
+        }
+
+        return [
+            'id' => $leaveRequest->id,
+            'reason' => $leaveRequest->reason,
+            'from_date' => $leaveRequest->from_date,
+            'to_date' => $leaveRequest->to_date,
+            'from_time' => $leaveRequest->from_time,
+            'to_time' => $leaveRequest->to_time,
+            'status' => $leaveRequest->status,
+            'user_id' => $leaveRequest->user_id,
+            'workspace_id' => $leaveRequest->workspace_id,
+            'admin_id' => $leaveRequest->admin_id,
+            'action_by' => $leaveRequest->action_by,
+            'visible_to_all' => (bool) $leaveRequest->visible_to_all,
+            'created_at' => $leaveRequest->created_at ? $leaveRequest->created_at->toDateTimeString() : null,
+            'updated_at' => $leaveRequest->updated_at ? $leaveRequest->updated_at->toDateTimeString() : null,
+            // Optional: Include user details
+            'user' => $leaveRequest->user ? [
+                'id' => $leaveRequest->user->id,
+                'name' => $leaveRequest->user->name,
+                'email' => $leaveRequest->user->email,
+            ] : null,
+            // Optional: Include visibility users if not visible to all
+            'visible_to_users' => !$leaveRequest->visible_to_all
+                ? $leaveRequest->visibleToUsers->map(function ($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ];
+                })->toArray()
+                : [],
+        ];
+    }
+}
+
 
 if (!function_exists('formatApiValidationError')) {
     function formatApiValidationError($isApi, $errors, $defaultMessage = 'Validation errors occurred')
@@ -3750,6 +3792,118 @@ if (!function_exists('validate_currency_format')) {
 
         return null; // Valid
     }
+    if (!function_exists('formatUserHtml')) {
+    function formatUserHtml($user)
+    {
+        if (!$user) {
+            return "-";
+        }
+
+        // Get the authenticated user
+        $authenticatedUser = getAuthenticatedUser();
+
+        // Get the guard name (web or client)
+        $guardName = getGuardName();
+
+        // Check if the authenticated user is the same as the user being displayed
+        if (
+            ($guardName === 'web' && $authenticatedUser->id === $user->id) ||
+            ($guardName === 'client' && $authenticatedUser->id === $user->id)
+        ) {
+            // Don't show the "Make Call" option if it's the logged-in user
+            $makeCallIcon = '';
+        } else {
+            // Check if the phone number or both phone and country code exist
+            $makeCallIcon = '';
+            if (!empty($user->phone) || (!empty($user->phone) && !empty($user->country_code))) {
+                $makeCallLink = 'tel:' . ($user->country_code ? $user->country_code . $user->phone : $user->phone);
+                $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+                                     <i class="bx bx-phone-call text-primary"></i>
+                                   </a>';
+            }
+        }
+
+        // If the user has 'manage_users' permission, return the full HTML with links
+        $profileLink = route('users.profile', ['id' => $user->id]);
+        $photoUrl = $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg');
+
+        // Create the Send Mail link
+        $sendMailLink = 'mailto:' . $user->email;
+        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                            <i class="bx bx-envelope text-primary"></i>
+                          </a>';
+
+        return "<div class='d-flex justify-content-start align-items-center user-name'>
+                    <div class='avatar-wrapper me-3'>
+                        <div class='avatar avatar-sm pull-up'>
+                            <a href='{$profileLink}'>
+                                <img src='{$photoUrl}' alt='Photo' class='rounded-circle'>
+                            </a>
+                        </div>
+                    </div>
+                    <div class='d-flex flex-column'>
+                        <span class='fw-semibold'>{$user->first_name} {$user->last_name} {$makeCallIcon}</span>
+                        <small class='text-muted'>{$user->email} {$sendMailIcon}</small>
+                    </div>
+                </div>";
+    }
+}
+if (!function_exists('formatClientHtml')) {
+    function formatClientHtml($client)
+    {
+        if (!$client) {
+            return "-";
+        }
+
+        // Get the authenticated user
+        $authenticatedUser = getAuthenticatedUser();
+
+        // Get the guard name (web or client)
+        $guardName = getGuardName();
+
+        // Check if the authenticated user is the same as the client being displayed
+        if (
+            ($guardName === 'web' && $authenticatedUser->id === $client->id) ||
+            ($guardName === 'client' && $authenticatedUser->id === $client->id)
+        ) {
+            // Don't show the "Make Call" option if it's the logged-in client
+            $makeCallIcon = '';
+        } else {
+            // Check if the phone number or both phone and country code exist
+            $makeCallIcon = '';
+            if (!empty($client->phone) || (!empty($client->phone) && !empty($client->country_code))) {
+                $makeCallLink = 'tel:' . ($client->country_code ? $client->country_code . $client->phone : $client->phone);
+                $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+                                     <i class="bx bx-phone-call text-primary"></i>
+                                   </a>';
+            }
+        }
+
+        // If the user has 'manage_clients' permission, return the full HTML with links
+        $profileLink = route('clients.profile', ['id' => $client->id]);
+        $photoUrl = $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg');
+
+        // Create the Send Mail link
+        $sendMailLink = 'mailto:' . $client->email;
+        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                            <i class="bx bx-envelope text-primary"></i>
+                          </a>';
+
+        return "<div class='d-flex justify-content-start align-items-center user-name'>
+                    <div class='avatar-wrapper me-3'>
+                        <div class='avatar avatar-sm pull-up'>
+                            <a href='{$profileLink}'>
+                                <img src='{$photoUrl}' alt='Photo' class='rounded-circle'>
+                            </a>
+                        </div>
+                    </div>
+                    <div class='d-flex flex-column'>
+                        <span class='fw-semibold'>{$client->first_name} {$client->last_name} {$makeCallIcon}</span>
+                        <small class='text-muted'>{$client->email} {$sendMailIcon}</small>
+                    </div>
+                </div>";
+    }
+}
 }
 
 
