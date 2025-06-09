@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-    use Exception;
+use App\Http\Middleware\IsApi;
+use Exception;
 use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\Task;
@@ -31,33 +32,23 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectsController extends Controller
 {
-    protected $workspace;
+      protected $workspace;
     protected $user;
-   public function __construct()
-{
-    $this->middleware(function ($request, $next) {
-        // For web: get workspace_id from session
-        if ($request->hasSession() && session()->has('workspace_id')) {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            // fetch session and use it in entire class with constructor
             $this->workspace = Workspace::find(session()->get('workspace_id'));
-        }
-        // For API: get workspace_id from request header 'workspace_id'
-        elseif ($request->header('workspace_id')) {
-            $workspaceId = $request->header('workspace_id');
-            $this->workspace = Workspace::find($workspaceId);
-        } else {
-            $this->workspace = null; // no workspace found
-        }
 
-        // Get authenticated user (make sure this works for API too)
-        $this->user = getAuthenticatedUser(); // or auth()->user()
-
-        return $next($request);
-    });
-}
+            $this->user = getAuthenticatedUser();
+            return $next($request);
+        });
+    }
     /**
      * Display a listing of the resource.
      *
@@ -199,9 +190,10 @@ class ProjectsController extends Controller
  * @bodyParam note string Internal note (optional). Example: Client prefers Figma for designs.
  * @bodyParam enable_tasks_time_entries boolean Whether time entries are enabled. Example: true
  * @bodyParam user_id array[int] Array of user IDs to assign. Example: [1, 2, 3]
- * @bodyParam client_id array[int] Array of client IDs to assign. Example: [1, 28]
+ * @bodyParam client_id array[int] Array of client IDs to assign. Example: [1, 43]
  * @bodyParam tag_ids array[int] Array of tag IDs to attach. Example: [1]
  * @bodyParam isApi boolean Optional flag to determine API-specific behavior. Example: true
+ * @bodyParam workspace_id int Workspace Id . Must exist in wprkspaces table . example:2
  *
  * @response 200 scenario="Success" {
  *   "error": false,
@@ -280,166 +272,115 @@ class ProjectsController extends Controller
  */
 
 
-  public function store(Request $request)
+
+
+
+public function store(Request $request)
 {
+    $workspaceId = $request->header('workspace_id') ?? session()->get('workspace_id');
+    $this->workspace = Workspace::find($workspaceId);
+    $this->user = getAuthenticatedUser();
+
+    if (!$this->workspace) {
+        return response()->json(['error' => true, 'message' => 'Missing or invalid workspace.'], 400);
+    }
+
     $isApi = $request->get('isApi', false);
-      try {
-    $adminId = getAdminIdByUserRole();
 
-    // Validation rules
-    $formFields = $request->validate([
-        'title' => ['required'],
-        'status_id' => ['required', 'exists:statuses,id'],
-        'priority_id' => ['nullable', 'exists:priorities,id'],
-        'start_date' => [
-            'nullable',
-            function ($attribute, $value, $fail) use ($request, $isApi) {
-                $endDate = $request->input('end_date');
-                $errors = validate_date_format_and_order($value, $endDate, $isApi ? 'Y-m-d' : null);
-                if (!empty($errors['start_date'])) {
-                    foreach ($errors['start_date'] as $error) {
-                        $fail($error);
-                    }
-                }
-            }
-        ],
-        'end_date' => [
-            'nullable',
-            function ($attribute, $value, $fail) use ($request, $isApi) {
-                $startDate = $request->input('start_date');
-                $errors = validate_date_format_and_order($startDate, $value, $isApi ? 'Y-m-d' : null);
-                if (!empty($errors['end_date'])) {
-                    foreach ($errors['end_date'] as $error) {
-                        $fail($error);
-                    }
-                }
-            }
-        ],
-        'budget' => [
-            'nullable',
-            function ($attribute, $value, $fail) {
-                $error = validate_currency_format($value, 'budget');
-                if ($error) {
-                    $fail($error);
-                }
-            }
-        ],
-        'task_accessibility' => [
-            'required',
-            'string',
-            function ($attribute, $value, $fail) {
-                if (!in_array($value, ['project_users', 'assigned_users'])) {
-                    $fail('The task accessibility must be either project_users or assigned_users.');
-                }
-            }
-        ],
-        'description' => ['nullable'],
-        'note' => ['nullable'],
-        'enable_tasks_time_entries' => ['boolean'],
-    ], [
-        'status_id.required' => 'The status field is required.'
-    ]);
+    try {
+        $adminId = getAdminIdByUserRole();
+        $formFields = $request->validate([
+            'title' => ['required'],
+            'status_id' => ['required'],
+            'priority_id' => ['nullable'],
+            'start_date' => ['required', 'before_or_equal:end_date'],
+            'end_date' => ['required'],
+            'budget' => ['nullable', 'regex:/^\d+(\.\d+)?$/'],
+            'task_accessibility' => ['required'],
+            'description' => ['nullable'],
+            'note' => ['nullable'],
+            'enable_tasks_time_entries' => 'boolean',
+        ], [
+            'status_id.required' => 'The status field is required.'
+        ]);
 
-    // Authorization check
-    $status = Status::findOrFail($request->input('status_id'));
-    if (!canSetStatus($status)) {
-        return formatApiResponse(true, 'You are not authorized to set this status.', [], 403);
-    }
+        $status = Status::findOrFail($request->input('status_id'));
 
-    // Format & assign fields
-    if ($request->filled('start_date')) {
-        $formFields['start_date'] = format_date($request->input('start_date'), false, 'Y-m-d', 'Y-m-d');
-    }
-    if ($request->filled('end_date')) {
-        $formFields['end_date'] = format_date($request->input('end_date'), false, 'Y-m-d', 'Y-m-d');
-    }
-    $formFields['budget'] = str_replace(',', '', $request->input('budget'));
-    $formFields['admin_id'] = $adminId;
-    $formFields['workspace_id'] = $this->workspace->id;
-    $formFields['created_by'] = $this->user->id;
-
-    // Create project
-    $project = Project::create($formFields);
-    // dd($project);
-
-    // Attach users/clients/tags
-    $userIds = $request->input('user_id') ?? [];
-    // dd( $userIds);
-    $clientIds = $request->input('client_id') ?? [];
-    // dd($clientIds);
-    $tagIds = $request->input('tag_ids') ?? [];
-// dd($tagIds);
-    if (Auth::guard('client')->check() && !in_array($this->user->id, $clientIds)) {
-        array_unshift($clientIds, $this->user->id);
-    } elseif (Auth::guard('web')->check() && !in_array($this->user->id, $userIds)) {
-        array_unshift($userIds, $this->user->id);
-    }
-
-    $project->users()->attach($userIds);
-    $project->clients()->attach($clientIds);
-    $project->tags()->attach($tagIds);
-
-    // Reload relationships for accurate formatting
-    $project->load(['status', 'priority', 'tags', 'users', 'clients', 'tasks']);
-    // dd($project);
-
-    // Track status change
-    $project->statusTimelines()->create([
-        'status' => $status->title,
-        'new_color' => $status->color,
-        'previous_status' => '-',
-        'changed_at' => now(),
-    ]);
-
-    // Send notifications
-    $notification_data = [
-        'type' => 'project',
-        'type_id' => $project->id,
-        'type_title' => $project->title,
-        'access_url' => 'projects/information/' . $project->id,
-        'action' => 'assigned',
-        'workspace_id' => $this->workspace->id
-    ];
-
-    $recipients = array_merge(
-        array_map(fn($id) => 'u_' . $id, $userIds),
-        array_map(fn($id) => 'c_' . $id, $clientIds)
-    );
-
-    processNotifications($notification_data, $recipients);
-
-    // Final response
-    if ($isApi) {
-        // dd($project);
-        return formatApiResponse(false,
-        'Project created successfully.',
-        [
-            'id' => $project->id,
-            'data' =>formatProject($project),
-        ]
-        );
-        // dd($project);
-    }
-
-    return response()->json([
-        'error' => false,
-        'id' => $project->id,
-        'message' => 'Project created successfully.'
-    ]);
-}catch (ValidationException $e) {
-            return formatApiValidationError($isApi, $e->errors());
-        } catch (Exception $e) {
-            return formatApiResponse(
-                true,
-                'project culd not created ',
-                [
-                    'error' => $e->getMessage(),
-                    'line' => $e->getLine(),
-                    'file' => $e->getFile()
-                ]
-            );
+        if (!canSetStatus($status)) {
+            return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
         }
+
+        $formFields['start_date'] = format_date($request->input('start_date'), false, app('php_date_format'), 'Y-m-d');
+        $formFields['end_date'] = format_date($request->input('end_date'), false, app('php_date_format'), 'Y-m-d');
+        $formFields['admin_id'] = $adminId;
+        $formFields['workspace_id'] = $this->workspace->id;
+        $formFields['created_by'] = $this->user->id;
+
+        $new_project = Project::create($formFields);
+
+        $userIds = $request->input('user_id') ?? [];
+        $clientIds = $request->input('client_id') ?? [];
+        $tagIds = $request->input('tag_ids') ?? [];
+
+        // Add creator to participants
+        if (Auth::guard('client')->check() && !in_array($this->user->id, $clientIds)) {
+            array_unshift($clientIds, $this->user->id);
+        } elseif (Auth::guard('web')->check() && !in_array($this->user->id, $userIds)) {
+            array_unshift($userIds, $this->user->id);
+        }
+
+        $project = Project::find($new_project->id);
+        $project->users()->attach($userIds);
+        $project->clients()->attach($clientIds);
+        $project->tags()->attach($tagIds);
+
+        $project->statusTimelines()->create([
+            'status' => $status->title,
+            'new_color' => $status->color,
+            'previous_status' => '-',
+            'changed_at' => now(),
+        ]);
+
+        // Notification
+        $notification_data = [
+            'type' => 'project',
+            'type_id' => $project->id,
+            'type_title' => $project->title,
+            'access_url' => 'projects/information/' . $project->id,
+            'action' => 'assigned',
+            'workspace_id' => $this->workspace->id,
+        ];
+
+        $recipients = array_merge(
+            array_map(fn($id) => 'u_' . $id, $userIds),
+            array_map(fn($id) => 'c_' . $id, $clientIds)
+        );
+
+        processNotifications($notification_data, $recipients);
+
+        if ($isApi) {
+            return formatApiResponse(false, 'Project created successfully.', [
+                'id' => $project->id,
+                'data' => formatProject($project),
+            ]);
+        }
+
+        return response()->json([
+            'error' => false,
+            'id' => $project->id,
+            'message' => 'Project created successfully.'
+        ]);
+    } catch (ValidationException $e) {
+        return formatApiValidationError($isApi, $e->errors());
+    } catch (Exception $e) {
+        return formatApiResponse(true, 'Project could not be created.', [
+            'error' => $e->getMessage(),
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+        ]);
     }
+}
+
 
   /**
      * Display the specified resource.
@@ -476,60 +417,44 @@ class ProjectsController extends Controller
         return view('projects.update_project', ["project" => $project, "users" => $users, "clients" => $clients, 'statuses' => $statuses, 'tags' => $tags]);
     }
 
-    public function get($projectId)
-    {
-        $project = Project::findOrFail($projectId);
-        $users = $project->users()->get();
-        $clients = $project->clients()->get();
-        $tags = $project->tags()->get();
-        $workspace_users = $this->workspace->users;
-        $workspace_clients = $this->workspace->clients;
-        $task_lists = $project->taskLists;
-
-        return response()->json(['error' => false, 'project' => $project, 'users' => $users, 'clients' => $clients, 'workspace_users' => $workspace_users, 'workspace_clients' => $workspace_clients, 'tags' => $tags, 'task_lists' => $task_lists]);
-    }
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-/**
  * Update an existing project.
- *
- * This endpoint updates a project with the given information, such as title, status, budget, participants, and other metadata.
- * It also handles status transitions with validation, updates relationships (users, clients, tags),
- * and sends notifications to affected users/clients.
  *@group Project Managemant
- * @bodyParam id int required The ID of the project to update. Example: 85
- * @bodyParam title string required The title of the project. Example: Marketing Campaign Q3
- * @bodyParam status_id int required The status ID of the project. Example: 1
- * @bodyParam priority_id int The priority ID of the project (nullable). Example: 1
- * @bodyParam budget number The budget allocated for the project (nullable). Example: 15000.00
- * @bodyParam start_date date required The project start date (must be before or equal to end date). Format: Y-m-d. Example: 2025-07-01
- * @bodyParam end_date date required The project end date. Format: Y-m-d. Example: 2025-07-31
- * @bodyParam task_accessibility string required Who can access tasks in this project. Accepted values: "project_users", "assigned_users". Example: assigned_users
- * @bodyParam description string The project description (nullable). Example: A full-scale marketing campaign for the third quarter.
- * @bodyParam note string Any internal notes about the project (nullable). Example: Focus on digital channels.
- * @bodyParam user_id array List of user IDs to assign to the project. Example: [2, 5]
- * @bodyParam client_id array List of client IDs to associate with the project. Example: [1]
- * @bodyParam tag_ids array List of tag IDs to assign to the project. Example: [1, 2]
- * @bodyParam enable_tasks_time_entries boolean Indicates if time entries are enabled for project tasks. Example: true
+ * This endpoint updates an existing project by its ID, including title, dates, users, clients, tags, and status.
+ * It also handles syncing assigned users, clients, and tags with the project, logs status change timelines, and dispatches notifications.
  *
- * @response 200 {
+ * @authenticated
+ *
+ * @header workspace_id int required The ID of the workspace to which the project belongs.
+ * @queryParam isApi boolean Optional. Set to true if you want API formatted response. Example: true
+ *
+ * @bodyParam id int required The ID of the project to update. Example: 111
+ * @bodyParam title string required The title of the project. Example: "Website Redesign"
+ * @bodyParam status_id int required The ID of the status to assign. Example: 1
+ * @bodyParam priority_id int The ID of the priority to assign. Nullable. Example: 4
+ * @bodyParam budget int The budget allocated to the project. Nullable. Example: 5000
+ * @bodyParam start_date date required The start date of the project. Must be before or equal to end_date. Format: Y-m-d. Example: 2025-05-01
+ * @bodyParam end_date date required The end date of the project. Format: Y-m-d. Example: 2025-05-31
+ * @bodyParam task_accessibility string required The task accessibility setting. Example: project_users
+ * @bodyParam description string A brief description of the project. Nullable. Example: "A complete redesign of the company website."
+ * @bodyParam note string Additional notes for the project. Nullable. Example: "Client prefers Figma for designs."
+ * @bodyParam user_id array[int] Array of user IDs to assign to the project. Example: [2, 3]
+ * @bodyParam client_id array[int] Array of client IDs to assign to the project. Example: [1, 5]
+ * @bodyParam tag_ids array[int] Array of tag IDs to associate with the project. Example: [1]
+ * @bodyParam enable_tasks_time_entries boolean Whether to enable time entries on tasks. Example: true
+ *
+ * @response 200 scenario="Success" {
  *   "error": false,
- *   "message": "project updated successfully.",
- *   "id": 85,
+ *   "message": "Project updated successfully.",
+ *   "id": 111,
  *   "data": {
- *     "id": 85,
- *     "title": "this is updated",
+ *     "id": 111,
+ *     "title": "updated",
  *     "task_count": 0,
  *     "status": "Open",
  *     "status_id": 1,
- *     "priority": "high",
- *     "priority_id": 1,
+ *     "priority": "r",
+ *     "priority_id": 4,
  *     "users": [
  *       {
  *         "id": 2,
@@ -542,22 +467,27 @@ class ProjectsController extends Controller
  *     "user_id": [2],
  *     "clients": [],
  *     "client_id": [],
- *     "tags": [{"id": 1, "title": ".first tag"}],
+ *     "tags": [
+ *       {
+ *         "id": 1,
+ *         "title": "first tag"
+ *       }
+ *     ],
  *     "tag_ids": [1],
- *     "start_date": "2025-07-01",
- *     "end_date": "2025-07-31",
- *     "budget": 15000,
- *     "task_accessibility": "assigned_users",
- *     "description": "A full-scale marketing campaign for the third quarter.",
- *     "note": "Focus on digital channels.",
- *     "favorite": false,
+ *     "start_date": "2025-05-01",
+ *     "end_date": "2025-05-31",
+ *     "budget": "5000",
+ *     "task_accessibility": "project_users",
+ *     "description": "A complete redesign of the company website.",
+ *     "note": "Client prefers Figma for designs.",
+ *     "favorite": 0,
  *     "client_can_discuss": null,
- *     "created_at": "2025-05-30",
- *     "updated_at": "2025-05-30"
+ *     "created_at": "2025-06-09",
+ *     "updated_at": "2025-06-09"
  *   }
  * }
  *
- * @response 422 scenario="Validation error" {
+ * @response 422 scenario="Validation failed" {
  *   "message": "The given data was invalid.",
  *   "errors": {
  *     "title": ["The title field is required."]
@@ -570,16 +500,17 @@ class ProjectsController extends Controller
  * }
  */
 
-
-    public function update(Request $request)
+public function update(Request $request)
     {
- $isApi = request()->get('isApi', false);
+         $isApi = $request->get('isApi', false);
+
+    try {
         $formFields = $request->validate([
             'id' => 'required|exists:projects,id',
             'title' => ['required'],
             'status_id' => ['required'],
             'priority_id' => ['nullable'],
-            'budget' => ['nullable', 'numeric'],
+            'budget' => ['nullable', 'integer'],
             'start_date' => ['required', 'before_or_equal:end_date'],
             'end_date' => ['required'],
             'task_accessibility' => ['required'],
@@ -590,18 +521,17 @@ class ProjectsController extends Controller
             'tag_ids' => ['array'],
             'enable_tasks_time_entries' =>  'boolean',
         ]);
- try {
         $id = $formFields['id'];
         $project = Project::findOrFail($id);
         $currentStatusId = $project->status_id;
-        $workspace = $project->workspace;  // Assuming project is related to a workspace
-        // Check if the status has changed and if the user can set this status
+        $workspace = $project->workspace;
+
         if ($currentStatusId != $formFields['status_id']) {
             $status = Status::findOrFail($formFields['status_id']);
             if (!canSetStatus($status)) {
                 return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
             }
-            // Statu sTime Storing
+            // Status Time Storing
             $oldStatus = Status::findOrFail($currentStatusId);
             $newStatus = Status::findOrFail($formFields['status_id']);
             $project->statusTimelines()->create([
@@ -613,9 +543,8 @@ class ProjectsController extends Controller
             ]);
         }
         // Format dates
-        $formFields['start_date'] = $formFields['start_date'];
-$formFields['end_date'] = $formFields['end_date'];
-
+        $formFields['start_date'] = format_date($formFields['start_date'], false, app('php_date_format'), 'Y-m-d');
+        $formFields['end_date'] = format_date($formFields['end_date'], false, app('php_date_format'), 'Y-m-d');
         // Remove user_id and client_id from $formFields to prevent updating directly on the projects table
         unset($formFields['user_id'], $formFields['client_id']);
         // Retrieve user and client IDs, defaulting to empty arrays
@@ -658,15 +587,16 @@ $formFields['end_date'] = $formFields['end_date'];
         );
         // Process notifications
         processNotifications($notificationData, $recipients);
-                return formatApiResponse(
-                    false,
-                    'project updated successfully.',
-                    [
-                        'id' => $project->id,
-                        'data' =>formatProject($project)
-                    ]
-                );
-              }  catch (ValidationException $e) {
+         $project = $project->fresh();
+            return formatApiResponse(
+                false,
+                'Project updated successfully.',
+                [
+                    'id' => $project->id,
+                    'data' => formatProject($project)
+                ]
+            );
+        } catch (ValidationException $e) {
             return formatApiValidationError($isApi, $e->errors());
         } catch (\Exception $e) {
             // Handle any unexpected errors
@@ -676,6 +606,27 @@ $formFields['end_date'] = $formFields['end_date'];
             ], 500);
         }
     }
+
+    public function get($projectId)
+    {
+        $project = Project::findOrFail($projectId);
+        $users = $project->users()->get();
+        $clients = $project->clients()->get();
+        $tags = $project->tags()->get();
+        $workspace_users = $this->workspace->users;
+        $workspace_clients = $this->workspace->clients;
+        $task_lists = $project->taskLists;
+
+        return response()->json(['error' => false, 'project' => $project, 'users' => $users, 'clients' => $clients, 'workspace_users' => $workspace_users, 'workspace_clients' => $workspace_clients, 'tags' => $tags, 'task_lists' => $task_lists]);
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
     /**
      * Remove the specified resource from storage.
      *
@@ -1260,7 +1211,7 @@ public function apiList(Request $request, $id = null)
      * }
      */
 
-    public function update_favorite(Request $request, $id)
+   /* public function update_favorite(Request $request, $id)
     {
         $isApi = request()->get('isApi', false);
         try {
@@ -1285,6 +1236,43 @@ public function apiList(Request $request, $id = null)
              return formatApiValidationError($isApi, $e->errors());
          } catch (\Exception $e) {
              dd($e->getMessage());
+             // Handle any unexpected errors
+             return response()->json([
+             'error' => true,
+                 'message' => 'An error occurred while updating the project favorite status.'
+             ], 500);
+         }
+     }
+*/
+
+
+public function update_favorite(Request $request, $id)
+    {
+        $isApi = request()->get('isApi', false);
+        try {
+             $request->validate([
+                'is_favorite' => 'required|integer|in:0,1',
+            ]);
+        $project = Project::find($id);
+        if (!$project) {
+            return response()->json(['error' => true, 'message' => 'Project not found']);
+        }
+
+
+        // Update the is_favorite column
+        $project->is_favorite = $request->input('is_favorite');
+        $project->save();
+
+        return formatApiResponse(
+                false,
+                'Project favorite status updated successfully',
+                ['data' => formatProject($project)]
+            );
+     } catch (ValidationException $e) {
+             // dd($e->errors());
+             return formatApiValidationError($isApi, $e->errors());
+         } catch (\Exception $e) {
+            //  dd($e->getMessage());
              // Handle any unexpected errors
              return response()->json([
              'error' => true,
@@ -1743,19 +1731,19 @@ public function store_milestone(Request $request)
     $formFields = $request->validate([
         'project_id' => ['required', 'exists:projects,id'],
         'title' => ['required', 'string', 'max:255'],
-        'status' => ['required', 'in:incomplete,complete,pending'], // adjust if needed
-        'start_date' => ['required', 'date', 'before_or_equal:end_date'],
-        'end_date' => ['required', 'date'],
+        'status' => ['required', 'in:incomplete,complete,pending'],
+                   'start_date' => ['required', 'before_or_equal:end_date'],
+            'end_date' => ['required'],
         'cost' => ['required', 'regex:/^\d+(\.\d+)?$/'],
         'description' => ['nullable', 'string'],
     ]);
 
     try {
         // Format dates for DB
-        $formFields['start_date'] = format_date($formFields['start_date'], false, 'Y-m-d', 'Y-m-d');
-        // dd($formFields['start_date']);
-        // Ensure end_date is also formatted correctly
-        $formFields['end_date'] = format_date($formFields['end_date'], false, 'Y-m-d', 'Y-m-d');
+          $start_date = $request->input('start_date');
+        $end_date = $request->input('end_date');
+  $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
+        $formFields['end_date'] = format_date($end_date, false, app('php_date_format'), 'Y-m-d');
 
         $formFields['workspace_id'] = $this->workspace->id;
         // dd($formFields['workspace_id']);
@@ -2425,7 +2413,7 @@ public function store_milestone(Request $request)
  * @group Project Comments
  *
  * create Comments
- *
+ *@header Authorization required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
  *
  * @bodyParam model_type string required The type of the model being commented on (e.g., "App\\Models\\Project").
  * @bodyParam model_id integer required The ID of the model being commented on (e.g., project ID).
@@ -2483,7 +2471,7 @@ public function store_milestone(Request $request)
  *  "message": "Internal Server Error"
  * }
  */
-    public function comments(Request $request)
+  /*  public function comments(Request $request)
     {
         $is_Api = $request->get('isApi', false);
         try{
@@ -2537,6 +2525,87 @@ public function store_milestone(Request $request)
             'comment' =>formatComments($comment),
         ]);
     }
+*/
+public function comments(Request $request)
+{
+    $isApi = $request->get('isApi', false);
+
+    try {
+        // Validate request
+        $request->validate([
+            'model_type' => 'required|string',
+            'model_id' => 'required|integer',
+            'content' => 'required|string',
+            'parent_id' => 'nullable|integer|exists:comments,id',
+            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,xlsx,txt,docx|max:2048',
+        ]);
+
+        // Process mentions
+        list($processedContent, $mentionedUserIds) = replaceUserMentionsWithLinks($request->content);
+
+        // Create comment
+        $comment = Comment::with('user')->create([
+            'commentable_type' => $request->model_type,
+            'commentable_id' => $request->model_id,
+            'content' => $processedContent,
+            'user_id' => auth()->id(),
+            'parent_id' => $request->parent_id,
+        ]);
+
+        // Ensure attachment directory exists
+        $directoryPath = storage_path('app/public/comment_attachments');
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0755, true);
+        }
+
+        // Handle file attachments
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('public/comment_attachments');
+                $path = str_replace('public/', '', $path);
+
+                CommentAttachment::create([
+                    'comment_id' => $comment->id,
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $path,
+                    'file_type' => $file->getClientMimeType(),
+                ]);
+            }
+        }
+
+        // Notify mentioned users
+        sendMentionNotification($comment, $mentionedUserIds, session()->get('workspace_id'), auth()->id());
+
+        // Return response based on mode
+        if ($isApi) {
+            return response()->json([
+                'success' => true,
+                'message' => get_label('comment_added_successfully', 'Comment Added Successfully'),
+                'comment' => formatComments($comment),
+            ]);
+        } else {
+            return response()->json([
+                'success' => true,
+                'comment' => $comment->load('attachments'),
+                'message' => get_label('comment_added_successfully', 'Comment Added Successfully'),
+                'user' => $comment->user,
+                'created_at' => $comment->created_at->diffForHumans(),
+            ]);
+        }
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        $errors = $e->errors();
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed.',
+            'errors' => $errors,
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage(),
+        ], 500);
+    }
+}
 
 
     /**

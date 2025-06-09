@@ -33,7 +33,7 @@ class HomeController extends Controller
                 $workspaceId = session()->get('workspace_id');
             }
 
-            $this->workspace = Workspace::find($workspaceId);
+            $this->workspace = Workspace::find(getWorkspaceId());
             $this->user = getAuthenticatedUser();
 
             return $next($request);
@@ -106,10 +106,94 @@ class HomeController extends Controller
  *
  * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
  */
+   public function upcoming_birthdays()
+    {
+        $search = request('search');
+        $sort = (request('sort')) ? request('sort') : "dob";
+        $order = (request('order')) ? request('order') : "ASC";
+        $upcoming_days = (int) request('upcoming_days', 30);
+        $user_id = (request('user_id')) ? request('user_id') : "";
+
+        $users = $this->workspace->users();
+
+        // Calculate the current date
+        $currentDate = today();
+        $currentYear = $currentDate->format('Y');
+
+        // Calculate the range for upcoming birthdays (e.g., 365 days from today)
+        $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+
+        $currentDateString = $currentDate->format('Y-m-d');
+        $upcomingDateString = $upcomingDate->format('Y-m-d');
+
+        $users = $users->whereRaw("DATE_ADD(DATE_FORMAT(dob, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(dob) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(dob, '%m-%d'), 1, 0) YEAR) BETWEEN ? AND ? AND DATEDIFF(DATE_ADD(DATE_FORMAT(dob, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(dob) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(dob, '%m-%d'), 1, 0) YEAR), CURRENT_DATE()) <= ?", [$currentDateString, $upcomingDateString, $upcoming_days])
+            ->orderByRaw("DATEDIFF(DATE_ADD(DATE_FORMAT(dob, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(dob) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(dob, '%m-%d'), 1, 0) YEAR), CURRENT_DATE()) " . $order);
+        // Search by full name (first name + last name)
+        if (!empty($search)) {
+            $users->where(function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhere('dob', 'LIKE', "%$search%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+            });
+        }
+
+        if (!empty($user_id)) {
+            $users->where('users.id', $user_id);
+        }
+
+        $total = $users->count();
+
+        $users = $users->orderBy($sort, $order)
+            ->paginate(request("limit"))
+            ->through(function ($user) use ($currentDate) {
+                // Convert the 'dob' field to a DateTime object
+                $birthdayDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
+
+                // Set the year to the current year
+                $birthdayDate->year = $currentDate->year;
+
+                if ($birthdayDate->lt($currentDate)) {
+                    // If the birthday has already passed this year, calculate for next year
+                    $birthdayDate->year = $currentDate->year + 1;
+                }
+
+                // Calculate days left until the user's birthday
+                $daysLeft = $currentDate->diffInDays($birthdayDate);
+
+                $emoji = '';
+                $label = '';
+
+                if ($daysLeft === 0) {
+                    $emoji = ' 🥳';
+                    $label = ' <span class="badge bg-success">' . get_label('today', 'Today') . '</span>';
+                } elseif ($daysLeft === 1) {
+                    $label = ' <span class="badge bg-primary">' . get_label('tomorow', 'Tomorrow') . '</span>';
+                } elseif ($daysLeft === 2) {
+                    $label = ' <span class="badge bg-warning">' . get_label('day_after_tomorow', 'Day after tomorrow') . '</span>';
+                }
 
 
 
-    public function upcoming_birthdays(Request $request)
+                return [
+                    'id' => $user->id,
+                    'member' => $user->first_name . ' ' . $user->last_name . $emoji . "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='".route('users.show' , ['id' =>  $user->id]) ."  ' target='_blank'><li class='avatar avatar-sm pull-up'  title='" . $user->first_name . " " . $user->last_name . "'>
+                    <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>",
+                    'age' => $currentDate->diffInYears($birthdayDate),
+                    'days_left' => $daysLeft,
+                    'dob' => format_date($birthdayDate) . $label, // Format as needed
+                ];
+            });
+
+        return response()->json([
+            "rows" => $users->items(),
+            "total" => $total,
+        ]);
+    }
+
+
+
+    public function api_upcoming_birthdays(Request $request)
     {
         $isApi = $request->get('isApi', false);
 
@@ -117,6 +201,7 @@ class HomeController extends Controller
             $upcoming_days = (int) $request->input('upcoming_days', 30);
 
             $workspace = $this->workspace;
+            // dd($workspace);
             $now = today();
              $users = $workspace->users;
             $usersWithDob = $users->filter(fn($u) => $u->dob !== null);
@@ -137,7 +222,7 @@ class HomeController extends Controller
 
                 return [
                     'id' => $user->id,
-                    'name' => $user->first_name . ' ' . $user->last_name,
+                    'member' => $user->first_name . ' ' . $user->last_name,
                     'dob' => $user->dob,
                     'days_left' => $daysLeft,
                     'age' => $now->diffInYears($dob),
@@ -150,10 +235,14 @@ class HomeController extends Controller
 
                 return formatApiResponse(false, 'Upcoming birthdays fetched successfully.', ['data' => $result, 'total' => $result->count()]);
             } else {
-                return view('users.upcoming_birthdays', ['users' => $result, 'total' => $result->count()]);
+                // dd($result);
+                   return response()->json([
+            "rows" => $result,
+            "total" => $result->count()
+        ]);
             }
         } catch (\Exception $e) {
-            // dd($e);
+            dd($e);
             if ($isApi) {
                 return formatApiResponse(true, 'Internal Server Error: ' . $e->getMessage(), [], 500);
             } else {
@@ -211,116 +300,188 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-public function upcoming_work_anniversaries(Request $request)
-{
-    $isApi = $request->get('isApi', true); // default true for API
 
+public function api_upcoming_work_anniversaries(Request $request)
+{
     try {
         $search = $request->get('search');
         $sort = $request->get('sort', 'doj');
-        $order = $request->get('order', 'ASC');
-        $upcoming_days = $request->get('upcoming_days', 30);
-        $user_id = $request->get('user_id', null);
+        $order = strtolower($request->get('order', 'ASC'));
+        $upcoming_days = (int) $request->get('upcoming_days', 30);
+        $user_id = $request->get('user_id');
 
         $workspace = $this->workspace;
 
-        // Start query for users with non-null doj
-        $usersQuery = $workspace->users()->whereNotNull('doj');
+        $today = \Carbon\Carbon::today()->startOfDay();
+        $upcomingDate = $today->copy()->addDays($upcoming_days)->endOfDay();
 
-        // Filter by user_id if provided
-        if (!empty($user_id)) {
-            $usersQuery->where('users.id', '=', (int)$user_id);
+        $query = $workspace->users()->whereNotNull('doj');
+
+        if ($user_id) {
+            $query->where('users.id', (int) $user_id);
         }
 
-        // Search filter on name or doj
-        if (!empty($search)) {
-            $usersQuery->where(function ($q) use ($search) {
-                $q->where('first_name', 'LIKE', "%$search%")
-                  ->orWhere('last_name', 'LIKE', "%$search%")
-                  ->orWhere('doj', 'LIKE', "%$search%")
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                  ->orWhere('last_name', 'like', "%$search%")
                   ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
             });
         }
 
-        // Date filtering logic in SQL for upcoming anniversaries
+        $users = $query->get();
+
+        $filteredUsers = $users->filter(function ($user) use ($today, $upcomingDate) {
+            try {
+                $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
+                $anniversary = $doj->copy()->year($today->year)->startOfDay();
+
+                if ($anniversary->lt($today)) {
+                    $anniversary->addYear();
+                }
+
+                return $anniversary->gte($today) && $anniversary->lte($upcomingDate);
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
+        $sortedUsers = $filteredUsers->sortBy(function ($user) use ($today) {
+            $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
+            $anniversary = $doj->copy()->year($today->year)->startOfDay();
+            if ($anniversary->lt($today)) {
+                $anniversary->addYear();
+            }
+            return $anniversary->timestamp;
+        }, SORT_REGULAR, $order === 'desc');
+
+        $page = max(1, (int) $request->get('page', 1));
+        $limit = max(1, (int) $request->get('limit', 15));
+        $total = $sortedUsers->count();
+        $paginated = $sortedUsers->slice(($page - 1) * $limit, $limit);
+
+        $transformedUsers = $paginated->values()->map(function ($user) use ($today) {
+            $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
+            $anniversary = $doj->copy()->year($today->year)->startOfDay();
+            if ($anniversary->lt($today)) {
+                $anniversary->addYear();
+            }
+
+            $daysLeft = $today->diffInDays($anniversary);
+            $emoji = '';
+            $label = '';
+
+            if ($daysLeft === 0) {
+                $emoji = ' 🥳';
+                $label = 'Today';
+            } elseif ($daysLeft === 1) {
+                $label = 'Tomorrow';
+            } elseif ($daysLeft === 2) {
+                $label = 'Day after tomorrow';
+            }
+
+            return [
+                'id' => $user->id,
+                'member' => $user->first_name . ' ' . $user->last_name . $emoji,
+                'wa_date' => $anniversary->toDateString() . ($label ? " ($label)" : ''),
+                'days_left' => $daysLeft,
+                'photo_url' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
+                'profile_url' => route('users.show', ['id' => $user->id]),
+            ];
+        });
+
+        return formatApiResponse(false, 'Upcoming work anniversaries fetched successfully.', [
+            'total' => $total,
+            'rows' => $transformedUsers,
+        ]);
+    } catch (\Exception $e) {
+        return formatApiResponse(true, 'Something went wrong while fetching data.', [
+            'line' => $e->getLine(),
+            'file' => $e->getFile(),
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+  public function upcoming_work_anniversaries()
+    {
+        $search = request('search');
+        $sort = (request('sort')) ? request('sort') : "doj";
+        $order = (request('order')) ? request('order') : "ASC";
+        $upcoming_days = (request('upcoming_days')) ? request('upcoming_days') : 30;
+        $user_id = (request('user_id')) ? request('user_id') : "";
+        $users = $this->workspace->users();
+
         $currentDate = today();
+        $currentYear = $currentDate->format('Y');
+
+        // Calculate the range for upcoming birthdays (e.g., 365 days from today)
         $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
 
         $currentDateString = $currentDate->format('Y-m-d');
         $upcomingDateString = $upcomingDate->format('Y-m-d');
 
-        $usersQuery->whereRaw("
-            DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'),
-            INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) +
-            IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0)
-            YEAR)
-            BETWEEN ? AND ?
-            AND DATEDIFF(
-                DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'),
-                INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) +
-                IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0) YEAR
-            ), CURRENT_DATE()) <= ?",
-            [$currentDateString, $upcomingDateString, $upcoming_days]
-        );
+        $users = $users->whereRaw("DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0) YEAR) BETWEEN ? AND ? AND DATEDIFF(DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0) YEAR), CURRENT_DATE()) <= ?", [$currentDateString, $upcomingDateString, $upcoming_days])
+            ->orderByRaw("DATEDIFF(DATE_ADD(DATE_FORMAT(doj, '%Y-%m-%d'), INTERVAL YEAR(CURRENT_DATE()) - YEAR(doj) + IF(DATE_FORMAT(CURRENT_DATE(), '%m-%d') > DATE_FORMAT(doj, '%m-%d'), 1, 0) YEAR), CURRENT_DATE()) " . $order);
 
-        // Count total matched records
-        $total = $usersQuery->count();
+        // Search by full name (first name + last name)
+        if (!empty($search)) {
+            $users->where(function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhere('doj', 'LIKE', "%$search%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+            });
+        }
+        if (!empty($user_id)) {
+            $users->where('users.id', $user_id);
+        }
+        $total = $users->count();
 
-        // Fetch paginated users sorted
-        $paginatedUsers = $usersQuery->orderBy($sort, $order)
-            ->paginate($request->get('limit', 15)); // default 15
+        $users = $users->orderBy($sort, $order)
+            ->paginate(request("limit"))
+            ->through(function ($user) use ($currentDate) {
+                // Convert the 'dob' field to a DateTime object
+                $doj = \Carbon\Carbon::createFromFormat('Y-m-d', $user->doj);
 
-        // Transform collection for response
-        $paginatedUsers->getCollection()->transform(function ($user) use ($currentDate) {
-            $doj = \Carbon\Carbon::createFromFormat('Y-m-d', $user->doj);
-            $doj->year = $currentDate->year;
-            if ($doj->lt($currentDate)) {
-                $doj->year += 1;
-            }
+                // Set the year to the current year
+                $doj->year = $currentDate->year;
 
-            $daysLeft = $currentDate->diffInDays($doj);
-            $label = '';
-            $emoji = '';
+                if ($doj->lt($currentDate)) {
+                    // If the birthday has already passed this year, calculate for next year
+                    $doj->year = $currentDate->year + 1;
+                }
 
-            if ($daysLeft === 0) {
-                $emoji = ' 🥳';
-                $label = ' <span class="badge bg-success">' . get_label('today', 'Today') . '</span>';
-            } elseif ($daysLeft === 1) {
-                $label = ' <span class="badge bg-primary">' . get_label('tomorrow', 'Tomorrow') . '</span>';
-            } elseif ($daysLeft === 2) {
-                $label = ' <span class="badge bg-warning">' . get_label('day_after_tomorrow', 'Day after tomorrow') . '</span>';
-            }
+                // Calculate days left until the user's birthday
+                $daysLeft = $currentDate->diffInDays($doj);
+                $label = '';
+                $emoji = '';
+                if ($daysLeft === 0) {
+                    $emoji = ' 🥳';
+                    $label = ' <span class="badge bg-success">' . get_label('today', 'Today') . '</span>';
+                } elseif ($daysLeft === 1) {
+                    $label = ' <span class="badge bg-primary">' . get_label('tomorow', 'Tomorrow') . '</span>';
+                } elseif ($daysLeft === 2) {
+                    $label = ' <span class="badge bg-warning">' . get_label('day_after_tomorow', 'Day after tomorrow') . '</span>';
+                }
 
-            return [
-                'id' => $user->id,
-                'member' => $user->first_name . ' ' . $user->last_name . $emoji . "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='" . route('users.show', ['id' => $user->id]) . "' target='_blank'><li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
+
+                return [
+                    'id' => $user->id,
+                    'member' => $user->first_name . ' ' . $user->last_name . $emoji . "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'><a href='" . route('users.show' ,['id'=>$user->id]) . "' target='_blank'><li class='avatar avatar-sm pull-up'  title='" . $user->first_name . " " . $user->last_name . "'>
                     <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>",
-                'wa_date' => format_date($doj) . $label,
-                'days_left' => $daysLeft,
-            ];
-        });
+                    'wa_date' => format_date($doj) . $label, // Format as needed
+                    'days_left' => $daysLeft,
+                ];
+            });
 
-        $data = [
-            'total' => $total,
-            'rows' => $paginatedUsers->items(),
-        ];
-
-        return $isApi
-            ? formatApiResponse(false, 'Upcoming work anniversaries fetched successfully.', $data)
-            : response()->json(['error' => false, 'message' => 'Success', 'data' => $data]);
-
-    } catch (\Exception $e) {
-        $errorData = [
-            'line' => $e->getLine(),
-            'file' => $e->getFile(),
-            'error' => $e->getMessage()
-        ];
-
-        return $isApi
-            ? formatApiResponse(true, 'Something went wrong while fetching data.', $errorData, 500)
-            : response()->json(array_merge(['error' => true, 'message' => 'Error occurred'], $errorData), 500);
+        return response()->json([
+            "rows" => $users->items(),
+            "total" => $total,
+        ]);
     }
-}
+
+
+
 
 
 
@@ -381,140 +542,132 @@ public function upcoming_work_anniversaries(Request $request)
 
 
     public function members_on_leave()
-    {
-        $search = request('search');
-        $sort = request('sort') ?: "from_date";
-        $order = request('order') ?: "ASC";
-        $upcoming_days = request('upcoming_days') ?: 30;
-        $user_id = request('user_id') ?: "";
+{
+    $search = request('search');
+    $sort = request('sort') ?: "from_date";
+    $order = request('order') ?: "ASC";
+    $upcoming_days = request('upcoming_days') ?: 30;
+    $user_id = request('user_id') ?: "";
+    $limit = min(max((int) request('limit', 10), 1), 100); // Default: 10, Min: 1, Max: 100
 
-        // Calculate the current date
-        $currentDate = today();
+    $currentDate = today();
+    $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+    $timezone = config('app.timezone');
 
-        // Calculate the range for upcoming leaves (e.g., 30 days from today)
-        $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+    $leaveUsers = DB::table('leave_requests')
+        ->selectRaw('*, leave_requests.user_id as UserId')
+        ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
+        ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
+        ->where(function ($query) use ($currentDate, $upcomingDate) {
+            $query->where('from_date', '<=', $upcomingDate)
+                ->where('to_date', '>=', $currentDate);
+        })
+        ->where('leave_requests.status', 'approved')
+        ->where('workspace_id', $this->workspace->id);
 
-        // Query members on leave based on 'from_date' and 'to_date' in the 'leave_requests' table
-        $leaveUsers = DB::table('leave_requests')
-            ->selectRaw('*, leave_requests.user_id as UserId')
-            ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
-            ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
-            ->where(function ($query) use ($currentDate, $upcomingDate) {
-                $query->where('from_date', '<=', $upcomingDate)
-                    ->where('to_date', '>=', $currentDate);
-            })
-            ->where('leave_requests.status', 'approved')
-            ->where('workspace_id', $this->workspace->id);
+    if (!is_admin_or_leave_editor()) {
+        $leaveUsers->where(function ($query) {
+            $query->where('leave_requests.user_id', $this->user->id)
+                ->orWhere('leave_request_visibility.user_id', $this->user->id)
+                ->orWhere('leave_requests.visible_to_all', 1);
+        });
+    }
 
-        if (!is_admin_or_leave_editor()) {
-            $leaveUsers->where(function ($query) {
-                $query->where('leave_requests.user_id', $this->user->id)
-                    ->orWhere('leave_request_visibility.user_id', $this->user->id)
-                    ->orWhere('leave_requests.visible_to_all', 1);
-            });
-        }
+    if (!empty($search)) {
+        $leaveUsers->where(function ($query) use ($search) {
+            $query->where('first_name', 'LIKE', "%$search%")
+                ->orWhere('last_name', 'LIKE', "%$search%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+        });
+    }
 
-        if (!empty($search)) {
-            $leaveUsers->where(function ($query) use ($search) {
-                $query->where('first_name', 'LIKE', "%$search%")
-                    ->orWhere('last_name', 'LIKE', "%$search%")
-                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
-            });
-        }
+    if (!empty($user_id)) {
+        $leaveUsers->where('leave_requests.user_id', $user_id);
+    }
 
-        if (!empty($user_id)) {
-            $leaveUsers->where('leave_requests.user_id', $user_id);
-        }
+    $total = $leaveUsers->count();
 
-        $total = $leaveUsers->count();
-        $timezone = config('app.timezone');
+    $leaveUsers = $leaveUsers->orderBy($sort, $order)
+        ->paginate($limit)
+        ->through(function ($user) use ($currentDate, $timezone) {
+            $fromDateForDuration = \Carbon\Carbon::createFromFormat('Y-m-d', $user->from_date);
+            $toDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->to_date);
+            $fromDateForDiff = $fromDateForDuration->copy()->year($currentDate->year);
 
-        $leaveUsers = $leaveUsers->orderBy($sort, $order)
-            ->paginate(request("limit"))
-            ->through(function ($user) use ($currentDate, $timezone) {
+            $daysLeft = $currentDate->diffInDays($fromDateForDiff, false);
+            if ($daysLeft < 0) {
+                $daysLeft = 0;
+            }
 
-                $fromDateForDuration = \Carbon\Carbon::createFromFormat('Y-m-d', $user->from_date);
-                $toDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->to_date);
+            $currentTime = \Carbon\Carbon::now()->tz($timezone)->format('H:i:s');
+            $label = '';
 
-                // Set the year to current year for diff calculation
-                $fromDateForDiff = $fromDateForDuration->copy()->year($currentDate->year);
+            if ($daysLeft === 0 && $user->from_time && $user->to_time && $user->from_time <= $currentTime && $user->to_time >= $currentTime) {
+                $label = ' <span class="badge bg-info">' . get_label('on_partial_leave', 'On Partial Leave') . '</span>';
+            } elseif (($daysLeft === 0 && (!$user->from_time && !$user->to_time)) ||
+                ($daysLeft === 0 && $user->from_time <= $currentTime && $user->to_time >= $currentTime)) {
+                $label = ' <span class="badge bg-success">' . get_label('on_leave', 'On leave') . '</span>';
+            } elseif ($daysLeft === 1) {
+                $langLabel = $user->from_time && $user->to_time
+                    ? get_label('on_partial_leave_tomorrow', 'On partial leave from tomorrow')
+                    : get_label('on_leave_tomorrow', 'On leave from tomorrow');
+                $label = ' <span class="badge bg-primary">' . $langLabel . '</span>';
+            } elseif ($daysLeft === 2) {
+                $langLabel = $user->from_time && $user->to_time
+                    ? get_label('on_partial_leave_day_after_tomorow', 'On partial leave from day after tomorrow')
+                    : get_label('on_leave_day_after_tomorow', 'On leave from day after tomorrow');
+                $label = ' <span class="badge bg-warning">' . $langLabel . '</span>';
+            }
 
-                // Calculate days left until the user's return from leave
-                $daysLeft = $currentDate->diffInDays($fromDateForDiff, false);
-                if ($daysLeft < 0) {
-                    $daysLeft = 0;
-                }
+            // Calculate duration
+            if ($user->from_time && $user->to_time) {
+                $duration = 0;
+                $tempFromDate = $fromDateForDuration->copy();
 
-                $currentDateTime = \Carbon\Carbon::now()->tz($timezone);
-                $currentTime = $currentDateTime->format('H:i:s');
-
-                $label = '';
-                if ($daysLeft === 0 && $user->from_time && $user->to_time && $user->from_time <= $currentTime && $user->to_time >= $currentTime) {
-                    $label = ' <span class="badge bg-info">' . get_label('on_partial_leave', 'On Partial Leave') . '</span>';
-                } elseif (($daysLeft === 0 && (!$user->from_time && !$user->to_time)) ||
-                    ($daysLeft === 0 && $user->from_time <= $currentTime && $user->to_time >= $currentTime)
-                ) {
-                    $label = ' <span class="badge bg-success">' . get_label('on_leave', 'On leave') . '</span>';
-                } elseif ($daysLeft === 1) {
-                    $langLabel = $user->from_time && $user->to_time
-                        ? get_label('on_partial_leave_tomorrow', 'On partial leave from tomorrow')
-                        : get_label('on_leave_tomorrow', 'On leave from tomorrow');
-                    $label = ' <span class="badge bg-primary">' . $langLabel . '</span>';
-                } elseif ($daysLeft === 2) {
-                    $langLabel = $user->from_time && $user->to_time
-                        ? get_label('on_partial_leave_day_after_tomorow', 'On partial leave from day after tomorrow')
-                        : get_label('on_leave_day_after_tomorow', 'On leave from day after tomorrow');
-                    $label = ' <span class="badge bg-warning">' . $langLabel . '</span>';
-                }
-
-                // Calculate duration safely
-                if ($user->from_time && $user->to_time) {
-                    $duration = 0;
-                    $tempFromDate = $fromDateForDuration->copy();
-
-                    // Use lte (less than or equal) instead of lessThanOrEqualTo
-                    while ($tempFromDate->lte($toDate)) {
-                        $fromDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->from_time);
-                        $toDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->to_time);
-
-                        $diffMinutes = $fromDateTime->diffInMinutes($toDateTime);
-
-                        if ($diffMinutes > 0) {
-                            $duration += $diffMinutes / 60; // duration in hours
-                        }
-                        $tempFromDate->addDay();
+                while ($tempFromDate->lte($toDate)) {
+                    $fromDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->from_time);
+                    $toDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->to_time);
+                    $diffMinutes = $fromDateTime->diffInMinutes($toDateTime);
+                    if ($diffMinutes > 0) {
+                        $duration += $diffMinutes / 60;
                     }
-                } else {
-                    // Calculate the inclusive duration in days
-                    $duration = $fromDateForDuration->diffInDays($toDate) + 1;
+                    $tempFromDate->addDay();
                 }
+            } else {
+                $duration = $fromDateForDuration->diffInDays($toDate) + 1;
+            }
 
-                $fromDateDayOfWeek = $fromDateForDuration->format('D');
-                $toDateDayOfWeek = $toDate->format('D');
+            $fromDateDayOfWeek = $fromDateForDuration->format('D');
+            $toDateDayOfWeek = $toDate->format('D');
 
-                return [
-                    'id' => $user->UserId,
-                    'member' => $user->first_name . ' ' . $user->last_name . ' ' . $label .
-                        "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'>
+            return [
+                'id' => $user->UserId,
+                'member' => $user->first_name . ' ' . $user->last_name . ' ' . $label .
+                    "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'>
                         <a href='/users/profile/" . $user->UserId . "' target='_blank'>
                             <li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
                                 <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
                             </li>
                         </a>
                     </ul>",
-                    'from_date' => $fromDateDayOfWeek . ', ' . ($user->from_time ? format_date($user->from_date . ' ' . $user->from_time, true, null, null, false) : format_date($user->from_date)),
-                    'to_date' => $toDateDayOfWeek . ', ' . ($user->to_time ? format_date($user->to_date . ' ' . $user->to_time, true, null, null, false) : format_date($user->to_date)),
-                    'type' => $user->from_time && $user->to_time ? '<span class="badge bg-info">' . get_label('partial', 'Partial') . '</span>' : '<span class="badge bg-primary">' . get_label('full', 'Full') . '</span>',
-                    'duration' => $user->from_time && $user->to_time ? $duration . ' hour' . ($duration > 1 ? 's' : '') : $duration . ' day' . ($duration > 1 ? 's' : ''),
-                    'days_left' => $daysLeft,
-                ];
-            });
+                'from_date' => $fromDateDayOfWeek . ', ' . ($user->from_time ? format_date($user->from_date . ' ' . $user->from_time, true, null, null, false) : format_date($user->from_date)),
+                'to_date' => $toDateDayOfWeek . ', ' . ($user->to_time ? format_date($user->to_date . ' ' . $user->to_time, true, null, null, false) : format_date($user->to_date)),
+                'type' => $user->from_time && $user->to_time
+                    ? '<span class="badge bg-info">' . get_label('partial', 'Partial') . '</span>'
+                    : '<span class="badge bg-primary">' . get_label('full', 'Full') . '</span>',
+                'duration' => $user->from_time && $user->to_time
+                    ? $duration . ' hour' . ($duration > 1 ? 's' : '')
+                    : $duration . ' day' . ($duration > 1 ? 's' : ''),
+                'days_left' => $daysLeft,
+            ];
+        });
 
-        return response()->json([
-            "rows" => $leaveUsers->items(),
-            "total" => $total,
-        ]);
-    }
+    return response()->json([
+        "rows" => $leaveUsers->items(),
+        "total" => $total,
+    ]);
+}
+
 
     /**
      * Get Upcoming Birthdays in Calendar Format

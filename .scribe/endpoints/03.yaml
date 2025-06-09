@@ -410,7 +410,7 @@ endpoints:
         name: client_id
         description: 'Array of client IDs to assign.'
         required: false
-        example: '[1, 28]'
+        example: '[1, 43]'
         type: 'array[int]'
         enumValues: []
         exampleWasSpecified: true
@@ -436,6 +436,16 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
+      workspace_id:
+        name: workspace_id
+        description: 'Workspace Id . Must exist in wprkspaces table . example:2'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
     cleanBodyParameters:
       title: 'Website Redesign'
       status_id: 1
@@ -448,9 +458,10 @@ endpoints:
       note: 'Client prefers Figma for designs.'
       enable_tasks_time_entries: true
       user_id: '[1, 2, 3]'
-      client_id: '[1, 28]'
+      client_id: '[1, 43]'
       tag_ids: '[1]'
       isApi: true
+      workspace_id: 17
     fileParameters: []
     responses:
       -
@@ -557,26 +568,26 @@ endpoints:
   -
     httpMethods:
       - PUT
-    uri: 'api/master-panel/projects/{project}'
+    uri: 'api/master-panel/projects/{id}'
     metadata:
       groupName: 'Project Managemant'
-      groupDescription: ''
+      groupDescription: |-
+        This endpoint updates an existing project by its ID, including title, dates, users, clients, tags, and status.
+        It also handles syncing assigned users, clients, and tags with the project, logs status change timelines, and dispatches notifications.
       subgroup: ''
       subgroupDescription: ''
       title: 'Update an existing project.'
-      description: |-
-        This endpoint updates a project with the given information, such as title, status, budget, participants, and other metadata.
-        It also handles status transitions with validation, updates relationships (users, clients, tags),
-        and sends notifications to affected users/clients.
-      authenticated: false
+      description: ''
+      authenticated: true
       custom: []
     headers:
+      workspace_id: 'int required The ID of the workspace to which the project belongs.'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      project:
-        name: project
-        description: 'The project.'
+      id:
+        name: id
+        description: 'The ID of the project.'
         required: true
         example: consequatur
         type: string
@@ -585,15 +596,26 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      project: consequatur
-    queryParameters: []
-    cleanQueryParameters: []
+      id: consequatur
+    queryParameters:
+      isApi:
+        name: isApi
+        description: 'Optional. Set to true if you want API formatted response.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      isApi: true
     bodyParameters:
       id:
         name: id
         description: 'The ID of the project to update.'
         required: true
-        example: 85
+        example: 111
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -603,7 +625,7 @@ endpoints:
         name: title
         description: 'The title of the project.'
         required: true
-        example: 'Marketing Campaign Q3'
+        example: '"Website Redesign"'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -611,7 +633,7 @@ endpoints:
         custom: []
       status_id:
         name: status_id
-        description: 'The status ID of the project.'
+        description: 'The ID of the status to assign.'
         required: true
         example: 1
         type: integer
@@ -621,29 +643,29 @@ endpoints:
         custom: []
       priority_id:
         name: priority_id
-        description: 'The priority ID of the project (nullable).'
+        description: 'The ID of the priority to assign. Nullable.'
         required: false
-        example: 1
+        example: 4
         type: integer
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         custom: []
       budget:
         name: budget
-        description: 'The budget allocated for the project (nullable).'
+        description: 'The budget allocated to the project. Nullable.'
         required: false
-        example: 15000.0
-        type: number
+        example: 5000
+        type: integer
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         custom: []
       start_date:
         name: start_date
-        description: 'The project start date (must be before or equal to end date). Format: Y-m-d.'
+        description: 'The start date of the project. Must be before or equal to end_date. Format: Y-m-d.'
         required: true
-        example: '2025-07-01'
+        example: '2025-05-01'
         type: date
         enumValues: []
         exampleWasSpecified: true
@@ -651,9 +673,9 @@ endpoints:
         custom: []
       end_date:
         name: end_date
-        description: 'The project end date. Format: Y-m-d.'
+        description: 'The end date of the project. Format: Y-m-d.'
         required: true
-        example: '2025-07-31'
+        example: '2025-05-31'
         type: date
         enumValues: []
         exampleWasSpecified: true
@@ -661,9 +683,9 @@ endpoints:
         custom: []
       task_accessibility:
         name: task_accessibility
-        description: 'Who can access tasks in this project. Accepted values: "project_users", "assigned_users".'
+        description: 'The task accessibility setting.'
         required: true
-        example: assigned_users
+        example: project_users
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -671,62 +693,57 @@ endpoints:
         custom: []
       description:
         name: description
-        description: 'The project description (nullable).'
+        description: 'A brief description of the project. Nullable.'
         required: false
-        example: 'A full-scale marketing campaign for the third quarter.'
+        example: '"A complete redesign of the company website."'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         custom: []
       note:
         name: note
-        description: 'Any internal notes about the project (nullable).'
+        description: 'Additional notes for the project. Nullable.'
         required: false
-        example: 'Focus on digital channels.'
+        example: '"Client prefers Figma for designs."'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         custom: []
       user_id:
         name: user_id
-        description: 'List of user IDs to assign to the project.'
+        description: 'Array of user IDs to assign to the project.'
         required: false
-        example:
-          - 2
-          - 5
-        type: 'string[]'
+        example: '[2, 3]'
+        type: 'array[int]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       client_id:
         name: client_id
-        description: 'List of client IDs to associate with the project.'
+        description: 'Array of client IDs to assign to the project.'
         required: false
-        example:
-          - 1
-        type: 'string[]'
+        example: '[1, 5]'
+        type: 'array[int]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       tag_ids:
         name: tag_ids
-        description: 'List of tag IDs to assign to the project.'
+        description: 'Array of tag IDs to associate with the project.'
         required: false
-        example:
-          - 1
-          - 2
-        type: 'string[]'
+        example: '[1]'
+        type: 'array[int]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       enable_tasks_time_entries:
         name: enable_tasks_time_entries
-        description: 'Indicates if time entries are enabled for project tasks.'
+        description: 'Whether to enable time entries on tasks.'
         required: false
         example: true
         type: boolean
@@ -735,24 +752,19 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      id: 85
-      title: 'Marketing Campaign Q3'
+      id: 111
+      title: '"Website Redesign"'
       status_id: 1
-      priority_id: 1
-      budget: 15000.0
-      start_date: '2025-07-01'
-      end_date: '2025-07-31'
-      task_accessibility: assigned_users
-      description: 'A full-scale marketing campaign for the third quarter.'
-      note: 'Focus on digital channels.'
-      user_id:
-        - 2
-        - 5
-      client_id:
-        - 1
-      tag_ids:
-        - 1
-        - 2
+      priority_id: 4
+      budget: 5000
+      start_date: '2025-05-01'
+      end_date: '2025-05-31'
+      task_accessibility: project_users
+      description: '"A complete redesign of the company website."'
+      note: '"Client prefers Figma for designs."'
+      user_id: '[2, 3]'
+      client_id: '[1, 5]'
+      tag_ids: '[1]'
       enable_tasks_time_entries: true
     fileParameters: []
     responses:
@@ -761,16 +773,16 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "project updated successfully.",
-            "id": 85,
+            "message": "Project updated successfully.",
+            "id": 111,
             "data": {
-              "id": 85,
-              "title": "this is updated",
+              "id": 111,
+              "title": "updated",
               "task_count": 0,
               "status": "Open",
               "status_id": 1,
-              "priority": "high",
-              "priority_id": 1,
+              "priority": "r",
+              "priority_id": 4,
               "users": [
                 {
                   "id": 2,
@@ -783,22 +795,27 @@ endpoints:
               "user_id": [2],
               "clients": [],
               "client_id": [],
-              "tags": [{"id": 1, "title": ".first tag"}],
+              "tags": [
+                {
+                  "id": 1,
+                  "title": "first tag"
+                }
+              ],
               "tag_ids": [1],
-              "start_date": "2025-07-01",
-              "end_date": "2025-07-31",
-              "budget": 15000,
-              "task_accessibility": "assigned_users",
-              "description": "A full-scale marketing campaign for the third quarter.",
-              "note": "Focus on digital channels.",
-              "favorite": false,
+              "start_date": "2025-05-01",
+              "end_date": "2025-05-31",
+              "budget": "5000",
+              "task_accessibility": "project_users",
+              "description": "A complete redesign of the company website.",
+              "note": "Client prefers Figma for designs.",
+              "favorite": 0,
               "client_can_discuss": null,
-              "created_at": "2025-05-30",
-              "updated_at": "2025-05-30"
+              "created_at": "2025-06-09",
+              "updated_at": "2025-06-09"
             }
           }
         headers: []
-        description: ''
+        description: Success
         custom: []
       -
         status: 422
@@ -810,7 +827,7 @@ endpoints:
             }
           }
         headers: []
-        description: 'Validation error'
+        description: 'Validation failed'
         custom: []
       -
         status: 500
@@ -831,7 +848,7 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/master-panel/projects/{project}'
+    uri: 'api/master-panel/projects/{id}'
     metadata:
       groupName: 'Project Managemant'
       groupDescription: ''
@@ -847,16 +864,6 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      project:
-        name: project
-        description: 'The project.'
-        required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
       id:
         name: id
         description: 'The ID of the project to delete.'
@@ -868,7 +875,6 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      project: consequatur
       id: 85
     queryParameters: []
     cleanQueryParameters: []

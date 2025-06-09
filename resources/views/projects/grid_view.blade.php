@@ -20,7 +20,9 @@
                                     href="{{ getDefaultViewRoute('projects') }}"><?= get_label('projects', 'Projects') ?></a>
                             </li>
                         @else
-                            <li class="breadcrumb-item active"><a href="{{ route('projects.index', ['type' => 'favorite']) }}"><?= get_label('favorite', 'Favorite') ?></a></li>
+                            <li class="breadcrumb-item active"><a
+                                    href="{{ route('projects.index', ['type' => 'favorite']) }}"><?= get_label('favorite', 'Favorite') ?></a>
+                            </li>
                         @endif
 
                     </ol>
@@ -69,10 +71,10 @@
                         data-bs-toggle="tooltip" data-bs-placement="left"
                         data-bs-original-title="<?= get_label('gantt_chart_view', 'Gantt Chart View') ?>"><i
                             class='bx bxs-collection'></i></button></a>
-                            <a href="{{ route('projects.calendar_view') }}"><button type="button" class="btn btn-sm btn-primary"
-                            data-bs-toggle="tooltip" data-bs-placement="left"
-                            data-bs-original-title="{{ get_label('calendar_view', 'Calendar log') }}"><i
-                                class='bx bx-calendar'></i></button></a>
+                <a href="{{ route('projects.calendar_view') }}"><button type="button" class="btn btn-sm btn-primary"
+                        data-bs-toggle="tooltip" data-bs-placement="left"
+                        data-bs-original-title="{{ get_label('calendar_view', 'Calendar log') }}"><i
+                            class='bx bx-calendar'></i></button></a>
             </div>
         </div>
         <div class="row">
@@ -264,12 +266,12 @@
                                                     $taskCount = $tasks->count();
                                                     $percentage = ($taskCount / $totalTasks) * 100;
                                                 @endphp
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-{{ $status->color }}"
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-{{ $status->color ?? 'secondary' }}"
                                                     role="progressbar" style="width: {{ $percentage }}%;"
                                                     aria-valuenow="{{ $percentage }}" aria-valuemin="0"
                                                     aria-valuemax="100"
-                                                    title="{{ $status->title }}: {{ $taskCount }} tasks">
-                                                    {{ $status->title }} ({{ $taskCount }})
+                                                    title="{{ $status->title ?? 'No Title' }}: {{ $taskCount }} tasks">
+                                                    {{ $status->title ?? 'No Title' }} ({{ $taskCount }})
                                                 </div>
                                             @endforeach
                                         @else
@@ -320,125 +322,125 @@
                                                         @endphp
                                                         <span
                                                             class="badge badge-center rounded-pill bg-primary mx-1">+{{ $remaining }}</span>
-                                                    @break
-                                                @endif
-                                            @endforeach
-                                            <a href="javascript:void(0)"
-                                                class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                                data-id="{{ $project->id }}">
-                                                <span class="bx bx-edit"></span>
-                                            </a>
-                                        @else
-                                            <span
-                                                class="badge bg-primary">{{ get_label('not_assigned', 'Not assigned') }}</span>
-                                            <a href="javascript:void(0)"
-                                                class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                                data-id="{{ $project->id }}">
-                                                <span class="bx bx-edit"></span>
-                                            </a>
-                                        @endif
-                                    </ul>
-                                    </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="card-text">
-                                        {{ get_label('clients', 'Clients') }}:
-                                    <ul class="list-unstyled users-list avatar-group d-flex align-items-center m-0">
-                                        @php
-                                            $clients = $project->clients;
-                                            $count = count($clients);
-                                            $displayed = 0;
-                                        @endphp
-                                        @if ($count > 0)
-                                            @foreach ($clients as $client)
-                                                @if ($displayed < 10)
-                                                    <li class="avatar avatar-sm pull-up"
-                                                        title="{{ $client->first_name }} {{ $client->last_name }}">
-                                                        <a href="{{ route('clients.profile', ['id' => $client->id]) }}"
-                                                            target="_blank">
-                                                            <img src="{{ $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg') }}"
-                                                                class="rounded-circle"
-                                                                alt="{{ $client->first_name }} {{ $client->last_name }}">
-                                                        </a>
-                                                    </li>
-                                                    @php $displayed++; @endphp
-                                                @else
-                                                    @php
-                                                        $remaining = $count - $displayed;
-                                                    @endphp
-                                                    <span
-                                                        class="badge badge-center rounded-pill bg-primary mx-1">+{{ $remaining }}</span>
-                                                @break
+                                                        @break
+                                                    @endif
+                                                @endforeach
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="{{ $project->id }}">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            @else
+                                                <span
+                                                    class="badge bg-primary">{{ get_label('not_assigned', 'Not assigned') }}</span>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="{{ $project->id }}">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
                                             @endif
-                                        @endforeach
-                                        <a href="javascript:void(0)"
-                                            class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                            data-id="{{ $project->id }}">
-                                            <span class="bx bx-edit"></span>
-                                        </a>
-                                    @else
-                                        <span
-                                            class="badge bg-primary">{{ get_label('not_assigned', 'Not assigned') }}</span>
-                                        <a href="javascript:void(0)"
-                                            class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                            data-id="{{ $project->id }}">
-                                            <span class="bx bx-edit"></span>
-                                        </a>
-                                    @endif
-                                </ul>
-                                </p>
+                                        </ul>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="card-text">
+                                            {{ get_label('clients', 'Clients') }}:
+                                        <ul class="list-unstyled users-list avatar-group d-flex align-items-center m-0">
+                                            @php
+                                                $clients = $project->clients;
+                                                $count = count($clients);
+                                                $displayed = 0;
+                                            @endphp
+                                            @if ($count > 0)
+                                                @foreach ($clients as $client)
+                                                    @if ($displayed < 10)
+                                                        <li class="avatar avatar-sm pull-up"
+                                                            title="{{ $client->first_name }} {{ $client->last_name }}">
+                                                            <a href="{{ route('clients.profile', ['id' => $client->id]) }}"
+                                                                target="_blank">
+                                                                <img src="{{ $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg') }}"
+                                                                    class="rounded-circle"
+                                                                    alt="{{ $client->first_name }} {{ $client->last_name }}">
+                                                            </a>
+                                                        </li>
+                                                        @php $displayed++; @endphp
+                                                    @else
+                                                        @php
+                                                            $remaining = $count - $displayed;
+                                                        @endphp
+                                                        <span
+                                                            class="badge badge-center rounded-pill bg-primary mx-1">+{{ $remaining }}</span>
+                                                        @break
+                                                    @endif
+                                                @endforeach
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="{{ $project->id }}">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            @else
+                                                <span
+                                                    class="badge bg-primary">{{ get_label('not_assigned', 'Not assigned') }}</span>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="{{ $project->id }}">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            @endif
+                                        </ul>
+                                        </p>
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-4 text-start">
+                                            <i class="bx bx-calendar text-success"></i>
+                                            {{ get_label('starts_at', 'Starts at') }}:
+                                            {{ format_date($project->start_date) }}
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <i class="bx bx-calendar text-danger"></i>
+                                            {{ get_label('ends_at', 'Ends at') }}:
+                                            {{ format_date($project->end_date) }}
+                                        </div>
+
+                                        @php
+                                            $endDate = \Carbon\Carbon::parse($project->end_date);
+                                            $currentDate = \Carbon\Carbon::now();
+                                            $daysDifference = $endDate->diffInDays($currentDate);
+                                            $isOverdue = $currentDate->gt($endDate);
+                                        @endphp
+                                        <div class="col-md-4 text-end">
+                                            <span>
+                                                <i
+                                                    class="bx bx-calendar-event text-{{ $isOverdue ? 'warning' : 'primary' }}"></i>
+                                                <b>{{ $daysDifference }}</b>
+                                                {{ $isOverdue ? get_label('days_overdue', 'Days Overdue') : get_label('days_left', 'Days Left') }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                </div>
                             </div>
-
-
-
-                            <div class="row">
-                                <div class="col-md-4 text-start">
-                                    <i class="bx bx-calendar text-success"></i>
-                                    {{ get_label('starts_at', 'Starts at') }}:
-                                    {{ format_date($project->start_date) }}
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <i class="bx bx-calendar text-danger"></i>
-                                    {{ get_label('ends_at', 'Ends at') }}:
-                                    {{ format_date($project->end_date) }}
-                                </div>
-
-                                @php
-                                    $endDate = \Carbon\Carbon::parse($project->end_date);
-                                    $currentDate = \Carbon\Carbon::now();
-                                    $daysDifference = $endDate->diffInDays($currentDate);
-                                    $isOverdue = $currentDate->gt($endDate);
-                                @endphp
-                                <div class="col-md-4 text-end">
-                                    <span>
-                                        <i
-                                            class="bx bx-calendar-event text-{{ $isOverdue ? 'warning' : 'primary' }}"></i>
-                                        <b>{{ $daysDifference }}</b>
-                                        {{ $isOverdue ? get_label('days_overdue', 'Days Overdue') : get_label('days_left', 'Days Left') }}
-                                    </span>
-                                </div>
-                            </div>
-
-
                         </div>
                     </div>
+                @endforeach
+                <div>
+                    {{ $projects->links() }}
                 </div>
             </div>
-        @endforeach
-        <div>
-            {{ $projects->links() }}
-        </div>
-    </div>
 
-    <!-- delete project modal -->
-@else
-    <?php $type = 'projects'; ?>
-    <x-empty-state-card :type="$type" />
-@endif
-</div>
-<script>
-    var add_favorite = '<?= get_label('add_favorite', 'Click to mark as favorite') ?>';
-    var remove_favorite = '<?= get_label('remove_favorite', 'Click to remove from favorite') ?>';
-</script>
-<script src="{{ asset('assets/js/pages/project-grid.js') }}"></script>
+            <!-- delete project modal -->
+        @else
+            <?php $type = 'projects'; ?>
+            <x-empty-state-card :type="$type" />
+        @endif
+    </div>
+    <script>
+        var add_favorite = '<?= get_label('add_favorite', 'Click to mark as favorite') ?>';
+        var remove_favorite = '<?= get_label('remove_favorite', 'Click to remove from favorite') ?>';
+    </script>
+    <script src="{{ asset('assets/js/pages/project-grid.js') }}"></script>
 @endsection

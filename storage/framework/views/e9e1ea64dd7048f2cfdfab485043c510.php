@@ -19,7 +19,9 @@
                                     href="<?php echo e(getDefaultViewRoute('projects')); ?>"><?= get_label('projects', 'Projects') ?></a>
                             </li>
                         <?php else: ?>
-                            <li class="breadcrumb-item active"><a href="<?php echo e(route('projects.index', ['type' => 'favorite'])); ?>"><?= get_label('favorite', 'Favorite') ?></a></li>
+                            <li class="breadcrumb-item active"><a
+                                    href="<?php echo e(route('projects.index', ['type' => 'favorite'])); ?>"><?= get_label('favorite', 'Favorite') ?></a>
+                            </li>
                         <?php endif; ?>
 
                     </ol>
@@ -68,10 +70,10 @@
                         data-bs-toggle="tooltip" data-bs-placement="left"
                         data-bs-original-title="<?= get_label('gantt_chart_view', 'Gantt Chart View') ?>"><i
                             class='bx bxs-collection'></i></button></a>
-                            <a href="<?php echo e(route('projects.calendar_view')); ?>"><button type="button" class="btn btn-sm btn-primary"
-                            data-bs-toggle="tooltip" data-bs-placement="left"
-                            data-bs-original-title="<?php echo e(get_label('calendar_view', 'Calendar log')); ?>"><i
-                                class='bx bx-calendar'></i></button></a>
+                <a href="<?php echo e(route('projects.calendar_view')); ?>"><button type="button" class="btn btn-sm btn-primary"
+                        data-bs-toggle="tooltip" data-bs-placement="left"
+                        data-bs-original-title="<?php echo e(get_label('calendar_view', 'Calendar log')); ?>"><i
+                            class='bx bx-calendar'></i></button></a>
             </div>
         </div>
         <div class="row">
@@ -268,12 +270,12 @@
                                                     $taskCount = $tasks->count();
                                                     $percentage = ($taskCount / $totalTasks) * 100;
                                                 ?>
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-<?php echo e($status->color); ?>"
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-<?php echo e($status->color ?? 'secondary'); ?>"
                                                     role="progressbar" style="width: <?php echo e($percentage); ?>%;"
                                                     aria-valuenow="<?php echo e($percentage); ?>" aria-valuemin="0"
                                                     aria-valuemax="100"
-                                                    title="<?php echo e($status->title); ?>: <?php echo e($taskCount); ?> tasks">
-                                                    <?php echo e($status->title); ?> (<?php echo e($taskCount); ?>)
+                                                    title="<?php echo e($status->title ?? 'No Title'); ?>: <?php echo e($taskCount); ?> tasks">
+                                                    <?php echo e($status->title ?? 'No Title'); ?> (<?php echo e($taskCount); ?>)
                                                 </div>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         <?php else: ?>
@@ -326,124 +328,124 @@
                                                         ?>
                                                         <span
                                                             class="badge badge-center rounded-pill bg-primary mx-1">+<?php echo e($remaining); ?></span>
-                                                    <?php break; ?>
-                                                <?php endif; ?>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            <a href="javascript:void(0)"
-                                                class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                                data-id="<?php echo e($project->id); ?>">
-                                                <span class="bx bx-edit"></span>
-                                            </a>
-                                        <?php else: ?>
-                                            <span
-                                                class="badge bg-primary"><?php echo e(get_label('not_assigned', 'Not assigned')); ?></span>
-                                            <a href="javascript:void(0)"
-                                                class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                                data-id="<?php echo e($project->id); ?>">
-                                                <span class="bx bx-edit"></span>
-                                            </a>
-                                        <?php endif; ?>
-                                    </ul>
-                                    </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="card-text">
-                                        <?php echo e(get_label('clients', 'Clients')); ?>:
-                                    <ul class="list-unstyled users-list avatar-group d-flex align-items-center m-0">
-                                        <?php
-                                            $clients = $project->clients;
-                                            $count = count($clients);
-                                            $displayed = 0;
-                                        ?>
-                                        <?php if($count > 0): ?>
-                                            <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $client): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <?php if($displayed < 10): ?>
-                                                    <li class="avatar avatar-sm pull-up"
-                                                        title="<?php echo e($client->first_name); ?> <?php echo e($client->last_name); ?>">
-                                                        <a href="<?php echo e(route('clients.profile', ['id' => $client->id])); ?>"
-                                                            target="_blank">
-                                                            <img src="<?php echo e($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')); ?>"
-                                                                class="rounded-circle"
-                                                                alt="<?php echo e($client->first_name); ?> <?php echo e($client->last_name); ?>">
-                                                        </a>
-                                                    </li>
-                                                    <?php $displayed++; ?>
-                                                <?php else: ?>
-                                                    <?php
-                                                        $remaining = $count - $displayed;
-                                                    ?>
-                                                    <span
-                                                        class="badge badge-center rounded-pill bg-primary mx-1">+<?php echo e($remaining); ?></span>
-                                                <?php break; ?>
+                                                        <?php break; ?>
+                                                    <?php endif; ?>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="<?php echo e($project->id); ?>">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            <?php else: ?>
+                                                <span
+                                                    class="badge bg-primary"><?php echo e(get_label('not_assigned', 'Not assigned')); ?></span>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="<?php echo e($project->id); ?>">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
                                             <?php endif; ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <a href="javascript:void(0)"
-                                            class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                            data-id="<?php echo e($project->id); ?>">
-                                            <span class="bx bx-edit"></span>
-                                        </a>
-                                    <?php else: ?>
-                                        <span
-                                            class="badge bg-primary"><?php echo e(get_label('not_assigned', 'Not assigned')); ?></span>
-                                        <a href="javascript:void(0)"
-                                            class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
-                                            data-id="<?php echo e($project->id); ?>">
-                                            <span class="bx bx-edit"></span>
-                                        </a>
-                                    <?php endif; ?>
-                                </ul>
-                                </p>
+                                        </ul>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="card-text">
+                                            <?php echo e(get_label('clients', 'Clients')); ?>:
+                                        <ul class="list-unstyled users-list avatar-group d-flex align-items-center m-0">
+                                            <?php
+                                                $clients = $project->clients;
+                                                $count = count($clients);
+                                                $displayed = 0;
+                                            ?>
+                                            <?php if($count > 0): ?>
+                                                <?php $__currentLoopData = $clients; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $client): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php if($displayed < 10): ?>
+                                                        <li class="avatar avatar-sm pull-up"
+                                                            title="<?php echo e($client->first_name); ?> <?php echo e($client->last_name); ?>">
+                                                            <a href="<?php echo e(route('clients.profile', ['id' => $client->id])); ?>"
+                                                                target="_blank">
+                                                                <img src="<?php echo e($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')); ?>"
+                                                                    class="rounded-circle"
+                                                                    alt="<?php echo e($client->first_name); ?> <?php echo e($client->last_name); ?>">
+                                                            </a>
+                                                        </li>
+                                                        <?php $displayed++; ?>
+                                                    <?php else: ?>
+                                                        <?php
+                                                            $remaining = $count - $displayed;
+                                                        ?>
+                                                        <span
+                                                            class="badge badge-center rounded-pill bg-primary mx-1">+<?php echo e($remaining); ?></span>
+                                                        <?php break; ?>
+                                                    <?php endif; ?>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="<?php echo e($project->id); ?>">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            <?php else: ?>
+                                                <span
+                                                    class="badge bg-primary"><?php echo e(get_label('not_assigned', 'Not assigned')); ?></span>
+                                                <a href="javascript:void(0)"
+                                                    class="btn btn-icon btn-sm btn-outline-primary btn-sm rounded-circle edit-project update-users-clients ms-1"
+                                                    data-id="<?php echo e($project->id); ?>">
+                                                    <span class="bx bx-edit"></span>
+                                                </a>
+                                            <?php endif; ?>
+                                        </ul>
+                                        </p>
+                                    </div>
+
+
+
+                                    <div class="row">
+                                        <div class="col-md-4 text-start">
+                                            <i class="bx bx-calendar text-success"></i>
+                                            <?php echo e(get_label('starts_at', 'Starts at')); ?>:
+                                            <?php echo e(format_date($project->start_date)); ?>
+
+                                        </div>
+                                        <div class="col-md-4 text-center">
+                                            <i class="bx bx-calendar text-danger"></i>
+                                            <?php echo e(get_label('ends_at', 'Ends at')); ?>:
+                                            <?php echo e(format_date($project->end_date)); ?>
+
+                                        </div>
+
+                                        <?php
+                                            $endDate = \Carbon\Carbon::parse($project->end_date);
+                                            $currentDate = \Carbon\Carbon::now();
+                                            $daysDifference = $endDate->diffInDays($currentDate);
+                                            $isOverdue = $currentDate->gt($endDate);
+                                        ?>
+                                        <div class="col-md-4 text-end">
+                                            <span>
+                                                <i
+                                                    class="bx bx-calendar-event text-<?php echo e($isOverdue ? 'warning' : 'primary'); ?>"></i>
+                                                <b><?php echo e($daysDifference); ?></b>
+                                                <?php echo e($isOverdue ? get_label('days_overdue', 'Days Overdue') : get_label('days_left', 'Days Left')); ?>
+
+                                            </span>
+                                        </div>
+                                    </div>
+
+
+                                </div>
                             </div>
-
-
-
-                            <div class="row">
-                                <div class="col-md-4 text-start">
-                                    <i class="bx bx-calendar text-success"></i>
-                                    <?php echo e(get_label('starts_at', 'Starts at')); ?>:
-                                    <?php echo e(format_date($project->start_date)); ?>
-
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <i class="bx bx-calendar text-danger"></i>
-                                    <?php echo e(get_label('ends_at', 'Ends at')); ?>:
-                                    <?php echo e(format_date($project->end_date)); ?>
-
-                                </div>
-
-                                <?php
-                                    $endDate = \Carbon\Carbon::parse($project->end_date);
-                                    $currentDate = \Carbon\Carbon::now();
-                                    $daysDifference = $endDate->diffInDays($currentDate);
-                                    $isOverdue = $currentDate->gt($endDate);
-                                ?>
-                                <div class="col-md-4 text-end">
-                                    <span>
-                                        <i
-                                            class="bx bx-calendar-event text-<?php echo e($isOverdue ? 'warning' : 'primary'); ?>"></i>
-                                        <b><?php echo e($daysDifference); ?></b>
-                                        <?php echo e($isOverdue ? get_label('days_overdue', 'Days Overdue') : get_label('days_left', 'Days Left')); ?>
-
-                                    </span>
-                                </div>
-                            </div>
-
-
                         </div>
                     </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <div>
+                    <?php echo e($projects->links()); ?>
+
                 </div>
             </div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-        <div>
-            <?php echo e($projects->links()); ?>
 
-        </div>
-    </div>
-
-    <!-- delete project modal -->
-<?php else: ?>
-    <?php $type = 'projects'; ?>
-    <?php if (isset($component)) { $__componentOriginal0fbbaf7987e44b855eae69b67dad7fdf = $component; } ?>
+            <!-- delete project modal -->
+        <?php else: ?>
+            <?php $type = 'projects'; ?>
+            <?php if (isset($component)) { $__componentOriginal0fbbaf7987e44b855eae69b67dad7fdf = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginal0fbbaf7987e44b855eae69b67dad7fdf = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.empty-state-card','data' => ['type' => $type]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('empty-state-card'); ?>
@@ -463,13 +465,13 @@
 <?php $component = $__componentOriginal0fbbaf7987e44b855eae69b67dad7fdf; ?>
 <?php unset($__componentOriginal0fbbaf7987e44b855eae69b67dad7fdf); ?>
 <?php endif; ?>
-<?php endif; ?>
-</div>
-<script>
-    var add_favorite = '<?= get_label('add_favorite', 'Click to mark as favorite') ?>';
-    var remove_favorite = '<?= get_label('remove_favorite', 'Click to remove from favorite') ?>';
-</script>
-<script src="<?php echo e(asset('assets/js/pages/project-grid.js')); ?>"></script>
+        <?php endif; ?>
+    </div>
+    <script>
+        var add_favorite = '<?= get_label('add_favorite', 'Click to mark as favorite') ?>';
+        var remove_favorite = '<?= get_label('remove_favorite', 'Click to remove from favorite') ?>';
+    </script>
+    <script src="<?php echo e(asset('assets/js/pages/project-grid.js')); ?>"></script>
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('layout', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/projects/grid_view.blade.php ENDPATH**/ ?>

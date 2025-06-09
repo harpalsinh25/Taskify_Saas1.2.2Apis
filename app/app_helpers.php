@@ -968,8 +968,7 @@ if (!function_exists('processNotifications')) {
 
             if (!$template || ($template->status !== 0)) {
                 $notification = Notification::create([
-                    'workspace_id' => session()->get('workspace_id'),
-                    'workspace_id' => request()->header('workspace_id'),
+                  'workspace_id' => $data['workspace_id'] ?? session()->get('workspace_id') ?? request()->header('workspace_id'),
                     'from_id' => isClient() ? 'c_' . session()->get('user_id') : 'u_' . session()->get('user_id'),
                     'type' => $type,
                     'type_id' => $data['type_id'],

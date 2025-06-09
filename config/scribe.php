@@ -191,8 +191,8 @@ return [
             'Project Managemant' => [
                 'GET /projects/{id?}',
                 'POST /projects',
-                'PUT /projects/{project}',
-                'DELETE /projects/{project}',
+                'PUT /projects/{id}',
+                'DELETE /projects/{id}',
                 'DELETE/destroy-multiple-projects',
                 'POST /update_favorite/{id}',
                 'POST /projects/{id}/duplicate',

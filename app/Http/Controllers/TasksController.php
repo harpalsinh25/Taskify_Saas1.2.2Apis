@@ -209,149 +209,143 @@ class TasksController extends Controller
      */
 
     public function store(Request $request)
-    {
+{
+    $isApi = $request->get('isApi', false);
 
+    try {
+        $adminId = getAdminIdByUserRole();
 
-        $isApi = $request->get('isApi', false);
+        $formFields = $request->validate([
+            'title' => ['required'],
+            'status_id' => ['required'],
+            'start_date' => ['required'],
+            'due_date' => ['required'],
+            'description' => ['nullable'],
+            'project' => ['required'],
+            'priority_id' => 'nullable|exists:priorities,id',
+            'note' => 'nullable|string',
+            'billing_type' => 'nullable|in:none,billable,non-billable',
+            'completion_percentage' => ['required', 'integer', 'min:0', 'max:100', 'in:0,10,20,30,40,50,60,70,80,90,100'],
+            'enable_reminder' => 'nullable|in:on',
+            'frequency_type' => 'nullable|in:daily,weekly,monthly',
+            'day_of_week' => 'nullable|integer|between:1,7',
+            'day_of_month' => 'nullable|integer|between:1,31',
+            'time_of_day' => 'nullable|date_format:H:i',
+            'enable_recurring_task' => 'nullable|in:on',
+            'recurrence_frequency' => 'nullable|in:daily,weekly,monthly,yearly',
+            'recurrence_day_of_week' => 'nullable|integer|min:1|max:7',
+            'recurrence_day_of_month' => 'nullable|integer|min:1|max:31',
+            'recurrence_month_of_year' => 'nullable|integer|min:1|max:12',
+            'recurrence_starts_from' => 'nullable|date|after_or_equal:today',
+            'recurrence_occurrences' => 'nullable|integer|min:1',
+            'task_list_id' => 'nullable|exists:task_lists,id',
+        ]);
+
+        $status = Status::findOrFail($request->input('status_id'));
+
+        if (!canSetStatus($status)) {
+            return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+        }
+
+        $project_id = $request->input('project');
+        $start_date = $request->input('start_date');
+        $due_date = $request->input('due_date');
+        $recurrence_starts_from = $request->input('recurrence_starts_from');
+
         try {
-
-            $adminId = getAdminIdByUserRole();
-            // dd($adminId);
-            $formFields = $request->validate([
-                'title' => ['required'],
-                'status_id' => ['required'],
-                'start_date' => ['required'],
-                'due_date' => ['required'],
-                'description' => ['nullable'],
-                'project' => ['required'],
-                'priority_id' => 'nullable|exists:priorities,id',
-                'note' => 'nullable|string',
-                'billing_type' => 'nullable|in:none,billable,non-billable',
-                'completion_percentage' => ['required', 'integer', 'min:0', 'max:100', 'in:0,10,20,30,40,50,60,70,80,90,100'],
-                // Validation for reminder toggle
-                'enable_reminder' => 'nullable|in:on',
-                'frequency_type' => 'nullable|in:daily,weekly,monthly',
-                'day_of_week' => 'nullable|integer|between:1,7',
-                'day_of_month' => 'nullable|integer|between:1,31',
-                'time_of_day' => 'nullable|date_format:H:i',
-                // Validation for recurring task
-                'enable_recurring_task' => 'nullable|in:on',
-                'recurrence_frequency' => 'nullable|in:daily,weekly,monthly,yearly',
-                'recurrence_day_of_week' => 'nullable|integer|min:1|max:7',
-                'recurrence_day_of_month' => 'nullable|integer|min:1|max:31',
-                'recurrence_month_of_year' => 'nullable|integer|min:1|max:12',
-                'recurrence_starts_from' => 'nullable|date|after_or_equal:today',
-                'recurrence_occurrences' => 'nullable|integer|min:1',
-                'task_list_id' => 'nullable|exists:task_lists,id',
-            ]);
-            // dd($formFields);
-            $status = Status::findOrFail($request->input('status_id'));
-            // dd($status);
-            if (canSetStatus($status)) {
-                $project_id = $request->input('project');
-                $start_date = $request->input('start_date');
-                $due_date = $request->input('due_date');
-                //           $formFields['start_date'] = format_date($start_date, false, 'Y-m-d', 'Y-m-d');
-                // $formFields['due_date'] = format_date($due_date, false, 'Y-m-d', 'Y-m-d');
-                // $formFields['start_date'] = Carbon::createFromFormat($start_date, false, 'Y-m-d', 'Y-m-d');
-                // $formFields['due_date'] = Carbon::createFromFormat('d-m-Y', $due_date)->format('Y-m-d');
-                try {
-                    $formFields['start_date'] = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->format('Y-m-d');
-                    $formFields['due_date'] = Carbon::createFromFormat('Y-m-d', $request->input('due_date'))->format('Y-m-d');
-                    $formFields['recurrence_starts_from'] = Carbon::createFromFormat('Y-m-d', $request->input('recurrence_starts_from'))->format('Y-m-d');
-                } catch (\Exception $e) {
-                    return response()->json([
-                        'error' => true,
-                        'message' => 'Invalid date format. Please use yyyy-mm-dd.',
-                        'exception' => $e->getMessage()
-                    ], 422);
-                }
-
-                $formFields['admin_id'] = getAdminIDByUserRole();
-                $formFields['workspace_id'] = getWorkspaceId();
-                //    dd($formFields);
-
-                $formFields['created_by'] = $this->user->id;
-                $formFields['admin_id'] = $adminId;
-
-                $formFields['project_id'] = $project_id;
-                // dd($formFields);
-                $userIds = $request->input('users_id');
-                // dd($userIds);
-                $new_task = Task::create($formFields);
-                // dd($new_task);
-                $task_id = $new_task->id;
-                $task = Task::find($task_id);
-                $task->users()->attach($userIds, ['admin_id' => $adminId]);
-                // dd($task);
-                $task->statusTimelines()->create([
-                    'status' => $status->title,
-                    'new_color' => $status->color,
-                    'previous_status' => '-',
-                    'changed_at' => now(),
-                ]);
-                // dd($task);
-                // Check Task Reminder is On than add the reminder
-                if (isset($formFields['enable_reminder']) && $formFields['enable_reminder'] == 'on') {
-                    $task->reminders()->create([
-                        'frequency_type' => $formFields['frequency_type'],
-                        'day_of_week' => $formFields['day_of_week'],
-                        'day_of_month' => $formFields['day_of_month'],
-                        'time_of_day' => $formFields['time_of_day'],
-                    ]);
-                }
-                // Check Task Recurring Task is On than add the recurring task
-                if (isset($formFields['enable_recurring_task']) && $formFields['enable_recurring_task'] == 'on') {
-                    $task->recurringTask()->create([
-                        'frequency' => $formFields['recurrence_frequency'],
-                        'day_of_week' => $formFields['recurrence_day_of_week'],
-                        'day_of_month' => $formFields['recurrence_day_of_month'],
-                        'month_of_year' => $formFields['recurrence_month_of_year'],
-                        'starts_from' => $formFields['recurrence_starts_from'],
-                        'number_of_occurrences' => $formFields['recurrence_occurrences'],
-                    ]);
-                }
-                $notification_data = [
-                    'type' => 'task',
-                    'type_id' => $task_id,
-                    'type_title' => $task->title,
-                    'access_url' => 'tasks/information/' . $task->id,
-                    'action' => 'assigned',
-                    'title' => 'New task assigned',
-                    'message' => $this->user->first_name . ' ' . $this->user->last_name . ' assigned you new task : ' . $task->title . ', ID #' . $task_id . '.'
-                ];
-                if (!empty($userIds)) {
-                    $recipients = array_map(function ($userId) {
-                        return 'u_' . $userId;
-                    }, $userIds);
-                } else {
-                    $recipients = [];
-                }
-                processNotifications($notification_data, $recipients);
-                return response()->json([
-                    'error' => false,
-                    'message' => 'Task created successfully.',
-                    'id' => $new_task->id,
-                    'type' => 'task',
-                    'parent_id' => $project_id,
-                    'parent_type' => 'project',
-                    'Data' => formatTask($task)
-                ]);
-                // dd($request->all());
-                // dd($formFields);
+            if ($isApi) {
+                $formFields['start_date'] = Carbon::createFromFormat('Y-m-d', $start_date)->format('Y-m-d');
+                $formFields['due_date'] = Carbon::createFromFormat('Y-m-d', $due_date)->format('Y-m-d');
+                $formFields['recurrence_starts_from'] = $recurrence_starts_from
+                    ? Carbon::createFromFormat('Y-m-d', $recurrence_starts_from)->format('Y-m-d')
+                    : null;
             } else {
-                return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+                $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
+                $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
+                $formFields['recurrence_starts_from'] = $recurrence_starts_from
+                    ? format_date($recurrence_starts_from, false, app('php_date_format'), 'Y-m-d')
+                    : null;
             }
-        } catch (ValidationException $e) {
-            return formatApiValidationError($isApi, $e->errors());
         } catch (\Exception $e) {
-            // Handle any unexpected errors
             return response()->json([
                 'error' => true,
-                'message' => 'An error occurred while creating the task.' . $e->getMessage()
-            ], 500);
+                'message' => 'Invalid date format. Please use yyyy-mm-dd.',
+                'exception' => $e->getMessage()
+            ], 422);
         }
+
+        $formFields['admin_id'] = $adminId;
+        $formFields['workspace_id'] = getWorkspaceId();
+        $formFields['created_by'] = $this->user->id;
+        $formFields['project_id'] = $project_id;
+
+        $userIds = $request->input('users_id', []);
+
+        $new_task = Task::create($formFields);
+        $task_id = $new_task->id;
+        $task = Task::find($task_id);
+        $task->users()->attach($userIds, ['admin_id' => $adminId]);
+
+        $task->statusTimelines()->create([
+            'status' => $status->title,
+            'new_color' => $status->color,
+            'previous_status' => '-',
+            'changed_at' => now(),
+        ]);
+
+        if ($formFields['enable_reminder'] ?? false) {
+            $task->reminders()->create([
+                'frequency_type' => $formFields['frequency_type'],
+                'day_of_week' => $formFields['day_of_week'],
+                'day_of_month' => $formFields['day_of_month'],
+                'time_of_day' => $formFields['time_of_day'],
+            ]);
+        }
+
+        if ($formFields['enable_recurring_task'] ?? false) {
+            $task->recurringTask()->create([
+                'frequency' => $formFields['recurrence_frequency'],
+                'day_of_week' => $formFields['recurrence_day_of_week'],
+                'day_of_month' => $formFields['recurrence_day_of_month'],
+                'month_of_year' => $formFields['recurrence_month_of_year'],
+                'starts_from' => $formFields['recurrence_starts_from'],
+                'number_of_occurrences' => $formFields['recurrence_occurrences'],
+            ]);
+        }
+
+        $notification_data = [
+            'type' => 'task',
+            'type_id' => $task_id,
+            'type_title' => $task->title,
+            'access_url' => 'tasks/information/' . $task->id,
+            'action' => 'assigned',
+            'title' => 'New task assigned',
+            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' assigned you new task : ' . $task->title . ', ID #' . $task_id . '.'
+        ];
+
+        $recipients = !empty($userIds) ? array_map(fn($userId) => 'u_' . $userId, $userIds) : [];
+        processNotifications($notification_data, $recipients);
+
+        return response()->json([
+            'error' => false,
+            'message' => 'Task created successfully.',
+            'id' => $new_task->id,
+            'type' => 'task',
+            'parent_id' => $project_id,
+            'parent_type' => 'project',
+            'Data' => formatTask($task)
+        ]);
+
+    } catch (ValidationException $e) {
+        return formatApiValidationError($isApi, $e->errors());
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => true,
+            'message' => 'An error occurred while creating the task. ' . $e->getMessage()
+        ], 500);
     }
+}
+
     /**
      * Display the specified resource.
      *
@@ -500,188 +494,176 @@ class TasksController extends Controller
      */
 
 
-    public function update(Request $request)
+   public function update(Request $request)
     {
+
         $isApi = $request->get('isApi', false);
         try {
-            $formFields = $request->validate([
-                'id' => 'required|exists:tasks,id',
-                'title' => ['required'],
-                'status_id' => ['required'],
-                'priority_id' => ['nullable'],
-                'start_date' => ['required', 'before_or_equal:due_date'],
-                'due_date' => ['required'],
-                'description' => ['nullable'],
-                'note' => ['nullable'],
-                'billing_type' => 'nullable|in:none,billable,non-billable',
-                'completion_percentage' => ['required', 'integer', 'min:0', 'max:100', 'in:0,10,20,30,40,50,60,70,80,90,100'],
-                'enable_reminder' => 'nullable|in:on', // Validation for reminder toggle
-                'frequency_type' => 'nullable|in:daily,weekly,monthly',
-                'day_of_week' => 'nullable|integer|between:1,7',
-                'day_of_month' => 'nullable|integer|between:1,31',
-                'time_of_day' => 'nullable|date_format:H:i',
-                'enable_recurring_task' => 'nullable|in:on', // Validation for recurring task
-                'recurrence_frequency' => 'nullable|in:daily,weekly,monthly,yearly',
-                'recurrence_day_of_week' => 'nullable|integer|min:1|max:7',
-                'recurrence_day_of_month' => 'nullable|integer|min:1|max:31',
-                'recurrence_month_of_year' => 'nullable|integer|min:1|max:12',
-                'recurrence_starts_from' => 'nullable|date|after_or_equal:today',
-                'recurrence_occurrences' => 'nullable|integer|min:1',
-            ]);
+        $formFields = $request->validate([
+            'id' => 'required|exists:tasks,id',
+            'title' => ['required'],
+            'status_id' => ['required'],
+            'priority_id' => ['nullable'],
+            'start_date' => ['required', 'before_or_equal:due_date'],
+            'due_date' => ['required'],
+            'description' => ['nullable'],
+            'note' => ['nullable'],
+            'billing_type' => 'nullable|in:none,billable,non-billable',
+            'completion_percentage' => ['required', 'integer', 'min:0', 'max:100', 'in:0,10,20,30,40,50,60,70,80,90,100'],
+            'enable_reminder' => 'nullable|in:on', // Validation for reminder toggle
+            'frequency_type' => 'nullable|in:daily,weekly,monthly',
+            'day_of_week' => 'nullable|integer|between:1,7',
+            'day_of_month' => 'nullable|integer|between:1,31',
+            'time_of_day' => 'nullable|date_format:H:i',
+            'enable_recurring_task' => 'nullable|in:on', // Validation for recurring task
+            'recurrence_frequency' => 'nullable|in:daily,weekly,monthly,yearly',
+            'recurrence_day_of_week' => 'nullable|integer|min:1|max:7',
+            'recurrence_day_of_month' => 'nullable|integer|min:1|max:31',
+            'recurrence_month_of_year' => 'nullable|integer|min:1|max:12',
+            'recurrence_starts_from' => 'nullable|date|after_or_equal:today',
+            'recurrence_occurrences' => 'nullable|integer|min:1',
+        ]);
+        $status = Status::findOrFail($request->input('status_id'));
+        $id = $request->input('id');
+        $task = Task::findOrFail($id);
+        $currentStatusId = $task->status_id;
+        // Check if the status has changed
+        if ($currentStatusId != $request->input('status_id')) {
             $status = Status::findOrFail($request->input('status_id'));
-            $id = $request->input('id');
-            $task = Task::findOrFail($id);
-            $currentStatusId = $task->status_id;
-            // Check if the status has changed
-            if ($currentStatusId != $request->input('status_id')) {
-                $status = Status::findOrFail($request->input('status_id'));
-                if (!canSetStatus($status)) {
-                    return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
-                }
-                $oldStatus = Status::findOrFail($currentStatusId);
-                $task->statusTimelines()->create([
-                    'status' => $status->title,
-                    'new_color' => $status->color,
-                    'previous_status' => $oldStatus->title,
-                    'old_color' => $oldStatus->color,
-                    'changed_at' => now()
+            if (!canSetStatus($status)) {
+                return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
+            }
+            $oldStatus = Status::findOrFail($currentStatusId);
+            $task->statusTimelines()->create([
+                'status' => $status->title,
+                'new_color' => $status->color,
+                'previous_status' => $oldStatus->title,
+                'old_color' => $oldStatus->color,
+                'changed_at' => now()
+            ]);
+        }
+        // Check Task Reminder is On than add the reminder
+        if (isset($formFields['enable_reminder']) && $formFields['enable_reminder'] == "on") {
+            // Check if reminder exists
+            $reminder = $task->reminders()->first();
+            if ($reminder) {
+                // Update existing reminder
+                $reminder->update([
+                    'frequency_type' => $formFields['frequency_type'],
+                    'day_of_week' => $formFields['frequency_type'] == 'weekly' ? $formFields['day_of_week'] : null,
+                    'day_of_month' => $formFields['frequency_type'] == 'monthly' ? $formFields['day_of_month'] : null,
+                    'time_of_day' => $formFields['time_of_day'],
+                    'is_active' => 1
+                ]);
+            } else {
+                // Create new reminder
+                $task->reminders()->create([
+                    'frequency_type' => $formFields['frequency_type'],
+                    'day_of_week' => $formFields['frequency_type'] == 'weekly' ? $formFields['day_of_week'] : null,
+                    'day_of_month' => $formFields['frequency_type'] == 'monthly' ? $formFields['day_of_month'] : null,
+                    'time_of_day' => $formFields['time_of_day'],
+                    'is_active' => 1
                 ]);
             }
-            // Check Task Reminder is On than add the reminder
-            if (isset($formFields['enable_reminder']) && $formFields['enable_reminder'] == "on") {
-                // Check if reminder exists
-                $reminder = $task->reminders()->first();
-                if ($reminder) {
-                    // Update existing reminder
-                    $reminder->update([
-                        'frequency_type' => $formFields['frequency_type'],
-                        'day_of_week' => $formFields['frequency_type'] == 'weekly' ? $formFields['day_of_week'] : null,
-                        'day_of_month' => $formFields['frequency_type'] == 'monthly' ? $formFields['day_of_month'] : null,
-                        'time_of_day' => $formFields['time_of_day'],
-                        'is_active' => 1
-                    ]);
-                } else {
-                    // Create new reminder
-                    $task->reminders()->create([
-                        'frequency_type' => $formFields['frequency_type'],
-                        'day_of_week' => $formFields['frequency_type'] == 'weekly' ? $formFields['day_of_week'] : null,
-                        'day_of_month' => $formFields['frequency_type'] == 'monthly' ? $formFields['day_of_month'] : null,
-                        'time_of_day' => $formFields['time_of_day'],
-                        'is_active' => 1
-                    ]);
-                }
+        } else {
+            // If reminder is turned off, either delete or deactivate the reminder
+            $reminder = $task->reminders()->first();
+            if ($reminder) {
+                //Deactivate the reminder
+                $reminder->update(['is_active' => 0]);
+            }
+        }
+        if (isset($formFields['enable_recurring_task']) && $formFields['enable_recurring_task'] == "on") {
+            // Check if recurring task exists
+            $recurringTask = $task->recurringTask()->first();
+            if ($recurringTask) {
+                // Update existing recurring task
+                $recurringTask->update([
+                    'frequency' => $formFields['recurrence_frequency'],
+                    'day_of_week' =>  $formFields['recurrence_day_of_week'],
+                    'day_of_month' =>  $formFields['recurrence_day_of_month'],
+                    'month_of_year' => $formFields['recurrence_month_of_year'],
+                    'starts_from' => $formFields['recurrence_starts_from'],
+                    'number_of_occurrences' => $formFields['recurrence_occurrences'],
+                    'is_active' => 1
+                ]);
             } else {
-                // If reminder is turned off, either delete or deactivate the reminder
-                $reminder = $task->reminders()->first();
-                if ($reminder) {
-                    //Deactivate the reminder
-                    $reminder->update(['is_active' => 0]);
-                }
+                // Create new recurring task
+                $task->recurringTask()->create([
+                    'frequency' => $formFields['recurrence_frequency'],
+                    'day_of_week' => $formFields['recurrence_frequency'] == 'weekly' ? $formFields['recurrence_day_of_week'] : null,
+                    'day_of_month' => $formFields['recurrence_frequency'] == 'monthly' ? $formFields['recurrence_day_of_month'] : null,
+                    'month_of_year' => $formFields['recurrence_frequency'] == 'yearly' ? $formFields['recurrence_month_of_year'] : null,
+                    'starts_from' => $formFields['recurrence_starts_from'],
+                    'number_of_occurrences' => $formFields['recurrence_occurrences'],
+                ]);
             }
-            if (isset($formFields['enable_recurring_task']) && $formFields['enable_recurring_task'] == "on") {
-                // Check if recurring task exists
-                $recurringTask = $task->recurringTask()->first();
-                if ($recurringTask) {
-                    // Update existing recurring task
-                    $recurringTask->update([
-                        'frequency' => $formFields['recurrence_frequency'],
-                        'day_of_week' =>  $formFields['recurrence_day_of_week'],
-                        'day_of_month' =>  $formFields['recurrence_day_of_month'],
-                        'month_of_year' => $formFields['recurrence_month_of_year'],
-                        'starts_from' => $formFields['recurrence_starts_from'],
-                        'number_of_occurrences' => $formFields['recurrence_occurrences'],
-                        'is_active' => 1
-                    ]);
-                } else {
-                    // Create new recurring task
-                    $task->recurringTask()->create([
-                        'frequency' => $formFields['recurrence_frequency'],
-                        'day_of_week' => $formFields['recurrence_frequency'] == 'weekly' ? $formFields['recurrence_day_of_week'] : null,
-                        'day_of_month' => $formFields['recurrence_frequency'] == 'monthly' ? $formFields['recurrence_day_of_month'] : null,
-                        'month_of_year' => $formFields['recurrence_frequency'] == 'yearly' ? $formFields['recurrence_month_of_year'] : null,
-                        'starts_from' => $formFields['recurrence_starts_from'],
-                        'number_of_occurrences' => $formFields['recurrence_occurrences'],
-                    ]);
-                }
-            } else {
-                // If recurring task is turned off, either delete or deactivate the recurring task
-                $recurringTask = $task->recurringTask()->first();
-                if ($recurringTask) {
-                    //Deactivate the reminder
-                    $recurringTask->update(['is_active' => 0]);
-                }
+        } else {
+            // If recurring task is turned off, either delete or deactivate the recurring task
+            $recurringTask = $task->recurringTask()->first();
+            if ($recurringTask) {
+                //Deactivate the reminder
+                $recurringTask->update(['is_active' => 0]);
             }
-            $start_date = $request->input('start_date');
-            $due_date = $request->input('due_date');
-            //           $formFields['start_date'] = format_date($start_date, false, 'Y-m-d', 'Y-m-d');
-            // $formFields['due_date'] = format_date($due_date, false, 'Y-m-d', 'Y-m-d');
-            // $formFields['start_date'] = Carbon::createFromFormat($start_date, false, 'Y-m-d', 'Y-m-d');
-            // $formFields['due_date'] = Carbon::createFromFormat('d-m-Y', $due_date)->format('Y-m-d');
-            try {
-                $formFields['start_date'] = Carbon::createFromFormat('Y-m-d', $request->input('start_date'))->format('Y-m-d');
-                $formFields['due_date'] = Carbon::createFromFormat('Y-m-d', $request->input('due_date'))->format('Y-m-d');
-                $formFields['recurrence_starts_from'] = Carbon::createFromFormat('Y-m-d', $request->input('recurrence_starts_from'))->format('Y-m-d');
-            } catch (\Exception $e) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Invalid date format. Please use yyyy-mm-dd.',
-                    'exception' => $e->getMessage()
-                ], 422);
-            }
-
-            $userIds = $request->input('user_id', []);
-            $task = Task::findOrFail($id);
-            $task->update($formFields);
-            // Get the current users associated with the task
-            $currentUsers = $task->users->pluck('id')->toArray();
-            $currentClients = $task->project->clients->pluck('id')->toArray();
-            // Sync the users for the task
-            $task->users()->sync($userIds);
-            // Get the new users associated with the task
-            $newUsers = array_diff($userIds, $currentUsers);
-            // Prepare notification data for new users
+        }
+        $start_date = $request->input('start_date');
+        $due_date = $request->input('due_date');
+        $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
+        $formFields['due_date'] = format_date($due_date, false, app('php_date_format'), 'Y-m-d');
+        $userIds = $request->input('user_id', []);
+        $task = Task::findOrFail($id);
+        $task->update($formFields);
+        // Get the current users associated with the task
+        $currentUsers = $task->users->pluck('id')->toArray();
+        $currentClients = $task->project->clients->pluck('id')->toArray();
+        // Sync the users for the task
+        $task->users()->sync($userIds);
+        // Get the new users associated with the task
+        $newUsers = array_diff($userIds, $currentUsers);
+        // Prepare notification data for new users
+        $notification_data = [
+            'type' => 'task',
+            'type_id' => $id,
+            'type_title' => $task->title,
+            'access_url' => 'tasks/information/' . $task->id,
+            'action' => 'assigned',
+            'title' => 'Task updated',
+            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' assigned you new task : ' . $task->title . ', ID #' . $id . '.'
+        ];
+        // Notify only the new users
+        $recipients = array_map(function ($userId) {
+            return 'u_' . $userId;
+        }, $newUsers);
+        // Process notifications for new users
+        processNotifications($notification_data, $recipients);
+        if ($currentStatusId != $request->input('status_id')) {
+            $currentStatus = Status::findOrFail($currentStatusId);
+            $newStatus = Status::findOrFail($request->input('status_id'));
             $notification_data = [
-                'type' => 'task',
+                'type' => 'task_status_updation',
                 'type_id' => $id,
                 'type_title' => $task->title,
-                'access_url' => 'tasks/information/' . $task->id,
-                'action' => 'assigned',
-                'title' => 'Task updated',
-                'message' => $this->user->first_name . ' ' . $this->user->last_name . ' assigned you new task : ' . $task->title . ', ID #' . $id . '.'
+                'updater_first_name' => $this->user->first_name,
+                'updater_last_name' => $this->user->last_name,
+                'old_status' => $currentStatus->title,
+                'new_status' => $newStatus->title,
+                'access_url' => 'tasks/information/' . $id,
+                'action' => 'status_updated',
+                'title' => 'Task status updated',
+                'message' => $this->user->first_name . ' ' . $this->user->last_name . ' has updated the status of task : ' . $task->title . ', ID #' . $id . ' from ' . $currentStatus->title . ' to ' . $newStatus->title
             ];
-            // Notify only the new users
-            $recipients = array_map(function ($userId) {
-                return 'u_' . $userId;
-            }, $newUsers);
-            // Process notifications for new users
-            processNotifications($notification_data, $recipients);
-            if ($currentStatusId != $request->input('status_id')) {
-                $currentStatus = Status::findOrFail($currentStatusId);
-                $newStatus = Status::findOrFail($request->input('status_id'));
-                $notification_data = [
-                    'type' => 'task_status_updation',
-                    'type_id' => $id,
-                    'type_title' => $task->title,
-                    'updater_first_name' => $this->user->first_name,
-                    'updater_last_name' => $this->user->last_name,
-                    'old_status' => $currentStatus->title,
-                    'new_status' => $newStatus->title,
-                    'access_url' => 'tasks/information/' . $id,
-                    'action' => 'status_updated',
-                    'title' => 'Task status updated',
-                    'message' => $this->user->first_name . ' ' . $this->user->last_name . ' has updated the status of task : ' . $task->title . ', ID #' . $id . ' from ' . $currentStatus->title . ' to ' . $newStatus->title
-                ];
-                $currentRecipients = array_merge(
-                    array_map(function ($userId) {
-                        return 'u_' . $userId;
-                    }, $currentUsers),
-                    array_map(function ($clientId) {
-                        return 'c_' . $clientId;
-                    }, $currentClients)
-                );
-                processNotifications($notification_data, $currentRecipients);
-            }
-            $task = $task->fresh();
+            $currentRecipients = array_merge(
+                array_map(function ($userId) {
+                    return 'u_' . $userId;
+                }, $currentUsers),
+                array_map(function ($clientId) {
+                    return 'c_' . $clientId;
+                }, $currentClients)
+            );
+            processNotifications($notification_data, $currentRecipients);
+        }
+
+     $task = $task->fresh();
             //
             return formatApiResponse(
                 false,
@@ -840,7 +822,7 @@ class TasksController extends Controller
         return response()->json(['error' => false, 'message' => 'Task(s) deleted successfully.', 'id' => $deletedTasks, 'titles' => $deletedTaskTitles, 'parent_id' => $parentIds, 'parent_type' => 'project']);
     }
 
-    public function list($id = '')
+     public function list($id = '')
     {
         $search = request('search');
         $sort = (request('sort')) ? request('sort') : "id";
@@ -978,37 +960,64 @@ class TasksController extends Controller
             } else {
                 $clientHtml = '<span class="badge bg-primary">' . get_label('not_assigned', 'Not Assigned') . '</span>';
             }
-            return [
-                'id' => $task->id,
-                'title' => "<a href='" . route('tasks.info', ['id' => $task->id]) . "' target='_blank' title='" . strip_tags($task->description) . "'>
-                <strong>{$task->title}</strong>
-            </a>",
-                'project_id' => "<a href='" . route('projects.info', ['id' => $task->project->id]) . "' target='_blank' title='" . strip_tags($task->project->description) . "'>
-                    <strong>{$task->project->title}</strong>
-                </a>
-                <a href='javascript:void(0);' class='mx-2'>
-                    <i class='bx " . ($task->project->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning'
-                       data-favorite='{$task->project->is_favorite}'
-                       data-id='{$task->project->id}'
-                       title='" . ($task->project->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'>
-                    </i>
-                </a>
-                <a href='" . route('tasks.info', ['id' => $task->id]) . "#navs-top-discussions'  target='_blank'  class='mx-2'>
-                    <i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussions', 'Discussions') . "'></i>
-                </a>",
-                'users' => $userHtml,
-                'clients' => $clientHtml,
-                'start_date' => format_date($task->start_date),
-                'end_date' => format_date($task->due_date),
-                'status_id' => "<div class='d-flex align-items-center'><select class='form-select form-select-sm select-bg-label-{$task->status->color}' id='statusSelect' data-id='{$task->id}' data-original-status-id='{$task->status->id}' data-original-color-class='select-bg-label-{$task->status->color}' data-type='task'>{$statusOptions}</select> " . (!empty($task->note) ? "
-                            <span class='ms-2' data-bs-toggle='tooltip' title='{$labelNote}:{$task->note}'> <i class='bx bxs-notepad text-primary'></i></span>" : "") . " </div>
-                ",
-                'priority_id' => "<select class='form-select form-select-sm select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "' id='prioritySelect' data-id='{$task->id}' data-original-priority-id='" . ($task->priority ? $task->priority->id : '') . "' data-original-color-class='select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "' data-type='task'>{$priorityOptions}</select>",
-                'created_at' => format_date($task->created_at, true),
-                'updated_at' => format_date($task->updated_at, true),
-                'billing_type' => ucwords($task->billing_type),
-                'actions' => $actions
-            ];
+          return [
+    'id' => $task->id,
+    'title' => "<a href='" . route('tasks.info', ['id' => $task->id]) . "' target='_blank' title='" . strip_tags($task->description) . "'>
+        <strong>{$task->title}</strong>
+    </a>",
+
+    'project_id' => $task->project ? "
+        <a href='" . route('projects.info', ['id' => $task->project->id]) . "' target='_blank' title='" . strip_tags($task->project->description) . "'>
+            <strong>{$task->project->title}</strong>
+        </a>
+        <a href='javascript:void(0);' class='mx-2'>
+            <i class='bx " . ($task->project->is_favorite ? 'bxs' : 'bx') . "-star favorite-icon text-warning'
+                data-favorite='{$task->project->is_favorite}'
+                data-id='{$task->project->id}'
+                title='" . ($task->project->is_favorite ? get_label('remove_favorite', 'Click to remove from favorite') : get_label('add_favorite', 'Click to mark as favorite')) . "'>
+            </i>
+        </a>
+        <a href='" . route('tasks.info', ['id' => $task->id]) . "#navs-top-discussions'  target='_blank' class='mx-2'>
+            <i class='bx bx-message-rounded-dots text-danger' data-bs-toggle='tooltip' data-bs-placement='right' title='" . get_label('discussions', 'Discussions') . "'></i>
+        </a>" : "<span class='text-danger'>No project</span>",
+
+    'users' => $userHtml,
+    'clients' => $clientHtml,
+    'start_date' => format_date($task->start_date),
+    'end_date' => format_date($task->due_date),
+
+    'status_id' => $task->status ? "
+        <div class='d-flex align-items-center'>
+            <select class='form-select form-select-sm select-bg-label-{$task->status->color}'
+                id='statusSelect'
+                data-id='{$task->id}'
+                data-original-status-id='{$task->status->id}'
+                data-original-color-class='select-bg-label-{$task->status->color}'
+                data-type='task'>
+                {$statusOptions}
+            </select>" .
+            (!empty($task->note) ? "
+                <span class='ms-2' data-bs-toggle='tooltip' title='{$labelNote}:{$task->note}'>
+                    <i class='bx bxs-notepad text-primary'></i>
+                </span>" : "") .
+        "</div>" : "<span class='text-danger'>No status</span>",
+
+    'priority_id' => "
+        <select class='form-select form-select-sm select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "'
+            id='prioritySelect'
+            data-id='{$task->id}'
+            data-original-priority-id='" . ($task->priority ? $task->priority->id : '') . "'
+            data-original-color-class='select-bg-label-" . ($task->priority ? $task->priority->color : 'secondary') . "'
+            data-type='task'>
+            {$priorityOptions}
+        </select>",
+
+    'created_at' => format_date($task->created_at, true),
+    'updated_at' => format_date($task->updated_at, true),
+    'billing_type' => ucwords($task->billing_type),
+    'actions' => $actions,
+];
+
         });
         // Return JSON response with formatted tasks and total count
         return response()->json([
@@ -1099,16 +1108,23 @@ class TasksController extends Controller
      * }
      */
 
-    public function updateStatus($id, $newStatus)
+  public function update_status(Request $request)
     {
-        $isApi = request()->get('isApi', false);
-        $status = Status::findOrFail($newStatus);
+        $request->validate([
+            'id' => ['required'],
+            'statusId' => ['required']
+        ]);
+        $id = $request->id;
+        $statusId = $request->statusId;
+        $status = Status::findOrFail($statusId);
         if (canSetStatus($status)) {
             $task = Task::findOrFail($id);
-            $current_status = $task->status->title;
-            $task->status_id = $newStatus;
-            $oldStatus = Status::where('title', $current_status)->first();
-            $newStatus = Status::findOrFail($newStatus);
+            $oldStatus = $task->status_id;
+                $currentStatus = optional($task->status)->title ?? 'Unknown';
+            $task->status_id = $statusId;
+            $task->note = $request->note;
+            $oldStatus = Status::findOrFail($oldStatus);
+            $newStatus = Status::findOrFail($statusId);
             $task->statusTimelines()->create([
                 'status' => $newStatus->title,
                 'new_color' => $newStatus->color,
@@ -1117,16 +1133,16 @@ class TasksController extends Controller
                 'changed_at' => now(),
             ]);
             if ($task->save()) {
-                $task->refresh();
-                $new_status = $task->status->title;
+                $task = $task->fresh();
+                $newStatus = $task->status->title;
                 $notification_data = [
                     'type' => 'task_status_updation',
                     'type_id' => $id,
                     'type_title' => $task->title,
                     'updater_first_name' => $this->user->first_name,
                     'updater_last_name' => $this->user->last_name,
-                    'old_status' => $current_status,
-                    'new_status' => $new_status,
+                    'old_status' => $currentStatus,
+                    'new_status' => $newStatus,
                     'access_url' => 'tasks/information/' . $id,
                     'action' => 'status_updated'
                 ];
@@ -1147,7 +1163,7 @@ class TasksController extends Controller
                     [
                         'id' => $id,
                         'type' => 'task',
-                        'activity_message' => trim($this->user->first_name) . ' ' . trim($this->user->last_name) . ' updated task status from ' . trim($current_status) . ' to ' . trim($newStatus),
+                        'activity_message' => trim($this->user->first_name) . ' ' . trim($this->user->last_name) . ' updated task status from ' . trim($currentStatus) . ' to ' . trim($newStatus),
                         'data' => formatTask($task)
                     ]
                 );
@@ -1158,7 +1174,6 @@ class TasksController extends Controller
             return response()->json(['error' => true, 'message' => 'You are not authorized to set this status.']);
         }
     }
-
     /**
      * Duplicate a task.
      *

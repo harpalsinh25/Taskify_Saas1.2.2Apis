@@ -47,8 +47,8 @@ Route::get('/settings/{variable}', [SettingsController::class, 'show']);
 Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'check.subscription', 'subscription.modules'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [HomeController::class, 'apiDashboard']);
-    Route::get('/upcoming-birthdays', [HomeController::class, 'upcoming_birthdays']);
-    Route::get('/upcoming-work-anniversaries', [HomeController::class, 'upcoming_work_anniversaries']);//pending data not shown
+    Route::get('/upcoming-birthdays', [HomeController::class, 'api_upcoming_birthdays']);
+    Route::get('/upcoming-work-anniversaries', [HomeController::class, 'api_upcoming_work_anniversaries']);//pending data not shown
     Route::get('/members-on-leave', [HomeController::class, 'members_on_leave']);//error
 
     //projects managemant
@@ -58,10 +58,10 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
 
         Route::get('/projects/{id?}', [ProjectsController::class, 'apiList']);
         Route::post('/projects', [ProjectsController::class, 'store'])->middleware(['customcan:create_projects', 'log.activity', 'check.maxCreate'])->name('projects.store');
-        Route::put('/projects/{project}', [ProjectsController::class, 'update'])->middleware(['customcan:edit_projects', 'log.activity']);
+        Route::put('/projects/{id}', [ProjectsController::class, 'update'])->middleware(['customcan:edit_projects', 'log.activity']);
     });
 
-    Route::delete('/projects/{project}', [ProjectsController::class, 'destroy'])->middleware(['customcan:delete_projects', 'demo_restriction', 'checkAccess:App\Models\Project,projects,id,projects', 'log.activity']);
+    Route::delete('/projects/{id}', [ProjectsController::class, 'destroy'])->middleware(['customcan:delete_projects', 'demo_restriction', 'checkAccess:App\Models\Project,projects,id,projects', 'log.activity']);
     Route::delete('/destroy-multiple-projects', [ProjectsController::class, 'destroy_multiple'])->middleware(['customcan:delete_projects', 'demo_restriction', 'log.activity'])->name('projects.delete_multiple');
     Route::post('/update_favorite/{id}', [ProjectsController::class, 'update_favorite']);
     Route::post('/projects/{id}/duplicate', [ProjectsController::class, 'duplicate'])->middleware(['customcan:create_projects', 'checkAccess:App\Models\Project,projects,id,projects', 'log.activity', 'check.maxCreate'])->name('projects.duplicate');
@@ -99,7 +99,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
         Route::delete('/delete-tasks/{id}', [TasksController::class, 'destroy']);
         Route::delete('/destroy-multiple-tasks', [TasksController::class, 'destroy_multiple']);
         //status and performance
-       Route::post('/task/{id}/status/{newStatus}', [TasksController::class, 'updateStatus']);
+       Route::post('/task/{id}/status/{newStatus}', [TasksController::class, 'update_status']);
 
         Route::post('tasks/{id}/duplicate', [TasksController::class, 'duplicate']);
         Route::post('/tasks/save-view-preference', [TasksController::class, 'saveViewPreference']);
@@ -184,7 +184,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
        Route::get('/note/{id?}',[NotesController::class,'apilist']);
     //leave request
     Route::middleware(['admin_or_user'])->group(function () {
-        Route::post('/leaverequest',[LeaveRequestController::class,'store']);
+        Route::post('/leaverequest',[LeaveRequestController::class,'api_store']);
         Route::get('/leaverequest/{id?}',[LeaveRequestController::class,'listapi']);
         Route::put('/leaverequest/{id}',[LeaveRequestController::class,'update']);
         Route::delete('/leaverequest/{id}',[LeaveRequestController::class,'destroy']);
