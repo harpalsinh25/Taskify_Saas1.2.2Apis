@@ -526,7 +526,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 9, 2025</li>
+        <li>Last updated: June 10, 2025</li>
     </ul>
 </div>
 
@@ -5467,7 +5467,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php1955.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpEFE2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5658,7 +5658,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php1955.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpEFE2.tmp</code></p>
         </div>
         </form>
 
@@ -6724,7 +6724,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
                 <h1 id="project-status-and-priority">Project status and priority</h1>
 
-    
+    <p>This endpoint updates the status of a specified project.
+The status change is recorded in the status timeline,
+and notifications are sent to related users and clients.</p>
+<p>You can include an optional <code>note</code> with the status update.</p>
+<p>If <code>isApi</code> request parameter is true, response will use
+the standardized API response format.</p>
 
                                 <h2 id="project-status-and-priority-POSTapi-master-panel-save-view-preference">Save the user&#039;s default view preference for projects.</h2>
 
@@ -6896,12 +6901,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>
 </p>
 
-<p>This endpoint updates the status of a specified project.
-The status change is recorded in the status timeline,
-and notifications are sent to related users and clients.</p>
-<p>You can include an optional <code>note</code> with the status update.</p>
-<p>If <code>isApi</code> request parameter is true, response will use
-the standardized API response format.</p>
+
 
 <span id="example-requests-PUTapi-master-panel-update-status--id-">
 <blockquote>Example request:</blockquote>
@@ -7188,13 +7188,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/comments" \
+    --header "Authorization: required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "model_type=consequatur"\
     --form "model_id=17"\
     --form "content=consequatur"\
     --form "parent_id=17"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php1D5E.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF2E2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7203,6 +7204,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -7343,6 +7345,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-comments"
+               value="required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -7418,7 +7431,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php1D5E.tmp</code></p>
+<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpF2E2.tmp</code></p>
         </div>
         </form>
 
@@ -9469,7 +9482,12 @@ It logs the status change in the task's status timeline and notifies assigned us
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/task/25/status/8?isApi=1" \
     --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Accept: application/json" \
+    --data "{
+    \"id\": \"consequatur\",
+    \"statusId\": \"consequatur\"
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -9488,9 +9506,15 @@ const headers = {
     "Accept": "application/json",
 };
 
+let body = {
+    "id": "consequatur",
+    "statusId": "consequatur"
+};
+
 fetch(url, {
     method: "POST",
     headers,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -9677,7 +9701,30 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <br>
 <p>Optional. Set to true if calling from API to get a structured API response. Example: <code>true</code></p>
             </div>
-                </form>
+                        <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="POSTapi-master-panel-task--id--status--newStatus-"
+               value="consequatur"
+               data-component="body">
+    <br>
+<p>Example: <code>consequatur</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>statusId</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="statusId"                data-endpoint="POSTapi-master-panel-task--id--status--newStatus-"
+               value="consequatur"
+               data-component="body">
+    <br>
+<p>Example: <code>consequatur</code></p>
+        </div>
+        </form>
 
                     <h2 id="task-status-and-performance-POSTapi-master-panel-tasks-save-view-preference">Save User&#039;s Default Task View Preference</h2>
 
@@ -10120,7 +10167,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php2417.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF70A.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -10859,7 +10906,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php25AE.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF8B1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11098,7 +11145,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php1F43.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF41B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13484,7 +13531,7 @@ profile photo upload, email verification logic, and account creation emails.</p>
     --form "internal_purpose=consequatur"\
     --form "status=17"\
     --form "require_ev=17"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\php28AD.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpFB04.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13875,7 +13922,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php28AD.tmp</code></p>
+<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFB04.tmp</code></p>
         </div>
         </form>
 
@@ -15302,7 +15349,7 @@ sends email notifications if configured.</p>
     --form "country_iso_code=IN"\
     --form "require_ev="\
     --form "status="\
-    --form "profile=@C:\Users\Dikshita\AppData\Local\Temp\php2A34.tmp" </code></pre></div>
+    --form "profile=@C:\Users\Dikshita\AppData\Local\Temp\phpFC8B.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15652,7 +15699,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>The user's profile image. JPEG, JPG, PNG. Max 2MB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php2A34.tmp</code></p>
+<p>The user's profile image. JPEG, JPG, PNG. Max 2MB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFC8B.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>require_ev</code></b>&nbsp;&nbsp;
@@ -15730,7 +15777,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "country_iso_code=US"\
     --form "status="\
     --form "role=consequatur"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\php2AA3.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpFCCB.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16045,7 +16092,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>image nullable User profile image (jpeg, jpg, png). Max size 2048 KB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php2AA3.tmp</code></p>
+<p>image nullable User profile image (jpeg, jpg, png). Max size 2048 KB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFCCB.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;

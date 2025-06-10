@@ -344,7 +344,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="photo"
                                 class="form-label"><?= get_label('profile_picture', 'Profile picture') ?></label>
-                            <input class="form-control" type="file" accept="image/*" id="photo" name="profile">
+                            <input class="form-control" type="file" accept="image/*" id="photo" name="photo">
                             <p class="text-muted mt-2"><?= get_label('allowed_jpg_png', 'Allowed JPG or PNG.') ?></p>
                         </div>
                         @if (isAdminOrHasAllDataAccess())

@@ -2124,7 +2124,7 @@ public function store_milestone(Request $request)
 
    /**
  * Update the status of a project.
- *
+ *@group Project status and priority
  * This endpoint updates the status of a specified project.
  * The status change is recorded in the status timeline,
  * and notifications are sent to related users and clients.

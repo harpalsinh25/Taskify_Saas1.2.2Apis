@@ -501,33 +501,50 @@ class WorkspacesController extends Controller
  * }
  */
 
-    public function update(Request $request)
+  public function update(Request $request)
 {
-    $isApi = $request->get('isApi', false);
+    $isApi = $request->get('isApi', false); // Determine if it's an API request
 
     try {
-        $formFields = $request->validate([
-            'id' => 'required|exists:workspaces,id',
-            'title' => ['required']
-        ]);
+        // For API, validate and use provided ID
+        if ($isApi) {
+            $request->validate([
+                'id' => ['required', 'exists:workspaces,id'],
+                'title' => ['required'],
+            ]);
+            $id = $request->input('id');
+            $workspace = getWorkspaceId();
+        } else {
+            // For web, use selected workspace from middleware
+            $workspace = $this->workspace;
 
-        $id = $request->input('id');
-        $workspace = Workspace::findOrFail($id);
+            if (!$workspace) {
+                return redirect()->back()->withErrors(['workspace' => 'No workspace selected.']);
+            }
+
+            $request->validate([
+                'title' => ['required'],
+            ]);
+        }
+
+        $formFields = $request->only(['title']);
+
         $userIds = $request->input('user_ids') ?? [];
         $clientIds = $request->input('client_ids') ?? [];
 
-        // Set creator as participant automatically
+        // Add creator if not included
         if (User::where('id', $workspace->user_id)->exists() && !in_array($workspace->user_id, $userIds)) {
-            array_splice($userIds, 0, 0, $workspace->user_id);
+            array_unshift($userIds, $workspace->user_id);
         } elseif (Client::where('id', $workspace->user_id)->exists() && !in_array($workspace->user_id, $clientIds)) {
-            array_splice($clientIds, 0, 0, $workspace->user_id);
+            array_unshift($clientIds, $workspace->user_id);
         }
 
         $existingUserIds = $workspace->users->pluck('id')->toArray();
         $existingClientIds = $workspace->clients->pluck('id')->toArray();
 
+        // Handle primary workspace
         if (isAdminOrHasAllDataAccess()) {
-            $primaryWorkspace = $request->has('primaryWorkspace') ? ($request->boolean('primaryWorkspace') ? 1 : 0) : 0;
+            $primaryWorkspace = $request->boolean('primaryWorkspace', false);
             $formFields['is_primary'] = $primaryWorkspace;
         } else {
             $primaryWorkspace = $workspace->is_primary;
@@ -542,17 +559,17 @@ class WorkspacesController extends Controller
         $workspace->users()->sync($userIds);
         $workspace->clients()->sync($clientIds);
 
-        // Get only newly assigned user/client IDs for notifications
         $newUserIds = array_diff($userIds, $existingUserIds);
         $newClientIds = array_diff($clientIds, $existingClientIds);
 
+        // Notification data
         $notification_data = [
             'type' => 'workspace',
-            'type_id' => $id,
+            'type_id' => $workspace->id,
             'type_title' => $workspace->title,
             'action' => 'assigned',
             'title' => 'Added in a workspace',
-            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $workspace->title . ', ID #' . $id . '.'
+            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $workspace->title . ', ID #' . $workspace->id . '.'
         ];
 
         $recipients = array_merge(
@@ -563,27 +580,28 @@ class WorkspacesController extends Controller
         processNotifications($notification_data, $recipients);
 
         if ($isApi) {
-            return formatApiResponse(false, 'Workspace updated successfully.', formatWorkspace($workspace));
+            return formatApiResponse(false, 'Workspace updated successfully.', [
+                'id' => $workspace->id,
+                'data' => formatWorkspace($workspace->fresh(['users', 'clients']))
+            ]);
+        } else {
+            Session::flash('message', 'Workspace updated successfully.');
+            return redirect()->back();
         }
 
-        Session::flash('message', 'Workspace updated successfully.');
-        return response()->json([
-            'error' => false,
-            'id' => $id,
-            'message' => 'Workspace updated successfully.',
-            'data' => formatWorkspace($workspace)
-        ]);
-
-    }  catch (ValidationException $e) {
-            return formatApiValidationError($isApi, $e->errors());
-        } catch (\Exception $e) {
-            // Handle any unexpected errors
-            return response()->json([
-                'error' => true,
-                'message' => 'An error occurred while updating the workspace`.'
+    } catch (\Exception $e) {
+        $message = 'Error: ' . $e->getMessage();
+        if ($isApi) {
+            return formatApiResponse(true, $message, [
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
             ], 500);
+        } else {
+            return redirect()->back()->withErrors(['message' => $message]);
         }
     }
+}
+
 /**
  *
  *

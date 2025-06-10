@@ -1,5 +1,13 @@
 name: 'Project status and priority'
-description: ''
+description: |-
+  This endpoint updates the status of a specified project.
+  The status change is recorded in the status timeline,
+  and notifications are sent to related users and clients.
+
+  You can include an optional `note` with the status update.
+
+  If `isApi` request parameter is true, response will use
+  the standardized API response format.
 endpoints:
   -
     httpMethods:
@@ -82,11 +90,7 @@ endpoints:
     uri: 'api/master-panel/update-status/{id}'
     metadata:
       groupName: 'Project status and priority'
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update the status of a project.'
-      description: |-
+      groupDescription: |-
         This endpoint updates the status of a specified project.
         The status change is recorded in the status timeline,
         and notifications are sent to related users and clients.
@@ -95,6 +99,10 @@ endpoints:
 
         If `isApi` request parameter is true, response will use
         the standardized API response format.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update the status of a project.'
+      description: ''
       authenticated: false
       custom: []
     headers:

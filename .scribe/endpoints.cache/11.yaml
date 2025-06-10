@@ -60,8 +60,30 @@ endpoints:
         custom: []
     cleanQueryParameters:
       isApi: true
-    bodyParameters: []
-    cleanBodyParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      statusId:
+        name: statusId
+        description: ''
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      id: consequatur
+      statusId: consequatur
     fileParameters: []
     responses:
       -

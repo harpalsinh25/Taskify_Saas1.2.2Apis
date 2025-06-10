@@ -35,6 +35,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Spatie\Permission\Traits\HasRoles;
 
 class UserController extends Controller
 {
@@ -135,26 +136,13 @@ class UserController extends Controller
  * }
  */
 
-   public function store(Request $request)
-{
-    $isApi = $request->get('api', true);
-    $user = null; //
+public function store(Request $request, User $user)
+    {
+$isApi = request()->get('isApi', false);
+ try {
 
-    try {
-        $adminId = null;
-
-      $userAuth = Auth::guard('web')->user() ?? Auth::guard('sanctum')->user();
-
-if ($userAuth && $userAuth->hasRole('admin')) {
-    $admin = Admin::where('user_id', $userAuth->id)->first();
-    if ($admin) {
-        $adminId = $admin->id;
-    }
-}
-
-
+        $adminId = getAuthenticatedUser()->id;
         ini_set('max_execution_time', 300);
-
         $formFields = $request->validate([
             'first_name' => ['required'],
             'last_name' => ['required'],
@@ -172,90 +160,94 @@ if ($userAuth && $userAuth->hasRole('admin')) {
             'doj' => 'nullable',
             'role' => 'required',
             'country_iso_code' => 'nullable',
-            'profile' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'],
+            // 'profile' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'], // max:2048 = 2MB
         ]);
+        $validator = Validator($formFields)->after(function ($validator) use ($request) {
+            $email = $request->input('email');
 
-        $validator = Validator::make($formFields, []);
-        $email = $request->input('email');
+            $existsInUsers = DB::table('users')->where('email', $email)->exists();
+            $existsInClients = DB::table('clients')->where('email', $email)->exists();
 
-        if (DB::table('users')->where('email', $email)->exists() || DB::table('clients')->where('email', $email)->exists()) {
-            $validator->errors()->add('email', 'The email has already been taken in users or clients.');
-        }
-
+            if ($existsInUsers || $existsInClients) {
+                $validator->errors()->add('email', 'The email has already been taken in users or clients.');
+            }
+        });
         if ($validator->fails()) {
-            return formatApiValidationError($isApi, $validator->errors());
+            return response()->json(['errors' => $validator->errors()], 422);
         }
-
-        if ($request->filled('dob')) {
-            $formFields['dob'] = format_date($request->input('dob'), false, app('php_date_format'), 'Y-m-d');
+        $workspace =  session()->get('workspace_id') ?? $request->header('workspace_id');
+        // dd($workspace);
+        if ($request->input('dob')) {
+            $dob = $request->input('dob');
+            $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
         }
-        if ($request->filled('doj')) {
-            $formFields['doj'] = format_date($request->input('doj'), false, app('php_date_format'), 'Y-m-d');
+        if ($request->input('doj')) {
+            $doj = $request->input('doj');
+            $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
         }
-
         $password = $request->input('password');
         $formFields['password'] = bcrypt($password);
-
-        if ($request->hasFile('profile')) {
-            $formFields['photo'] = $request->file('profile')->store('photos', 'public');
+        if ($request->hasFile('photo')) {
+            $formFields['photo'] = $request->file('photo')->store('photos', 'public');
         } else {
             $formFields['photo'] = 'photos/no-image.jpg';
         }
-
-        $requireEv = isAdminOrHasAllDataAccess() && $request->boolean('require_ev') === false ? 0 : 1;
-        $status = isAdminOrHasAllDataAccess() && $request->boolean('status') === true ? 1 : 0;
-        $formFields['email_verified_at'] = $requireEv === 0 ? now()->tz(config('app.timezone')) : null;
-        $formFields['status'] = $status;
-
-
+        // $require_ev = isAdminOrHasAllDataAccess() && $request->has('require_ev') && $request->input('require_ev') == 0 ? 0 : 1;
+        // $status = getAuthenticatedUser()->hasRole('admin') && $request->has('status') && $request->input('status') == 1 ? 1 : 0;
+        // if ($status == 1) {
+        //     $formFields['status'] = 1;
+        //     $formFields['email_verified_at'] = now()->tz(config('app.timezone'));
+        // }
+        $require_ev = isAdminOrHasAllDataAccess() && $request->has('require_ev') && $request->input('require_ev') == 0 ? 0 : 1;
+            $status = isAdminOrHasAllDataAccess() && $request->has('status') && $request->input('status') == 1 ? 1 : 0;
+            $formFields['email_verified_at'] = $require_ev == 0 ? now()->tz(config('app.timezone')) : null;
+            $formFields['status'] = $status;
         $user = User::create($formFields);
-
         TeamMember::create([
-            'admin_id' => $adminId ?? 0,
+            'admin_id' => $adminId,
             'user_id' => $user->id,
         ]);
-
-        $workspace = Workspace::find(session('workspace_id'));
-        $workspace?->users()->attach($user->id);
-        $user->assignRole($request->input('role'));
-
-        if ($requireEv === 1) {
-            $user->notify(new VerifyEmail($user));
-        }
-
-        if (isEmailConfigured()) {
-            $template = Template::where('type', 'email')
-                ->where('name', 'account_creation')
-                ->first();
-
-            if (!$template || $template->status !== 0) {
-                $user->notify(new AccountCreation($user, $password));
+        try {
+            if ($require_ev == 1) {
+                $user->notify(new VerifyEmail($user));
             }
+            $workspace->users()->attach($user->id);
+            // dd($workspace);
+            $user->assignRole($request->input('role'));
+            if (isEmailConfigured()) {
+                $account_creation_template = Template::where('type', 'email')
+                    ->where('name', 'account_creation')
+                    ->first();
+                if (!$account_creation_template || ($account_creation_template->status !== 0)) {
+                    $user->notify(new AccountCreation($user, $password));
+                }
+            }
+            Session::flash('message', 'User created successfully.');
+             $data = formatUser($user);
+                $data['require_ev'] = $require_ev;
+                return formatApiResponse(
+                    false,
+                    'User created successfully.',
+                    [
+                        'id' => $user->id,
+                        'data' => $data
+                    ]
+                );
+        } catch (TransportExceptionInterface $e) {
+                // Rollback user creation on email transport failure
+                $user->delete();
+                return response()->json(['error' => true, 'message' => 'User couldn\'t be created, please make sure email settings are operational.'], 500);
+            } catch (Throwable $e) {
+                dd($e);
+                // Rollback user creation on other errors
+                $user->delete();
+                return response()->json(['error' => true, 'message' => 'User couldn\'t be created, please try again later.'], 500);
+            }
+        } catch (ValidationException $e) {
+            return formatApiValidationError($isApi, $e->errors());
         }
-
-        return formatApiResponse(false, 'User created successfully.', [
-            'id' => $user->id,
-            'data' => formatUser($user),
-        ]);
-
-    } catch (TransportExceptionInterface $e) {
-        if ($user) {
-            $user->delete();
-        }
-        return formatApiResponse(true, 'User could not be created. Please check email settings.', [
-            'error' => $e->getMessage()
-        ]);
-    } catch (Throwable $e) {
-        if ($user) {
-            $user->delete();
-        }
-        return formatApiResponse(true, 'User could not be created.', [
-            'error' => $e->getMessage(),
-            'line' => $e->getLine(),
-            'file' => $e->getFile()
-        ]);
     }
-}
+
 
     public function email_verification()
     {
@@ -337,6 +329,61 @@ if ($userAuth && $userAuth->hasRole('admin')) {
  *   }
  * }
  */
+public function update_user(Request $request, $id)
+    {
+
+        $formFields = $request->validate([
+            'first_name' => ['required'],
+            'last_name' => ['required'],
+            'phone' => 'nullable',
+            'country_code' => 'nullable',
+            'address' => 'nullable',
+            'city' => 'nullable',
+            'state' => 'nullable',
+            'country' => 'nullable',
+            'zip' => 'nullable',
+            'dob' => 'nullable',
+            'doj' => 'nullable',
+            'password' => 'nullable|min:6','password_confirmation' => 'required_with:password|same:password',
+            'country_iso_code' => 'nullable',
+            'upload' => ['nullable', 'image', 'mimes:jpeg,jpg,png', 'max:2048'], // max:2048 = 2MB
+        ]);
+
+        $user = User::findOrFail($id);
+        if ($request->input('dob')) {
+            $dob = $request->input('dob');
+            $formFields['dob'] = format_date($dob, false, app('php_date_format'), 'Y-m-d');
+        }
+        if ($request->input('doj')) {
+            $doj = $request->input('doj');
+            $formFields['doj'] = format_date($doj, false, app('php_date_format'), 'Y-m-d');
+        }
+        if ($request->hasFile('upload')) {
+            if ($user->photo != 'photos/no-image.jpg' && $user->photo !== null)
+                Storage::disk('public')->delete($user->photo);
+
+            $formFields['photo'] = $request->file('upload')->store('photos', 'public');
+        }
+
+        $status = isAdminOrHasAllDataAccess() && $request->has('status') ? $request->input('status') : $user->status;
+        $formFields['status'] = $status;
+
+        if (isAdminOrHasAllDataAccess() && isset($formFields['password']) && !empty($formFields['password'])) {
+            $formFields['password'] = bcrypt($formFields['password']);
+        } else {
+            unset($formFields['password']);
+        }
+
+        if (!($user->hasRole('admin'))) {
+            $user->syncRoles($request->input('role'));
+        }
+
+
+        $user->update($formFields);
+
+        Session::flash('message', 'Profile details updated successfully.');
+        return response()->json(['error' => false, 'id' => $user->id]);
+    }
 public function update(Request $request, $id)
 {
     $isApi = $request->get('api', true);

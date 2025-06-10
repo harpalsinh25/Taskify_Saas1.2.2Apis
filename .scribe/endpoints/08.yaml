@@ -15,6 +15,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      Authorization: 'required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Content-Type: multipart/form-data
       Accept: application/json
     urlParameters: []
