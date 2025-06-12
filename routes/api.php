@@ -46,7 +46,7 @@ Route::get('/settings/{variable}', [SettingsController::class, 'show']);
 
 Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'check.subscription', 'subscription.modules'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [HomeController::class, 'apiDashboard']);
+    Route::get('/dashboardList', [HomeController::class, 'apiDashboard']);
     Route::get('/upcoming-birthdays', [HomeController::class, 'api_upcoming_birthdays']);
     Route::get('/upcoming-work-anniversaries', [HomeController::class, 'api_upcoming_work_anniversaries']);//pending data not shown
     Route::get('/members-on-leave', [HomeController::class, 'members_on_leave']);//error
@@ -68,7 +68,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
     //media
     Route::middleware(['customcan:manage_media'])->group(function () {
         Route::post('/projects/upload-media', [ProjectsController::class, 'upload_media']);
-        Route::get('/projects/{id}/media', [ProjectsController::class, 'get_    media']);
+        Route::get('/projects/{id}/media', [ProjectsController::class, 'get_media']);
         Route::delete('/media/{id}', [ProjectsController::class, 'delete_media']);
         Route::post('/media/delete-multiple', [ProjectsController::class, 'delete_multiple_media']);
     });

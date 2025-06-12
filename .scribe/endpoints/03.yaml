@@ -19,7 +19,6 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
       workspace_id: '2'
       Content-Type: application/json
@@ -324,7 +323,7 @@ endpoints:
         name: priority_id
         description: 'The priority ID. Must exist in priorities table.'
         required: false
-        example: 1
+        example: 4
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -403,9 +402,12 @@ endpoints:
       user_id:
         name: user_id
         description: 'Array of user IDs to assign.'
-        required: false
-        example: '[1, 2, 3]'
-        type: 'array[int]'
+        required: true
+        example:
+          - 1
+          - 2
+          - 3
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -413,9 +415,11 @@ endpoints:
       client_id:
         name: client_id
         description: 'Array of client IDs to assign.'
-        required: false
-        example: '[1, 43]'
-        type: 'array[int]'
+        required: true
+        example:
+          - 1
+          - 43
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -423,9 +427,10 @@ endpoints:
       tag_ids:
         name: tag_ids
         description: 'Array of tag IDs to attach.'
-        required: false
-        example: '[1]'
-        type: 'array[int]'
+        required: true
+        example:
+          - 1
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -453,7 +458,7 @@ endpoints:
     cleanBodyParameters:
       title: 'Website Redesign'
       status_id: 1
-      priority_id: 1
+      priority_id: 4
       start_date: '2025-05-01'
       end_date: '2025-05-31'
       budget: '5000'
@@ -461,9 +466,15 @@ endpoints:
       description: 'A complete redesign of the company website.'
       note: 'Client prefers Figma for designs.'
       enable_tasks_time_entries: true
-      user_id: '[1, 2, 3]'
-      client_id: '[1, 43]'
-      tag_ids: '[1]'
+      user_id:
+        - 1
+        - 2
+        - 3
+      client_id:
+        - 1
+        - 43
+      tag_ids:
+        - 1
       isApi: true
       workspace_id: 17
     fileParameters: []
@@ -586,7 +597,6 @@ endpoints:
       custom: []
     headers:
       workspace_id: '2'
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
       Content-Type: application/json
     urlParameters:
@@ -708,40 +718,35 @@ endpoints:
         custom: []
       note:
         name: note
-        description: 'Additional notes for the project. Nullable.'
+        description: |-
+          Additional notes for the project. Nullable. Example: "Client prefers Figma for designs."
+           @bodyParam user_id int[] required Array of user IDs to assign.
         required: false
-        example: '"Client prefers Figma for designs."'
+        example: '[1, 2, 3]'
         type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      user_id:
-        name: user_id
-        description: 'Array of user IDs to assign to the project.'
-        required: false
-        example: '[2, 3]'
-        type: 'array[int]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       client_id:
         name: client_id
-        description: 'Array of client IDs to assign to the project.'
-        required: false
-        example: '[1, 5]'
-        type: 'array[int]'
+        description: 'Array of client IDs to assign.'
+        required: true
+        example:
+          - 1
+          - 43
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       tag_ids:
         name: tag_ids
-        description: 'Array of tag IDs to associate with the project.'
-        required: false
-        example: '[1]'
-        type: 'array[int]'
+        description: 'Array of tag IDs to attach.'
+        required: true
+        example:
+          - 1
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -766,10 +771,12 @@ endpoints:
       end_date: '2025-05-31'
       task_accessibility: project_users
       description: '"A complete redesign of the company website."'
-      note: '"Client prefers Figma for designs."'
-      user_id: '[2, 3]'
-      client_id: '[1, 5]'
-      tag_ids: '[1]'
+      note: '[1, 2, 3]'
+      client_id:
+        - 1
+        - 43
+      tag_ids:
+        - 1
       enable_tasks_time_entries: true
     fileParameters: []
     responses:
@@ -866,7 +873,6 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
       workspace_id: '2'
       Content-Type: application/json
@@ -948,7 +954,6 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
       workspace_id: '2'
       Content-Type: application/json

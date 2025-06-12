@@ -179,14 +179,10 @@ return [
                 'POST /login',
             ],
             'Dashboard' => [
-                'GET /dashboard',
-                'GET /upcoming_birthdays',
-                'GET /upcoming_work_anniversaries',
-                'GET /members_on_leave',
-                'GET /upcoming_birthdays_calendar',
-                'GET /upcoming_work_anniversaries_calendar',
-                'GET /members_on_leave_calendar',
-                'GET /income_vs_expense_data',
+                'GET /dashboardList',
+                'GET /upcoming-birthdays',
+                'GET /upcoming-work-anniversaries',
+                'GET /members-on-leave'
             ],
             'Project Managemant' => [
                 'GET /projects/{id?}',
@@ -216,7 +212,7 @@ return [
             ],
             'Project Comments' => [
                 'POST /comments',
-                'GET /comments/{id}',
+                'GET comments/{id}',
                 'PUT /comments/{id}',
                 'DELETE /comments/{id}'
 
@@ -243,7 +239,7 @@ return [
             'Task Comments' => [
                 'GET /comments/{id}',
                 'PUT /comments/{id}',
-                'DELETE /comments/{id}'
+                'DELETE /comments/{id}',
 
             ],
             'Status Management' => [

@@ -10,10 +10,11 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Register a New User'
+      title: 'Register a new user'
       description: |-
-        This endpoint allows a user to register by providing first name, last name, email, password, confirm password, and phone number.
-        On success, it returns the user data along with an access token.
+        This endpoint allows a new user to register with first name, last name, email, phone, and password.
+        The system ensures the email and phone are unique across both users and clients.
+        Upon successful registration, the user is assigned the "admin" role, an admin record is created, and a token is issued.
       authenticated: false
       custom: []
     headers:
@@ -26,9 +27,9 @@ endpoints:
     bodyParameters:
       first_name:
         name: first_name
-        description: "The user's first name."
+        description: 'The first name of the user. Must not contain numbers.'
         required: true
-        example: harpalsinh
+        example: John
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -36,9 +37,9 @@ endpoints:
         custom: []
       last_name:
         name: last_name
-        description: "The user's last name."
+        description: 'The last name of the user. Must not contain numbers.'
         required: true
-        example: sarvaiya
+        example: ramanandi
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -46,9 +47,9 @@ endpoints:
         custom: []
       email:
         name: email
-        description: "The user's email address. Must be unique."
+        description: 'Must be a valid email and unique across users and clients.'
         required: true
-        example: harpalsinh@gmail.com
+        example: bhurabhai@example.com
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -56,19 +57,19 @@ endpoints:
         custom: []
       phone:
         name: phone
-        description: 'Must match the regex /^\d+$/.'
+        description: 'Must be a string of digits and unique among users.'
         required: true
-        example: '1562'
+        example: '9876543210'
         type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       password:
         name: password
-        description: "The user's password. Minimum 6 characters."
+        description: 'Minimum 6 characters.'
         required: true
-        example: password
+        example: secret123
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -76,92 +77,62 @@ endpoints:
         custom: []
       password_confirmation:
         name: password_confirmation
-        description: ''
+        description: 'Must match the password.'
         required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      confirm_password:
-        name: confirm_password
-        description: 'Must match the password field.'
-        required: true
-        example: password
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      phone_number:
-        name: phone_number
-        description: "The user's phone number."
-        required: true
-        example: '+1234567890'
+        example: secret123
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      first_name: harpalsinh
-      last_name: sarvaiya
-      email: harpalsinh@gmail.com
-      phone: '1562'
-      password: password
-      password_confirmation: consequatur
-      confirm_password: password
-      phone_number: '+1234567890'
+      first_name: John
+      last_name: ramanandi
+      email: bhurabhai@example.com
+      phone: '9876543210'
+      password: secret123
+      password_confirmation: secret123
     fileParameters: []
     responses:
       -
-        status: 201
+        status: 200
         content: |-
           {
-            "status": true,
-            "message": "Registration successful.",
-            "data": {
-              "user": {
-                "id": 1,
-                "first_name": "harpalsinh",
-                "last_name": "sarvaiya",
-                "email": "harpalsinh@gmail.com",
-                "phone_number": "+1234567890"
-              },
-              "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-            }
+            "error": false,
+            "message": "User registered successfully",
+            "redirect_url": "http://localhost:8000/login",
+            "access_token": "1|ABCDEF1234567890...",
+            "token_type": "Bearer"
           }
         headers: []
-        description: ''
+        description: 'Successful Registration'
         custom: []
       -
         status: 422
         content: |-
           {
-            "status": false,
-            "message": "The given data was invalid.",
-            "errors": {
-              "first_name": ["The first name field is required."],
-              "last_name": ["The last name field is required."],
-              "email": ["The email has already been taken."],
-              "password": ["The password must be at least 6 characters."],
-              "confirm_password": ["The confirm password and password must match."],
-              "phone_number": ["The phone number field is required."]
+            "error": true,
+            "message": {
+              "email": [
+                "The email has already been taken in users or clients."
+              ],
+              "password": [
+                "Password must be at least 6 characters long."
+              ]
             }
           }
         headers: []
-        description: ''
+        description: 'Validation Failed'
         custom: []
       -
         status: 500
         content: |-
           {
-            "status": false,
-            "message": "Something went wrong. Please try again later."
+            "error": true,
+            "message": "Something went wrong on the server."
           }
         headers: []
-        description: ''
+        description: 'Server Error'
         custom: []
     responseFields: []
     auth: []

@@ -71,7 +71,9 @@ class HomeController extends Controller
  *
  * @queryParam isApi boolean Optional. Specify if the request is from API (true) or web (false). Default false.
  * @queryParam upcoming_days integer Optional. Number of days ahead to check for upcoming birthdays. Default 30.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Upcoming birthdays fetched successfully.",
@@ -191,6 +193,49 @@ class HomeController extends Controller
         ]);
     }
 
+/**
+ * Get Upcoming Birthdays
+ *
+ * This endpoint retrieves a list of users within the current workspace whose birthdays are coming up within the next given number of days (default is 30).
+ * It calculates the number of days left for each birthday and includes user details like name, photo, age, and profile link.
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
+ * @group Dashboard
+ *
+ * @authenticated
+ *
+ * @queryParam upcoming_days integer Optional. Number of upcoming days to look for birthdays. Defaults to 30. Example: 15
+ * @queryParam isApi boolean Optional. Pass true to get formatted API response. Example: true
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Upcoming birthdays fetched successfully.",
+ *   "data": {
+ *     "data": [
+ *       {
+ *         "id": 5,
+ *         "member": "John Doe",
+ *         "dob": "1995-07-18",
+ *         "days_left": 12,
+ *         "age": 28,
+ *         "photo": "http://example.com/storage/photos/user5.jpg",
+ *         "profile_url": "http://example.com/users/5"
+ *       }
+ *     ],
+ *     "total": 1
+ *   }
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Internal Server Error: Something went wrong.",
+ *   "data": [],
+ *   "status_code": 500
+ * }
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
 
 
     public function api_upcoming_birthdays(Request $request)
@@ -253,11 +298,11 @@ class HomeController extends Controller
 
     /**
      * Get Upcoming Work Anniversaries
-     *
+     *@group Dashboard
      * Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
      * This endpoint supports filtering, sorting, searching, and pagination.
      *
-     * @group Dashboard
+     *
      * @authenticated
      *
      * @queryParam search string Optional. Search term to filter users by first name, last name, full name, or date of joining. Example: John
@@ -266,7 +311,9 @@ class HomeController extends Controller
      * @queryParam upcoming_days integer Optional. Number of upcoming days to check. Default is 30. Example: 30
      * @queryParam user_id integer Optional. Filter by a specific user ID. Example: 15
      * @queryParam limit integer Optional. Number of results per page. Default is 15. Example: 10
-     *
+     * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
      * @response 200 {
      *   "rows": [
      *     {
@@ -300,80 +347,95 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-
 public function api_upcoming_work_anniversaries(Request $request)
 {
     try {
         $search = $request->get('search');
+        // DD($search);
         $sort = $request->get('sort', 'doj');
-        $order = strtolower($request->get('order', 'ASC'));
+        $order = strtolower($request->get('order', 'asc'));
         $upcoming_days = (int) $request->get('upcoming_days', 30);
         $user_id = $request->get('user_id');
+        $page = max(1, (int) $request->get('page', 1));
+        $limit = max(1, (int) $request->get('limit', 15));
 
         $workspace = $this->workspace;
 
         $today = \Carbon\Carbon::today()->startOfDay();
         $upcomingDate = $today->copy()->addDays($upcoming_days)->endOfDay();
 
+        // Step 1: Build query
         $query = $workspace->users()->whereNotNull('doj');
 
-        if ($user_id) {
-            $query->where('users.id', (int) $user_id);
-        }
-
+        // Step 2: Apply search
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%$search%")
-                  ->orWhere('last_name', 'like', "%$search%")
-                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+                $search = '%' . $search . '%';
+                $q->where('first_name', 'like', $search)
+                  ->orWhere('last_name', 'like', $search)
+                  ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$search]);
             });
         }
 
+        // Step 3: Filter by user_id
+        if ($user_id) {
+            $query->where('users.id', $user_id);
+        }
+
+        // Step 4: Get matching users
         $users = $query->get();
 
-        $filteredUsers = $users->filter(function ($user) use ($today, $upcomingDate) {
+        // Step 5: Filter by upcoming anniversary
+        $filtered = $users->filter(function ($user) use ($today, $upcomingDate) {
+            if (!$user->doj) return false;
+
             try {
                 $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
-                $anniversary = $doj->copy()->year($today->year)->startOfDay();
-
+                $anniversary = $doj->copy()->year($today->year);
                 if ($anniversary->lt($today)) {
                     $anniversary->addYear();
                 }
 
-                return $anniversary->gte($today) && $anniversary->lte($upcomingDate);
+                return $anniversary->between($today, $upcomingDate);
             } catch (\Exception $e) {
                 return false;
             }
         });
 
-        $sortedUsers = $filteredUsers->sortBy(function ($user) use ($today) {
+        // Step 6: Sort by anniversary date
+        $sorted = $filtered->sortBy(function ($user) use ($today) {
             $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
-            $anniversary = $doj->copy()->year($today->year)->startOfDay();
+            $anniversary = $doj->copy()->year($today->year);
             if ($anniversary->lt($today)) {
                 $anniversary->addYear();
             }
             return $anniversary->timestamp;
         }, SORT_REGULAR, $order === 'desc');
 
-        $page = max(1, (int) $request->get('page', 1));
-        $limit = max(1, (int) $request->get('limit', 15));
-        $total = $sortedUsers->count();
-        $paginated = $sortedUsers->slice(($page - 1) * $limit, $limit);
+        // Step 7: Paginate manually
+        $total = $sorted->count();
+        $paginated = $sorted->slice(($page - 1) * $limit, $limit)->values();
 
-        $transformedUsers = $paginated->values()->map(function ($user) use ($today) {
+        // Step 8: Format response
+        $today = \Carbon\Carbon::today();
+        // dd($today); // Re-ensure same instance
+        $data = $paginated->map(function ($user) use ($today) {
             $doj = \Carbon\Carbon::parse($user->doj)->startOfDay();
-            $anniversary = $doj->copy()->year($today->year)->startOfDay();
+            // dd($doj);
+            $anniversary = $doj->copy()->year($today->year);
+
             if ($anniversary->lt($today)) {
                 $anniversary->addYear();
             }
-
+            // dd($anniversary);
             $daysLeft = $today->diffInDays($anniversary);
-            $emoji = '';
+            // dd($daysLeft);
             $label = '';
+            $emoji = '';
 
             if ($daysLeft === 0) {
-                $emoji = ' 🥳';
                 $label = 'Today';
+                $emoji = ' 🥳';
             } elseif ($daysLeft === 1) {
                 $label = 'Tomorrow';
             } elseif ($daysLeft === 2) {
@@ -392,17 +454,20 @@ public function api_upcoming_work_anniversaries(Request $request)
 
         return formatApiResponse(false, 'Upcoming work anniversaries fetched successfully.', [
             'total' => $total,
-            'rows' => $transformedUsers,
+            // dd($data),
+            'rows' => $data,
+            // dd($data),
         ]);
     } catch (\Exception $e) {
         return formatApiResponse(true, 'Something went wrong while fetching data.', [
-            'line' => $e->getLine(),
-            'file' => $e->getFile(),
             'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
         ], 500);
     }
 }
-  public function upcoming_work_anniversaries()
+
+   public function upcoming_work_anniversaries()
     {
         $search = request('search');
         $sort = (request('sort')) ? request('sort') : "doj";
@@ -481,11 +546,6 @@ public function api_upcoming_work_anniversaries(Request $request)
     }
 
 
-
-
-
-
-
     /**
      * Get Members on Leave (Filtered & Paginated)
      *
@@ -502,7 +562,9 @@ public function api_upcoming_work_anniversaries(Request $request)
      * @queryParam upcoming_days integer Optional. Number of upcoming days to include. Default is 30. Example: 15
      * @queryParam user_id integer Optional. Filter by a specific user ID. Example: 5
      * @queryParam limit integer Optional. Number of records per page. Default is 15. Example: 10
-     *
+     *@header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
      * @response 200 {
      *   "rows": [
      *     {
@@ -1095,120 +1157,82 @@ public function api_upcoming_work_anniversaries(Request $request)
     }
 
     /**
-     * @group Dashboard
-     *
-     * Get Dashboard Summary
-     *
-     * This endpoint returns a summary and detailed breakdown of the authenticated user's dashboard. It includes counts and detailed data for users, clients, projects, tasks, todos, meetings, statuses, and recent activities within the selected workspace.
-     *
-     * @authenticated
-     *
-     * @header Authorization Bearer {token} Required. A valid Sanctum token for the authenticated user.
-     * @header workspace-id integer Required. The ID of the workspace to fetch dashboard data for.
-     *
-     * @response 200 {
-     *   "error": false,
-     *   "message": "Dashboard data fetched successfully.",
-     *   "data": {
-     *     "counts": {
-     *       "users_count": 5,
-     *       "clients_count": 3,
-     *       "projects_count": 4,
-     *       "tasks_count": 12,
-     *       "todos_count": 7,
-     *       "meetings_count": 2,
-     *       "statuses_count": 5,
-     *       "activities_count": 10
-     *     },
-     *     "users": [
-     *       {
-     *         "id": 1,
-     *         "name": "Jane Doe",
-     *         "email": "jane@example.com"
-     *       }
-     *     ],
-     *     "clients": [
-     *       {
-     *         "id": 1,
-     *         "name": "Acme Corp"
-     *       }
-     *     ],
-     *     "projects": [
-     *       {
-     *         "id": 1,
-     *         "name": "Project Apollo"
-     *       }
-     *     ],
-     *     "tasks": [
-     *       {
-     *         "id": 1,
-     *         "title": "Fix bug",
-     *         "status": "In Progress"
-     *       }
-     *     ],
-     *     "todos": {
-     *       "current_page": 1,
-     *       "data": [
-     *         {
-     *           "id": 1,
-     *           "title": "Call client",
-     *           "is_completed": false
-     *         }
-     *       ],
-     *       "per_page": 5,
-     *       "total": 7
-     *     },
-     *     "total_todos": [
-     *       {
-     *         "id": 1,
-     *         "title": "Call client"
-     *       }
-     *     ],
-     *     "meetings": [
-     *       {
-     *         "id": 1,
-     *         "title": "Team sync",
-     *         "scheduled_at": "2025-06-02T14:00:00Z"
-     *       }
-     *     ],
-     *     "auth_user": {
-     *       "id": 1,
-     *       "name": "Jane Doe",
-     *       "email": "jane@example.com"
-     *     },
-     *     "statuses": [
-     *       {
-     *         "id": 1,
-     *         "name": "In Progress"
-     *       }
-     *     ],
-     *     "activities": [
-     *       {
-     *         "id": 1,
-     *         "log": "User created a task"
-     *       }
-     *     ]
-     *   }
-     * }
-     *
-     * @response 400 {
-     *   "error": true,
-     *   "message": "Missing or invalid workspace-id header."
-     * }
-     *
-     * @response 401 {
-     *   "error": true,
-     *   "message": "Unauthorized: User not authenticated."
-     * }
-     *
-     * @response 404 {
-     *   "error": true,
-     *   "message": "Workspace not found."
-     * }
-     */
-    /**
-     * Get dashboard data for the authenticated user.
-     */
+ * Get Dashboard Data
+ *
+ * This endpoint returns a comprehensive dashboard summary for the authenticated user within the selected workspace.
+ * It includes counts and detailed lists of users, clients, projects, tasks, to-dos, meetings, activities, and statuses.
+ *
+ * @group Dashboard
+ *
+ *@authenticated
+ *@header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
+
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Dashboard data fetched successfully.",
+ *   "data": {
+ *     "counts": {
+ *       "users_count": 5,
+ *       "clients_count": 3,
+ *       "projects_count": 8,
+ *       "tasks_count": 22,
+ *       "todos_count": 5,
+ *       "meetings_count": 2,
+ *       "statuses_count": 6,
+ *       "activities_count": 10
+ *     },
+ *     "users": [...],
+ *     "clients": [...],
+ *     "projects": [...],
+ *     "tasks": [...],
+ *     "todos": [...],
+ *     "total_todos": [...],
+ *     "meetings": [...],
+ *     "auth_user": {
+ *       "id": 1,
+ *       "first_name": "John",
+ *       "last_name": "Doe",
+ *       ...
+ *     },
+ *     "statuses": [...],
+ *     "activities": [...]
+ *   }
+ * }
+ *
+ * @response 400 {
+ *   "error": true,
+ *   "message": "Missing or invalid workspace-id header.",
+ *   "data": []
+ * }
+ *
+ * @response 401 {
+ *   "error": true,
+ *   "message": "Unauthorized: User not authenticated.",
+ *   "data": []
+ * }
+ *
+ * @response 404 {
+ *   "error": true,
+ *   "message": "Workspace not found.",
+ *   "data": []
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Something went wrong.",
+ *   "data": {
+ *     "line": 123,
+ *     "file": "app/Http/Controllers/DashboardController.php",
+ *     "error": "Exception message here"
+ *   }
+ * }
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+
     public function apiDashboard(Request $request)
     {
         $isApi = $request->get('isApi', true); // Default to true for API usage
@@ -1273,17 +1297,7 @@ public function api_upcoming_work_anniversaries(Request $request)
                     'activities_count' => $activities->count(),
                 ],
 
-                // Details after counts
-                'users' => $users,
-                'clients' => $clients,
-                'projects' => $projects,
-                'tasks' => $tasks,
-                'todos' => $todos,
-                'total_todos' => $totalTodos,
-                'meetings' => $meetings,
-                'auth_user' => $user,
-                'statuses' => $statuses,
-                'activities' => $activities,
+
             ];
 
             return $isApi

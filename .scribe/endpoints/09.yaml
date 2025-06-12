@@ -1,75 +1,120 @@
-name: 'Task Comments'
+name: 'Task Management'
 description: |-
-  This endpoint updates the content of an existing comment. It also detects user mentions
-  (e.g., @username) in the updated content and sends mention notifications accordingly.
+  Validates and updates the specified task. Handles status changes,
+  reminders, recurring tasks, user assignments, and sends notifications.
 endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/master-panel/comments/{id}'
+    uri: 'api/master-panel/tasks/list-api/{id?}'
     metadata:
-      groupName: 'Task Comments'
+      groupName: 'Task Management'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'get comments'
-      description: |-
-        This endpoint allows an authenticated user to add a comment to any commentable model (e.g., Task, Project).
-        Supports file attachments and user mentions within the comment content.
+      title: |-
+        List or Get Task(s)
+
+        This endpoint returns a paginated list of tasks, or a single task if an ID is provided.
+        It supports advanced filtering, searching, sorting, and eager loading of related entities
+        such as users, project, status, priority, reminders, and recurring task details.
+
+        If the ID is numeric, it returns a single formatted task object.
+        If the ID follows the format `user_{id}` or `project_{id}`, it filters tasks belonging
+        to the specified user or project.
+      description: ''
       authenticated: false
       custom: []
     headers:
-      Content-Type: multipart/form-data
+      Content-Type: application/json
       Accept: application/json
     urlParameters:
       id:
         name: id
-        description: 'The ID of the comment.'
-        required: true
+        description: 'int|string Optional. Numeric task ID to fetch a single task, or `user_{id}`, `project_{id}` to filter by user/project.'
+        required: false
+        example: '25'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: '25'
+    queryParameters:
+      isApi:
+        name: isApi
+        description: "Optional. Indicate if it's an API call. Default: false"
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      search:
+        name: search
+        description: 'Optional. Search tasks by title or ID.'
+        required: false
+        example: Design
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'Optional. Field to sort by. Default: id.'
+        required: false
+        example: title
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Optional. Sorting order: ASC or DESC. Default: DESC'
+        required: false
         example: consequatur
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-    cleanUrlParameters:
-      id: consequatur
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      model_type:
-        name: model_type
-        description: 'The fully qualified class name of the model being commented on (e.g., App\Models\Task).'
-        required: true
-        example: App\Models\Task
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      model_id:
-        name: model_id
-        description: 'The ID of the model instance being commented on.'
-        required: true
-        example: 12
+      'status_ids[]':
+        name: 'status_ids[]'
+        description: 'Optional. Filter tasks by status ID(s).'
+        required: false
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      content:
-        name: content
-        description: 'The content of the comment. Mentions (e.g., @username) will be converted to user links.'
-        required: true
-        example: 'This is a test comment with @johndoe mentioned.'
-        type: string
+      'priority_ids[]':
+        name: 'priority_ids[]'
+        description: 'Optional. Filter tasks by priority ID(s).'
+        required: false
+        example: 2
+        type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      parent_id:
-        name: parent_id
-        description: 'nullable The ID of the parent comment if this is a reply.'
+      'user_ids[]':
+        name: 'user_ids[]'
+        description: 'Optional. Filter tasks assigned to these user ID(s).'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      'client_ids[]':
+        name: 'client_ids[]'
+        description: 'Optional. Filter tasks linked to clients via project(s).'
         required: false
         example: 5
         type: integer
@@ -77,72 +122,574 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      attachments:
-        name: attachments
-        description: 'Optional array of files to attach to the comment (jpg, jpeg, png, pdf, xlsx, txt, docx, max 2MB each).'
+      'project_ids[]':
+        name: 'project_ids[]'
+        description: 'Optional. Filter tasks by project ID(s).'
         required: false
-        example:
-          - null
-        type: 'file[]'
+        example: 2
+        type: integer
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
-    cleanBodyParameters:
-      model_type: App\Models\Task
-      model_id: 12
-      content: 'This is a test comment with @johndoe mentioned.'
-      parent_id: 5
-    fileParameters:
-      attachments:
-        - null
+      task_start_date_from:
+        name: task_start_date_from
+        description: 'date Optional. Filter tasks starting from this date. Format: Y-m-d.'
+        required: false
+        example: '2025-06-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_start_date_to:
+        name: task_start_date_to
+        description: 'date Optional. Filter tasks starting up to this date. Format: Y-m-d.'
+        required: false
+        example: '2025-06-30'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_end_date_from:
+        name: task_end_date_from
+        description: 'date Optional. Filter tasks due from this date. Format: Y-m-d.'
+        required: false
+        example: '2025-06-05'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_end_date_to:
+        name: task_end_date_to
+        description: 'date Optional. Filter tasks due up to this date. Format: Y-m-d.'
+        required: false
+        example: '2025-06-20'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      limit:
+        name: limit
+        description: 'Optional. Number of results per page. Default: 10.'
+        required: false
+        example: 20
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      isApi: false
+      search: Design
+      sort: title
+      order: consequatur
+      'status_ids[]': 1
+      'priority_ids[]': 2
+      'user_ids[]': 3
+      'client_ids[]': 5
+      'project_ids[]': 2
+      task_start_date_from: '2025-06-01'
+      task_start_date_to: '2025-06-30'
+      task_end_date_from: '2025-06-05'
+      task_end_date_to: '2025-06-20'
+      limit: 20
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-            "success": true,
-            "comment": {
-              "id": 20,
-              "commentable_type": "App\\Models\\Task",
-              "commentable_id": 12,
-              "content": "This is a test comment with <a href='/user/profile/5'>@johndoe</a>",
-              "user_id": 3,
-              "parent_id": null,
-              "created_at": "2025-05-28T12:45:00.000000Z",
-              "updated_at": "2025-05-28T12:45:00.000000Z",
-              "attachments": [
-                {
-                  "id": 1,
-                  "comment_id": 20,
-                  "file_name": "screenshot.png",
-                  "file_path": "comment_attachments/screenshot.png",
-                  "file_type": "image/png"
-                }
-              ]
-            },
-            "message": "Comment Added Successfully",
-            "user": {
-              "id": 3,
-              "name": "John Doe",
-              ...
-            },
-            "created_at": "just now"
+           "id": 25,
+           "workspace_id": 2,
+           "title": "Test Task Title",
+           "status": "Open",
+           "status_id": 1,
+           "priority": "low",
+           "priority_id": 2,
+           "users": [
+             {
+               "id": 2,
+               "first_name": "herry",
+               "last_name": "porter",
+               "email": "admin@gmail.com",
+               "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+             }
+           ],
+           "user_id": [2],
+           "clients": [],
+           "start_date": "2025-06-01",
+           "due_date": "2025-06-10",
+           "project": "favorite project",
+           "project_id": 2,
+           "description": "This is a test task description.",
+           "note": "Optional note about the task.",
+           "favorite": 0,
+           "client_can_discuss": null,
+           "created_at": "2025-05-28",
+           "updated_at": "2025-05-28",
+           "enable_reminder": 1,
+           "last_reminder_sent": null,
+           "frequency_type": "weekly",
+           "day_of_week": 3,
+           "day_of_month": null,
+           "time_of_day": "14:30:00",
+           "enable_recurring_task": 1,
+           "recurrence_frequency": "monthly",
+           "recurrence_day_of_week": null,
+           "recurrence_day_of_month": 15,
+           "recurrence_month_of_year": null,
+           "recurrence_starts_from": "2025-06-01",
+           "recurrence_occurrences": 6,
+           "completed_occurrences": null,
+           "billing_type": "billable",
+           "completion_percentage": 0,
+           "task_list_id": null
           }
         headers: []
-        description: ''
+        description: 'Single task response'
+        custom: []
+      -
+        status: 200
+        content: |-
+          {
+            "status": false,
+            "message": "Tasks retrieved successfully.",
+            "data": {
+              "total": 25,
+              "data": [
+                {
+                  "id": 25,
+                  "workspace_id": 2,
+                  "title": "Test Task Title",
+                  "status": "Open",
+                  ...
+                }
+              ]
+            }
+          }
+        headers: []
+        description: 'Paginated task list'
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "message": "Task not found"
+          }
+        headers: []
+        description: 'Task not found'
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "message": "Project not found"
+          }
+        headers: []
+        description: 'Project or User not found'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/master-panel/create-tasks
+    metadata:
+      groupName: 'Task Management'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create a new task'
+      description: |-
+        This endpoint allows you to create a new task within a workspace and assign it to users.
+        It supports additional features like setting reminders and recurring schedules.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        name: title
+        description: 'The title of the task.'
+        required: true
+        example: 'Create new onboarding flow'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      status_id:
+        name: status_id
+        description: 'The ID of the task status.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      start_date:
+        name: start_date
+        description: 'The start date in `YYYY-MM-DD` format.'
+        required: true
+        example: '2025-06-01'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      due_date:
+        name: due_date
+        description: 'The due date in `YYYY-MM-DD` format.'
+        required: true
+        example: '2025-06-06'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      description:
+        name: description
+        description: 'The description of the task.'
+        required: false
+        example: 'Implement onboarding UI and logic.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      project:
+        name: project
+        description: 'The ID of the project to which the task belongs.'
+        required: true
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      priority_id:
+        name: priority_id
+        description: 'The ID of the priority level. Must exist in priorities table.'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      note:
+        name: note
+        description: 'Optional note for the task.'
+        required: false
+        example: 'Coordinate with HR and DevOps.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      billing_type:
+        name: billing_type
+        description: 'The billing type (none, billable, non-billable).'
+        required: false
+        example: billable
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      completion_percentage:
+        name: completion_percentage
+        description: 'Completion in steps of 10. One of: 0,10,...,100.'
+        required: true
+        example: 0
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      users_id:
+        name: users_id
+        description: 'User IDs assigned to the task.'
+        required: false
+        example:
+          - 2
+          - 3
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      enable_reminder:
+        name: enable_reminder
+        description: "Enable reminders. Must be 'on' if enabled."
+        required: false
+        example: 'on'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      frequency_type:
+        name: frequency_type
+        description: 'Frequency of reminder (daily, weekly, monthly).'
+        required: false
+        example: weekly
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      day_of_week:
+        name: day_of_week
+        description: 'Day of the week for reminders (1 = Monday).'
+        required: false
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      day_of_month:
+        name: day_of_month
+        description: 'Day of the month for reminders.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      time_of_day:
+        name: time_of_day
+        description: 'Time of day for reminder (HH:MM).'
+        required: false
+        example: '09:00'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      enable_recurring_task:
+        name: enable_recurring_task
+        description: "Enable recurring task. Must be 'on' if enabled."
+        required: false
+        example: 'on'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_frequency:
+        name: recurrence_frequency
+        description: 'Frequency (daily, weekly, monthly, yearly).'
+        required: false
+        example: monthly
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_day_of_week:
+        name: recurrence_day_of_week
+        description: 'Day of the week for recurrence.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_day_of_month:
+        name: recurrence_day_of_month
+        description: 'Day of the month for recurrence.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_month_of_year:
+        name: recurrence_month_of_year
+        description: 'Month of the year for recurrence.'
+        required: false
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_starts_from:
+        name: recurrence_starts_from
+        description: 'Date from which recurrence starts. Must be today or future.'
+        required: false
+        example: '2025-06-03'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_occurrences:
+        name: recurrence_occurrences
+        description: 'Number of occurrences.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      task_list_id:
+        name: task_list_id
+        description: 'The ID of the task list (if any). Must exist in task_lists table.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      title: 'Create new onboarding flow'
+      status_id: 1
+      start_date: '2025-06-01'
+      due_date: '2025-06-06'
+      description: 'Implement onboarding UI and logic.'
+      project: 15
+      priority_id: 2
+      note: 'Coordinate with HR and DevOps.'
+      billing_type: billable
+      completion_percentage: 0
+      users_id:
+        - 2
+        - 3
+      enable_reminder: 'on'
+      frequency_type: weekly
+      day_of_week: 2
+      day_of_month: 15
+      time_of_day: '09:00'
+      enable_recurring_task: 'on'
+      recurrence_frequency: monthly
+      recurrence_day_of_week: 3
+      recurrence_day_of_month: 10
+      recurrence_month_of_year: 6
+      recurrence_starts_from: '2025-06-03'
+      recurrence_occurrences: 5
+      task_list_id: 1
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Task created successfully.",
+            "id": 28,
+            "type": "task",
+            "parent_id": 15,
+            "parent_type": "project",
+            "Data": {
+              "id": 28,
+              "workspace_id": 2,
+              "title": "Create new onboarding flow",
+              "status": "Open",
+              "status_id": 1,
+              "priority": "low",
+              "priority_id": 2,
+              "users": [
+                {
+                  "id": 2,
+                  "first_name": "herry",
+                  "last_name": "porter",
+                  "email": "admin@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                },
+                {
+                  "id": 3,
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "email": "admin2@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                }
+              ],
+              "user_id": [2, 3],
+              "clients": [
+                {
+                  "id": 1,
+                  "first_name": "jerry",
+                  "last_name": "ginny",
+                  "email": "jg@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/gqHsvgmDBCbtf843SRYx31e6Zl51amPZY8eG05FB.jpg"
+                }
+              ],
+              "start_date": "2015-01-01",
+              "due_date": "2025-06-06",
+              "project": "New Project Title",
+              "project_id": 15,
+              "description": "Implement onboarding UI and logic.",
+              "note": "Coordinate with HR and DevOps.",
+              "favorite": 0,
+              "client_can_discuss": null,
+              "created_at": "2025-06-03",
+              "updated_at": "2025-06-03",
+              "enable_reminder": 1,
+              "last_reminder_sent": null,
+              "frequency_type": "weekly",
+              "day_of_week": 2,
+              "day_of_month": 15,
+              "time_of_day": "09:00:00",
+              "enable_recurring_task": 1,
+              "recurrence_frequency": "monthly",
+              "recurrence_day_of_week": 3,
+              "recurrence_day_of_month": 10,
+              "recurrence_month_of_year": 6,
+              "recurrence_starts_from": "2025-06-03",
+              "recurrence_occurrences": 5,
+              "completed_occurrences": null,
+              "billing_type": "billable",
+              "completion_percentage": 0,
+              "task_list_id": null
+            }
+          }
+        headers: []
+        description: 'Task created successfully'
         custom: []
       -
         status: 422
         content: |-
           {
-            "message": "The given data was invalid.",
-            "errors": {
-              "content": ["The content field is required."]
-            }
+            "error": true,
+            "message": "Invalid date format. Please use yyyy-mm-dd.",
+            "exception": "InvalidArgumentException message here..."
           }
         headers: []
-        description: ''
+        description: 'Validation error'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An error occurred while creating the task. SQLSTATE[23000]: Integrity constraint violation: 1452..."
+          }
+        headers: []
+        description: 'Unexpected server error'
         custom: []
     responseFields: []
     auth: []
@@ -153,15 +700,15 @@ endpoints:
   -
     httpMethods:
       - PUT
-    uri: 'api/master-panel/comments/{id}'
+    uri: 'api/master-panel/update-tasks/{id}'
     metadata:
-      groupName: 'Task Comments'
+      groupName: 'Task Management'
       groupDescription: |-
-        This endpoint updates the content of an existing comment. It also detects user mentions
-        (e.g., @username) in the updated content and sends mention notifications accordingly.
+        Validates and updates the specified task. Handles status changes,
+        reminders, recurring tasks, user assignments, and sends notifications.
       subgroup: ''
       subgroupDescription: ''
-      title: "Update a comment's content."
+      title: 'Update an existing task.'
       description: ''
       authenticated: false
       custom: []
@@ -171,7 +718,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the comment.'
+        description: 'The ID of the update task.'
         required: true
         example: consequatur
         type: string
@@ -184,29 +731,273 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      comment_id:
-        name: comment_id
-        description: 'The ID of the comment to update.'
+      id:
+        name: id
+        description: 'The ID of the task to update. Must exist in tasks table.'
         required: true
-        example: 15
+        example: 17
         type: integer
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         custom: []
-      content:
-        name: content
-        description: 'The updated content of the comment. User mentions using @username will be parsed and linked.'
+      title:
+        name: title
+        description: 'The title of the task.'
         required: true
-        example: 'Updated comment mentioning @janedoe.'
+        example: consequatur
         type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      status_id:
+        name: status_id
+        description: 'The status ID for the task.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      priority_id:
+        name: priority_id
+        description: 'The priority ID for the task.'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      start_date:
+        name: start_date
+        description: 'The start date (YYYY-MM-DD). Must be before or equal to due_date.'
+        required: true
+        example: consequatur
+        type: date
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      due_date:
+        name: due_date
+        description: 'The due date (YYYY-MM-DD).'
+        required: true
+        example: consequatur
+        type: date
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      description:
+        name: description
+        description: 'Task description.'
+        required: false
+        example: 'Dolores dolorum amet iste laborum eius est dolor.'
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      note:
+        name: note
+        description: 'Additional notes.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      billing_type:
+        name: billing_type
+        description: 'Billing type. Allowed values: none, billable, non-billable.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      completion_percentage:
+        name: completion_percentage
+        description: 'Completion percentage. Allowed values: 0,10,20,...,100.'
+        required: true
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      enable_reminder:
+        name: enable_reminder
+        description: '"on" to enable reminder.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      frequency_type:
+        name: frequency_type
+        description: 'Reminder frequency. Allowed values: daily, weekly, monthly.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      day_of_week:
+        name: day_of_week
+        description: 'Day of week for weekly reminder (1-7).'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      day_of_month:
+        name: day_of_month
+        description: 'Day of month for monthly reminder (1-31).'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      time_of_day:
+        name: time_of_day
+        description: 'Reminder time in HH:mm format.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      enable_recurring_task:
+        name: enable_recurring_task
+        description: '"on" to enable recurring task.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_frequency:
+        name: recurrence_frequency
+        description: 'Recurrence frequency. Allowed: daily, weekly, monthly, yearly.'
+        required: false
+        example: consequatur
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_day_of_week:
+        name: recurrence_day_of_week
+        description: 'Recurrence day of week (1-7).'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_day_of_month:
+        name: recurrence_day_of_month
+        description: 'Recurrence day of month (1-31).'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_month_of_year:
+        name: recurrence_month_of_year
+        description: 'Recurrence month of year (1-12).'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_starts_from:
+        name: recurrence_starts_from
+        description: 'Recurrence start date (YYYY-MM-DD), must be today or later.'
+        required: false
+        example: consequatur
+        type: date|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      recurrence_occurrences:
+        name: recurrence_occurrences
+        description: 'Number of recurrence occurrences.'
+        required: false
+        example: consequatur
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      user_id:
+        name: user_id
+        description: 'Array of user IDs to assign to the task.'
+        required: false
+        example:
+          - 17
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      isApi:
+        name: isApi
+        description: 'Internal flag indicating API request.'
+        required: false
+        example: consequatur
+        type: bool|null
+        enumValues: []
+        exampleWasSpecified: false
         nullable: false
         custom: []
     cleanBodyParameters:
-      comment_id: 15
-      content: 'Updated comment mentioning @janedoe.'
+      id: 17
+      title: consequatur
+      status_id: 17
+      priority_id: consequatur
+      start_date: consequatur
+      due_date: consequatur
+      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      note: consequatur
+      billing_type: consequatur
+      completion_percentage: 17
+      enable_reminder: consequatur
+      frequency_type: consequatur
+      day_of_week: consequatur
+      day_of_month: consequatur
+      time_of_day: consequatur
+      enable_recurring_task: consequatur
+      recurrence_frequency: consequatur
+      recurrence_day_of_week: consequatur
+      recurrence_day_of_month: consequatur
+      recurrence_month_of_year: consequatur
+      recurrence_starts_from: consequatur
+      recurrence_occurrences: consequatur
+      user_id:
+        - 17
+      isApi: consequatur
     fileParameters: []
     responses:
       -
@@ -214,19 +1005,103 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "Comment updated successfully.",
-            "id": 15,
-            "type": "project"
+            "message": "Task updated successfully.",
+            "id": 23,
+            "parent_id": 2,
+            "parent_type": "project",
+            "data": {
+              "id": 23,
+              "workspace_id": 2,
+              "title": "Update client onboarding flow",
+              "status": "Open",
+              "status_id": 1,
+              "priority": "high",
+              "priority_id": 1,
+              "users": [
+                {
+                  "id": 3,
+                  "first_name": "John",
+                  "last_name": "Doe",
+                  "email": "admin2@gmail.com",
+                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+                },
+                ...
+              ],
+              "user_id": [3,5,6],
+              "clients": [],
+              "start_date": "2025-05-01",
+              "due_date": "2025-05-31",
+              "project": "favorite project",
+              "project_id": 2,
+              "description": "New UI design changes for onboarding.",
+              "note": "Prioritize before end of Q2.",
+              "favorite": 0,
+              "client_can_discuss": null,
+              "created_at": "2025-05-28",
+              "updated_at": "2025-06-03",
+              "enable_reminder": 1,
+              "last_reminder_sent": null,
+              "frequency_type": "weekly",
+              "day_of_week": 2,
+              "day_of_month": null,
+              "time_of_day": "10:00:00",
+              "enable_recurring_task": 1,
+              "recurrence_frequency": "monthly",
+              "recurrence_day_of_week": 2,
+              "recurrence_day_of_month": 5,
+              "recurrence_month_of_year": 12,
+              "recurrence_starts_from": "2025-06-06",
+              "recurrence_occurrences": 10,
+              "completed_occurrences": null,
+              "billing_type": "billable",
+              "completion_percentage": 40,
+              "task_list_id": null
+            }
           }
         headers: []
         description: ''
         custom: []
       -
-        status: 400
+        status: 403
         content: |-
           {
             "error": true,
-            "message": "Comment couldn't updated."
+            "message": "You are not authorized to set this status."
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": "The given data was invalid.",
+            "errors": {
+              "title": ["The title field is required."],
+              "status_id": ["The status id must exist in tasks table."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": "Invalid date format. Please use yyyy-mm-dd.",
+            "exception": "DateTimeException message"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An error occurred while updating the task. <Exception message>"
           }
         headers: []
         description: ''
@@ -240,15 +1115,16 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/master-panel/comments/{id}'
+    uri: 'api/master-panel/delete-tasks/{id}'
     metadata:
-      groupName: 'Task Comments'
+      groupName: 'Task Management'
       groupDescription: |-
-        This endpoint deletes a comment by its ID, including all of its associated attachments
-        (files uploaded with the comment). Files will be removed from storage as well.
+        This endpoint deletes a task along with its associated comments and their attachments.
+        All attachments are deleted from the `public` storage disk.
+        Uses the DeletionService to handle the final removal process.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Permanently delete a comment and its attachments.'
+      title: 'Delete a specific task by ID.'
       description: ''
       authenticated: false
       custom: []
@@ -258,31 +1134,20 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the comment.'
+        description: 'The ID of the task to delete.'
         required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      id: consequatur
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      comment_id:
-        name: comment_id
-        description: 'The ID of the comment to delete.'
-        required: true
-        example: 12
+        example: 23
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-    cleanBodyParameters:
-      comment_id: 12
+    cleanUrlParameters:
+      id: 23
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses:
       -
@@ -290,9 +1155,197 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "Comment deleted successfully.",
+            "message": "Task deleted successfully.",
+            "data": {
+              "id": 23,
+              "title": "Update client onboarding flow",
+              "parent_id": 2,
+              "parent_type": "project",
+              "data": []
+            }
+          }
+        headers: []
+        description: 'Task deleted successfully'
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "Task not found.",
+            "data": []
+          }
+        headers: []
+        description: 'Task not found'
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An unexpected error occurred while deleting the task.",
+            "data": []
+          }
+        headers: []
+        description: 'Unexpected error'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: api/master-panel/destroy-multiple-tasks
+    metadata:
+      groupName: 'Task Management'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete multiple tasks'
+      description: 'This endpoint deletes multiple tasks by their IDs. All associated comments and attachments are also permanently removed.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      ids:
+        name: ids
+        description: 'An array of task IDs to be deleted.'
+        required: true
+        example:
+          - 101
+          - 102
+          - 103
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      'ids.*':
+        name: 'ids.*'
+        description: 'The ID of an individual task to delete. Must exist in the tasks table.'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      ids:
+        - 101
+        - 102
+        - 103
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Task(s) deleted successfully.",
+            "id": [101, 102],
+            "titles": ["Task One", "Task Two"],
+            "parent_id": [5, 6],
+            "parent_type": "project"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "ids.0": ["The selected ids.0 is invalid."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - POST
+    uri: 'api/master-panel/tasks/{id}/duplicate'
+    metadata:
+      groupName: 'Task Management'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Duplicate a task.'
+      description: |-
+        This endpoint allows you to duplicate an existing task. You can optionally set a custom title for the duplicated task.
+        Related data such as assigned users will also be duplicated.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the task to duplicate.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 12
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      title:
+        name: title
+        description: 'optional A new title for the duplicated task. If not provided, the system will use a default naming convention.'
+        required: false
+        example: 'Copy of Design Review Task'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      reload:
+        name: reload
+        description: 'optional Set to "true" if you want to trigger a session flash message (usually used for reloading UI).'
+        required: false
+        example: 'true'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      title: 'Copy of Design Review Task'
+      reload: 'true'
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Task duplicated successfully.",
             "id": 12,
-            "type": "project"
+            "parent_id": 5,
+            "parent_type": "project"
           }
         headers: []
         description: ''
@@ -302,7 +1355,7 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "Comment couldn't deleted."
+            "message": "Task duplication failed."
           }
         headers: []
         description: ''

@@ -93,7 +93,7 @@ class UserController extends Controller
  * @bodyParam require_ev boolean Whether email verification is required. 1 = yes, 0 = no. Example: 1
  * @bodyParam status boolean Whether the user account should be active immediately. Example: 1
  *
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  *
@@ -367,7 +367,7 @@ public function update_user(Request $request, $id)
  *
  * @urlParam id integer required The ID of the user to update. Example: 18
  *
- * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header workspace_id 2
  * @header Content-Type application/json
  *
@@ -524,7 +524,7 @@ public function update(Request $request, $id)
  * Delete a user
  *@group User Managemant
  * This endpoint deletes a user by their ID. It also removes all associated todos for the user. If the user does not exist, a 404 error is returned.
-  * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header workspace_id 2
  * @urlParam id integer required The ID of the user to delete. Example: 6
  *
@@ -918,54 +918,48 @@ public function update(Request $request, $id)
         $security_settings = get_settings('security_settings', true);
         return $security_settings[$name] ?? $default;
     }
+/**
+ * Register a new user
+ *
+ * This endpoint allows a new user to register with first name, last name, email, phone, and password.
+ * The system ensures the email and phone are unique across both users and clients.
+ * Upon successful registration, the user is assigned the "admin" role, an admin record is created, and a token is issued.
+ *
+ * @group  User Authentication
+ *
+ * @bodyParam first_name string required The first name of the user. Must not contain numbers. Example: John
+ * @bodyParam last_name string required The last name of the user. Must not contain numbers. Example: ramanandi
+ * @bodyParam email string required Must be a valid email and unique across users and clients. Example: bhurabhai@example.com
+ * @bodyParam phone string required Must be a string of digits and unique among users. Example: 9876543210
+ * @bodyParam password string required Minimum 6 characters. Example: secret123
+ * @bodyParam password_confirmation string required Must match the password. Example: secret123
+ *
+ * @response 200 scenario="Successful Registration" {
+ *   "error": false,
+ *   "message": "User registered successfully",
+ *   "redirect_url": "http://localhost:8000/login",
+ *   "access_token": "1|ABCDEF1234567890...",
+ *   "token_type": "Bearer"
+ * }
+ *
+ * @response 422 scenario="Validation Failed" {
+ *   "error": true,
+ *   "message": {
+ *     "email": [
+ *       "The email has already been taken in users or clients."
+ *     ],
+ *     "password": [
+ *       "Password must be at least 6 characters long."
+ *     ]
+ *   }
+ * }
+ *
+ * @response 500 scenario="Server Error" {
+ *   "error": true,
+ *   "message": "Something went wrong on the server."
+ * }
+ */
 
-    /**
-     * Register a New User
-     *
-     * This endpoint allows a user to register by providing first name, last name, email, password, confirm password, and phone number.
-     * On success, it returns the user data along with an access token.
-     *
-     *  @group  User Authentication
-     * @bodyParam first_name string required The user's first name. Example: harpalsinh
-     * @bodyParam last_name string required The user's last name. Example: sarvaiya
-     * @bodyParam email string required The user's email address. Must be unique. Example: harpalsinh@gmail.com
-     * @bodyParam password string required The user's password. Minimum 6 characters. Example: password
-     * @bodyParam confirm_password string required Must match the password field. Example: password
-     * @bodyParam phone_number string required The user's phone number. Example: +1234567890
-     *
-     * @response 201 {
-     *   "status": true,
-     *   "message": "Registration successful.",
-     *   "data": {
-     *     "user": {
-     *       "id": 1,
-     *       "first_name": "harpalsinh",
-     *       "last_name": "sarvaiya",
-     *       "email": "harpalsinh@gmail.com",
-     *       "phone_number": "+1234567890"
-     *     },
-     *     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
-     *   }
-     * }
-     *
-     * @response 422 {
-     *   "status": false,
-     *   "message": "The given data was invalid.",
-     *   "errors": {
-     *     "first_name": ["The first name field is required."],
-     *     "last_name": ["The last name field is required."],
-     *     "email": ["The email has already been taken."],
-     *     "password": ["The password must be at least 6 characters."],
-     *     "confirm_password": ["The confirm password and password must match."],
-     *     "phone_number": ["The phone number field is required."]
-     *   }
-     * }
-     *
-     * @response 500 {
-     *   "status": false,
-     *   "message": "Something went wrong. Please try again later."
-     * }
-     */
 
     public function register(Request $request)
     {
@@ -1218,7 +1212,7 @@ public function update(Request $request, $id)
  * @group User Managemant
  * This API endpoint retrieves a list of users within the current workspace or a specific user by ID.
  * Supports filtering by search term, status, roles, type (project/task), sorting, and pagination.
-  * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header workspace_id 2
  * @urlParam id integer optional The ID of the user to retrieve. Leave blank to get all users. Example: 5
  *

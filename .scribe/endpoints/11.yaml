@@ -1,20 +1,110 @@
-name: 'Task status and performance'
+name: 'Task Media'
 description: |-
-  This endpoint allows you to update the status of a task by providing the task ID and the new status ID.
-  It logs the status change in the task's status timeline and notifies assigned users and clients.
+  Upload one or more media files to an existing task using its ID. The uploaded files will be stored
+  in the `task-media` media collection using Spatie MediaLibrary. This endpoint accepts multiple files.
 endpoints:
   -
     httpMethods:
       - POST
-    uri: 'api/master-panel/task/{id}/status/{newStatus}'
+    uri: api/master-panel/tasks/upload-media
     metadata:
-      groupName: 'Task status and performance'
+      groupName: 'Task Media'
       groupDescription: |-
-        This endpoint allows you to update the status of a task by providing the task ID and the new status ID.
-        It logs the status change in the task's status timeline and notifies assigned users and clients.
+        Upload one or more media files to an existing task using its ID. The uploaded files will be stored
+        in the `task-media` media collection using Spatie MediaLibrary. This endpoint accepts multiple files.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update the status of a task.'
+      title: 'Upload media files to a task.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The ID of the task to which the files should be uploaded.'
+        required: true
+        example: 25
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      media_files:
+        name: media_files
+        description: 'The media files to upload. Must be provided as an array of files.'
+        required: true
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      id: 25
+    fileParameters:
+      media_files:
+        - null
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "File(s) uploaded successfully.",
+            "id": [15, 16],
+            "type": "media",
+            "parent_type": "task",
+            "parent_id": 25
+          }
+        headers: []
+        description: Success
+        custom: []
+      -
+        status: 200
+        content: |-
+          {
+            "error": true,
+            "message": "No file(s) chosen."
+          }
+        headers: []
+        description: 'No files uploaded'
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "id": ["The selected id is invalid."]
+            }
+          }
+        headers: []
+        description: 'Missing or invalid task ID'
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/master-panel/tasks/{id}/media'
+    metadata:
+      groupName: 'Task Media'
+      groupDescription: 'Returns a list of media files associated with a specific task. Supports optional searching and sorting.'
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get task media list.'
       description: ''
       authenticated: false
       custom: []
@@ -24,7 +114,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the task.'
+        description: 'The ID of the task to get media for.'
         required: true
         example: 25
         type: integer
@@ -32,56 +122,117 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      newStatus:
-        name: newStatus
-        description: 'The ID of the new status.'
+    cleanUrlParameters:
+      id: 25
+    queryParameters:
+      search:
+        name: search
+        description: 'Optional search term to filter by file name, ID, or creation date.'
+        required: false
+        example: image
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'Field to sort by. Default is `id`.'
+        required: false
+        example: file_name
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Sorting direction: `asc` or `desc`. Default is `desc`.'
+        required: false
+        example: asc
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      search: image
+      sort: file_name
+      order: asc
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "rows": [
+              {
+                "id": 16,
+                "file": "<a href=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" data-lightbox=\"task-media\"><img src=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" alt=\"hmgoepprod.jpg\" width=\"50\"></a>",
+                "file_name": "hmgoepprod.jpg",
+                "file_size": "67.54 KB",
+                "created_at": "2025-06-04",
+                "updated_at": "2025-06-04",
+                "actions": "<a href=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" title=\"Download\" download><i class=\"bx bx-download bx-sm\"></i></a><button title=\"Delete\" type=\"button\" class=\"btn delete\" data-id=\"16\" data-type=\"task-media\" data-table=\"task_media_table\"><i class=\"bx bx-trash text-danger\"></i></button>"
+              }
+            ],
+            "total": 2
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/master-panel/tasks/media/{id}'
+    metadata:
+      groupName: 'Task Media'
+      groupDescription: 'Deletes a specific media file associated with a task using its media ID. This removes the file from both the database and the storage disk.'
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a media file from a task.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the medium.'
         required: true
-        example: 8
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      mediaId:
+        name: mediaId
+        description: 'The ID of the media file to delete.'
+        required: true
+        example: 45
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 25
-      newStatus: 8
-    queryParameters:
-      isApi:
-        name: isApi
-        description: 'Optional. Set to true if calling from API to get a structured API response.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanQueryParameters:
-      isApi: true
-    bodyParameters:
-      id:
-        name: id
-        description: ''
-        required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      statusId:
-        name: statusId
-        description: ''
-        required: true
-        example: consequatur
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-    cleanBodyParameters:
       id: consequatur
-      statusId: consequatur
+      mediaId: 45
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses:
       -
@@ -89,44 +240,12 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "Status updated successfully.",
-            "id": "25",
-            "type": "task",
-            "activity_message": "herry porter updated task status from Approved to Completed",
-            "data": {
-              "id": 25,
-              "workspace_id": 2,
-              "title": "Test Task Title",
-              "status": "Approved",
-              "status_id": 8,
-              "priority": "low",
-              "priority_id": 2,
-              "users": [
-                {
-                  "id": 2,
-                  "first_name": "herry",
-                  "last_name": "porter",
-                  "email": "admin@gmail.com",
-                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                }
-              ],
-              "start_date": "2025-06-01",
-              "due_date": "2025-06-10",
-              "project": "favorite project",
-              "project_id": 2,
-              "description": "This is a test task description.",
-              ...
-            }
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 403
-        content: |-
-          {
-            "error": true,
-            "message": "You are not authorized to set this status."
+            "message": "File deleted successfully.",
+            "id": 45,
+            "title": "example-file.pdf",
+            "parent_id": 23,
+            "type": "media",
+            "parent_type": "task"
           }
         headers: []
         description: ''
@@ -135,254 +254,8 @@ endpoints:
         status: 404
         content: |-
           {
-            "message": "No query results for model [App\\Models\\Task] 999"
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 500
-        content: |-
-          {
             "error": true,
-            "message": "Task status couldn't updated."
-          }
-        headers: []
-        description: ''
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - POST
-    uri: api/master-panel/tasks/save-view-preference
-    metadata:
-      groupName: 'Task status and performance'
-      groupDescription: |-
-        Stores the default task view (e.g., board, list, calendar) for the currently authenticated user or client.
-        This preference determines how tasks are displayed by default in the UI.
-
-        Requires the user to be authenticated.
-      subgroup: ''
-      subgroupDescription: ''
-      title: "Save User's Default Task View Preference"
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      view:
-        name: view
-        description: 'The view preference to set.'
-        required: true
-        example: board
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanBodyParameters:
-      view: board
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: |-
-          {
-            "error": false,
-            "message": "Default View Set Successfully."
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 401
-        content: |-
-          {
-            "message": "Unauthenticated."
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 422
-        content: |-
-          {
-            "message": "The given data was invalid.",
-            "errors": {
-              "view": [
-                "The view field is required."
-              ]
-            }
-          }
-        headers: []
-        description: ''
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - POST
-    uri: api/master-panel/tasks/update-priority
-    metadata:
-      groupName: 'Task status and performance'
-      groupDescription: 'This endpoint updates the priority of a specific task. You can provide a new priority or remove it by passing `null` or `0`.'
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update Task Priority'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      id:
-        name: id
-        description: "optional The ID of the task. If provided in the URL, it doesn't need to be in the body."
-        required: false
-        example: 25
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      id: 25
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      id:
-        name: id
-        description: 'The ID of the task to update. Required if not provided in the URL.'
-        required: true
-        example: 25
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      priorityId:
-        name: priorityId
-        description: 'nullable The new priority ID. Use `null` or `0` to remove the priority.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanBodyParameters:
-      id: 25
-      priorityId: 1
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: |-
-          {
-            "error": false,
-            "message": "Priority updated successfully.",
-            "id": 25,
-            "type": "task",
-            "activity_message": "herry porter updated task priority from low to high",
-            "data": {
-              "id": 25,
-              "workspace_id": 2,
-              "title": "Test Task Title",
-              "status": "Approved",
-              "status_id": 8,
-              "priority": "high",
-              "priority_id": 1,
-              "users": [
-                {
-                  "id": 2,
-                  "first_name": "herry",
-                  "last_name": "porter",
-                  "email": "admin@gmail.com",
-                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                },
-                {
-                  "id": 3,
-                  "first_name": "John",
-                  "last_name": "Doe",
-                  "email": "admin2@gmail.com",
-                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                }
-              ],
-              "user_id": [2, 3],
-              "clients": [],
-              "start_date": "2025-06-01",
-              "due_date": "2025-06-10",
-              "project": "favorite project",
-              "project_id": 2,
-              "description": "This is a test task description.",
-              "note": "Optional note about the task.",
-              "favorite": 0,
-              "client_can_discuss": null,
-              "created_at": "2025-05-28",
-              "updated_at": "2025-06-03",
-              "enable_reminder": 1,
-              "last_reminder_sent": null,
-              "frequency_type": "weekly",
-              "day_of_week": 3,
-              "time_of_day": "14:30:00",
-              "enable_recurring_task": 1,
-              "recurrence_frequency": "monthly",
-              "recurrence_day_of_month": 15,
-              "recurrence_starts_from": "2025-06-01",
-              "recurrence_occurrences": 6,
-              "billing_type": "billable",
-              "completion_percentage": 0,
-              "task_list_id": null
-            }
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 400
-        content: |-
-          {
-            "error": true,
-            "message": "No priority change detected."
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 422
-        content: |-
-          {
-            "message": "The given data was invalid.",
-            "errors": {
-              "id": ["The id field is required."],
-              "priorityId": ["The selected priorityId is invalid."]
-            }
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 500
-        content: |-
-          {
-            "error": true,
-            "message": "Priority couldn’t be updated."
+            "message": "File not found."
           }
         headers: []
         description: ''

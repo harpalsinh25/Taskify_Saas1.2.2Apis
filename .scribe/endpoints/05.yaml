@@ -10,17 +10,14 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Store a new project milestone.'
-      description: |-
-        This endpoint allows users to create a new milestone for a project. It validates required fields, formats dates,
-        sets the workspace and creator info, and stores the milestone in the database.
+      title: 'Create a new milestone for a project'
+      description: 'This endpoint allows users to create a milestone under a specific project.'
       authenticated: false
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
+      workspace_id: 'integer required The ID of the workspace. Example: 2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -28,9 +25,9 @@ endpoints:
     bodyParameters:
       project_id:
         name: project_id
-        description: 'The ID of the project this milestone belongs to.'
+        description: 'The ID of the project the milestone belongs to.'
         required: true
-        example: 1
+        example: 5
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -40,7 +37,7 @@ endpoints:
         name: title
         description: 'The title of the milestone.'
         required: true
-        example: '"Design Phase"'
+        example: 'Final Design Review'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -48,9 +45,9 @@ endpoints:
         custom: []
       status:
         name: status
-        description: 'The status of the milestone (e.g., pending, in_progress, completed).'
+        description: 'The status of the milestone. Must be one of: incomplete, complete, pending.'
         required: true
-        example: '"pending"'
+        example: incomplete
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -58,64 +55,66 @@ endpoints:
         custom: []
       start_date:
         name: start_date
-        description: 'The start date of the milestone. Must be in Y-m-d format and before or equal to end_date.'
+        description: 'The start date of the milestone in the current PHP date format. Must be before or equal to end_date.'
         required: true
-        example: '2025-05-20'
-        type: date
+        example: '2025-06-10'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       end_date:
         name: end_date
-        description: 'The end date of the milestone. Must be in Y-m-d format.'
+        description: 'The end date of the milestone.'
         required: true
-        example: '2025-06-15'
-        type: date
+        example: '2025-06-20'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       cost:
         name: cost
-        description: 'The cost of the milestone. Must be a valid number (integer or decimal).'
+        description: 'The cost of the milestone.'
         required: true
-        example: '1200.50'
-        type: decimal
+        example: '2000.50'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       description:
         name: description
-        description: 'optional A description of the milestone.'
+        description: 'The description of the milestone (optional).'
         required: false
-        example: '"Initial design and prototyping"'
+        example: 'All screens finalized and approved by client.'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: true
         custom: []
     cleanBodyParameters:
-      project_id: 1
-      title: '"Design Phase"'
-      status: '"pending"'
-      start_date: '2025-05-20'
-      end_date: '2025-06-15'
-      cost: '1200.50'
-      description: '"Initial design and prototyping"'
+      project_id: 5
+      title: 'Final Design Review'
+      status: incomplete
+      start_date: '2025-06-10'
+      end_date: '2025-06-20'
+      cost: '2000.50'
+      description: 'All screens finalized and approved by client.'
     fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-           "error": false,
-           "message": "Milestone created successfully.",
-           "id": 12,
-           "type": "milestone",
-           "parent_type": "project",
-           "parent_id": 1
+            "error": false,
+            "message": "Milestone created successfully.",
+            "data": {
+              "id": 12,
+              "type": "milestone",
+              "parent_type": "project",
+              "parent_id": 5
+            }
           }
         headers: []
         description: ''
@@ -124,12 +123,11 @@ endpoints:
         status: 422
         content: |-
           {
-           "message": "The given data was invalid.",
-           "errors": {
-             "title": ["The title field is required."],
-             "cost": ["The cost format is invalid."],
-             "start_date": ["The start date must be a date before or equal to end date."]
-           }
+            "message": "The given data was invalid.",
+            "errors": {
+              "project_id": ["The project_id field is required."],
+              "title": ["The title field is required."]
+            }
           }
         headers: []
         description: ''
@@ -138,10 +136,8 @@ endpoints:
         status: 500
         content: |-
           {
-           "message": "The separation symbol could not be found\r\nTrailing data",
-           "exception": "Carbon\\Exceptions\\InvalidFormatException",
-           "file": ".../vendor/nesbot/carbon/src/Carbon/Traits/Creator.php",
-           ...
+            "error": true,
+            "message": "Milestone couldn't be created: Milestone creation failed due to mass assignment or DB error."
           }
         headers: []
         description: ''

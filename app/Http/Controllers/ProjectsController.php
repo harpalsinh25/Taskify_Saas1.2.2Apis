@@ -181,7 +181,7 @@ class ProjectsController extends Controller
  *
  * @bodyParam title string required The title of the project. Example: Website Redesign
  * @bodyParam status_id int required The status ID for the project. Must exist in statuses table. Example: 1
- * @bodyParam priority_id int The priority ID. Must exist in priorities table. Example: 1
+ * @bodyParam priority_id int The priority ID. Must exist in priorities table. Example: 4
  * @bodyParam start_date string The project start date in `Y-m-d` format. Must be before or equal to `end_date`. Example: 2025-05-01
  * @bodyParam end_date string The project end date in `Y-m-d` format. Must be after or equal to `start_date`. Example: 2025-05-31
  * @bodyParam budget string The budget amount (formatted string or numeric). Example: 5000
@@ -189,9 +189,10 @@ class ProjectsController extends Controller
  * @bodyParam description string Project description (optional). Example: A complete redesign of the company website.
  * @bodyParam note string Internal note (optional). Example: Client prefers Figma for designs.
  * @bodyParam enable_tasks_time_entries boolean Whether time entries are enabled. Example: true
- * @bodyParam user_id array[int] Array of user IDs to assign. Example: [1, 2, 3]
- * @bodyParam client_id array[int] Array of client IDs to assign. Example: [1, 43]
- * @bodyParam tag_ids array[int] Array of tag IDs to attach. Example: [1]
+  * @bodyParam user_id int[] required Array of user IDs to assign. Example: [1, 2, 3]
+ * @bodyParam client_id int[] required Array of client IDs to assign. Example: [1, 43]
+ * @bodyParam tag_ids int[] required Array of tag IDs to attach. Example: [1]
+
  * @bodyParam isApi boolean Optional flag to determine API-specific behavior. Example: true
  * @bodyParam workspace_id int Workspace Id . Must exist in wprkspaces table . example:2
  *
@@ -441,11 +442,11 @@ public function store(Request $request)
  * @bodyParam task_accessibility string required The task accessibility setting. Example: project_users
  * @bodyParam description string A brief description of the project. Nullable. Example: "A complete redesign of the company website."
  * @bodyParam note string Additional notes for the project. Nullable. Example: "Client prefers Figma for designs."
- * @bodyParam user_id array[int] Array of user IDs to assign to the project. Example: [2, 3]
- * @bodyParam client_id array[int] Array of client IDs to assign to the project. Example: [1, 5]
- * @bodyParam tag_ids array[int] Array of tag IDs to associate with the project. Example: [1]
+ *  @bodyParam user_id int[] required Array of user IDs to assign. Example: [1, 2, 3]
+ * @bodyParam client_id int[] required Array of client IDs to assign. Example: [1, 43]
+ * @bodyParam tag_ids int[] required Array of tag IDs to attach. Example: [1]
  * @bodyParam enable_tasks_time_entries boolean Whether to enable time entries on tasks. Example: true
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  * @response 200 scenario="Success" {
@@ -646,7 +647,7 @@ public function update(Request $request)
  * Files are permanently removed from the public storage disk.
  *@group Project Managemant
  * @urlParam id integer required The ID of the project to delete. Example: 85
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  * @response 200 {
@@ -708,7 +709,7 @@ else {
  *@group Project Managemant
  * @bodyParam ids array required An array of project IDs to delete. Example: [1, 2, 3]
  * @bodyParam ids.* integer required Each ID must exist in the projects table.
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  * @response 200 {
@@ -957,7 +958,7 @@ else {
  * @queryParam project_end_date_from date optional Filter by project end date from (YYYY-MM-DD). Example: 2025-01-01
  * @queryParam project_end_date_to date optional Filter by project end date to (YYYY-MM-DD). Example: 2025-12-31
  * @queryParam is_favorites boolean optional Filter for favorite projects. Accepts 1 or 0. Example: 1
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  * @response 200 scenario="Single project found" {
@@ -1224,7 +1225,7 @@ public function apiList(Request $request, $id = null)
      * }
      */
 
-   /* public function update_favorite(Request $request, $id)
+    public function update_favorite(Request $request, $id)
     {
         $isApi = request()->get('isApi', false);
         try {
@@ -1256,43 +1257,9 @@ public function apiList(Request $request, $id = null)
              ], 500);
          }
      }
-*/
 
 
-public function update_favorite(Request $request, $id)
-    {
-        $isApi = request()->get('isApi', false);
-        try {
-             $request->validate([
-                'is_favorite' => 'required|integer|in:0,1',
-            ]);
-        $project = Project::find($id);
-        if (!$project) {
-            return response()->json(['error' => true, 'message' => 'Project not found']);
-        }
 
-
-        // Update the is_favorite column
-        $project->is_favorite = $request->input('is_favorite');
-        $project->save();
-
-        return formatApiResponse(
-                false,
-                'Project favorite status updated successfully',
-                ['data' => formatProject($project)]
-            );
-     } catch (ValidationException $e) {
-             // dd($e->errors());
-             return formatApiValidationError($isApi, $e->errors());
-         } catch (\Exception $e) {
-            //  dd($e->getMessage());
-             // Handle any unexpected errors
-             return response()->json([
-             'error' => true,
-                 'message' => 'An error occurred while updating the project favorite status.'
-             ], 500);
-         }
-     }
 
     /**
  * Duplicate a project.
@@ -1515,7 +1482,9 @@ public function update_favorite(Request $request, $id)
  * }
  */
 
-    public function get_media($id)
+
+
+  public function get_media($id)
 {
     $isApi = request()->get('isApi', false);
     $search = request('search');
@@ -1524,12 +1493,13 @@ public function update_favorite(Request $request, $id)
 
     $project = Project::findOrFail($id);
     $media = $project->getMedia('project-media');
+    // dd($media); // Debug media collection
 
-    // Debug media count and dump raw
-    // dd('Media count: ' . $media->count(), $media->toArray());
+    //    dd('Media count: ' . $media->count(), $media->toArray()); // Debug media count and dump raw
+
 
     // Skip filtering temporarily for debug
-    /*
+
     if ($search) {
         $media = $media->filter(function ($mediaItem) use ($search) {
             return (
@@ -1539,7 +1509,7 @@ public function update_favorite(Request $request, $id)
             );
         });
     }
-    */
+
 
     $formattedMedia = $media->map(function ($mediaItem) {
         $isPublicDisk = $mediaItem->disk == 'public' ? 1 : 0;
@@ -1708,47 +1678,48 @@ public function update_favorite(Request $request, $id)
         }
         return response()->json(['error' => false, 'message' => 'Files(s) deleted successfully.', 'id' => $deletedIds, 'titles' => $deletedTitles, 'parent_id' => $parentIds, 'type' => 'media', 'parent_type' => 'project']);
     }
-    /**
- * Store a new project milestone.
+  /**
+ * Create a new milestone for a project
  *
- * This endpoint allows users to create a new milestone for a project. It validates required fields, formats dates,
- * sets the workspace and creator info, and stores the milestone in the database.
- *@group Project Milestones
- * @bodyParam project_id integer required The ID of the project this milestone belongs to. Example: 1
- * @bodyParam title string required The title of the milestone. Example: "Design Phase"
- * @bodyParam status string required The status of the milestone (e.g., pending, in_progress, completed). Example: "pending"
- * @bodyParam start_date date required The start date of the milestone. Must be in Y-m-d format and before or equal to end_date. Example: 2025-05-20
- * @bodyParam end_date date required The end date of the milestone. Must be in Y-m-d format. Example: 2025-06-15
- * @bodyParam cost decimal required The cost of the milestone. Must be a valid number (integer or decimal). Example: 1200.50
- * @bodyParam description string optional A description of the milestone. Example: "Initial design and prototyping"
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
+ * This endpoint allows users to create a milestone under a specific project.
+ *
+ * @group Project Milestones
+ *
+ * @header workspace_id integer required The ID of the workspace. Example: 2
+ *
+ * @bodyParam project_id int required The ID of the project the milestone belongs to. Example: 5
+ * @bodyParam title string required The title of the milestone. Example: Final Design Review
+ * @bodyParam status string required The status of the milestone. Must be one of: incomplete, complete, pending. Example: incomplete
+ * @bodyParam start_date string required The start date of the milestone in the current PHP date format. Must be before or equal to end_date. Example: 2025-06-10
+ * @bodyParam end_date string required The end date of the milestone. Example: 2025-06-20
+ * @bodyParam cost string required The cost of the milestone. Example: 2000.50
+ * @bodyParam description string The description of the milestone (optional). Example: All screens finalized and approved by client.
+ *
  * @response 200 {
- *  "error": false,
- *  "message": "Milestone created successfully.",
- *  "id": 12,
- *  "type": "milestone",
- *  "parent_type": "project",
- *  "parent_id": 1
+ *   "error": false,
+ *   "message": "Milestone created successfully.",
+ *   "data": {
+ *     "id": 12,
+ *     "type": "milestone",
+ *     "parent_type": "project",
+ *     "parent_id": 5
+ *   }
  * }
  *
  * @response 422 {
- *  "message": "The given data was invalid.",
- *  "errors": {
- *    "title": ["The title field is required."],
- *    "cost": ["The cost format is invalid."],
- *    "start_date": ["The start date must be a date before or equal to end date."]
- *  }
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "project_id": ["The project_id field is required."],
+ *     "title": ["The title field is required."]
+ *   }
  * }
  *
  * @response 500 {
- *  "message": "The separation symbol could not be found\r\nTrailing data",
- *  "exception": "Carbon\\Exceptions\\InvalidFormatException",
- *  "file": ".../vendor/nesbot/carbon/src/Carbon/Traits/Creator.php",
- *  ...
+ *   "error": true,
+ *   "message": "Milestone couldn't be created: Milestone creation failed due to mass assignment or DB error."
  * }
  */
+
 public function store_milestone(Request $request)
 {
     $isApi = request()->get('isApi', false);
@@ -1771,7 +1742,7 @@ public function store_milestone(Request $request)
         $formFields['end_date'] = format_date($end_date, false, app('php_date_format'), 'Y-m-d');
 
         $formFields['workspace_id'] = $this->workspace->id;
-        // dd($formFields['workspace_id']);
+        dd($formFields['workspace_id']);
         $formFields['created_by'] = isClient() ? 'c_' . $this->user->id : 'u_' . $this->user->id;
 // dd($formFields['created_by']);
         // Create milestone
@@ -1790,8 +1761,11 @@ public function store_milestone(Request $request)
             'parent_id' => $milestone->project_id,
         ]);
     } catch (ValidationException $e) {
+        // dd($e->errors());
         return formatApiValidationError($isApi, $e->errors());
     } catch (\Exception $e) {
+        // dd($e);
+        // Handle any unexpected errors
         if ($isApi) {
             return formatApiResponse(true, 'Milestone couldn\'t be created: ' . $e->getMessage());
         } else {
@@ -1960,9 +1934,10 @@ public function store_milestone(Request $request)
     }
 }
 
-    public function get_milestone($id)
+    public function get_milestones($id)
     {
         $ms = Milestone::findOrFail($id);
+        dd($ms);
 
         return response()->json(['ms' => $ms]);
     }
@@ -2330,7 +2305,7 @@ public function store_milestone(Request $request)
 
 /**
  * Update the priority of a project.
- * * @group Project status and priority
+ * @group Project status and priority
  * This endpoint allows updating the priority of a specified project.
  * The request must include the project ID and optionally the new priority ID.
  * It returns the updated project details along with an activity message.
@@ -2446,125 +2421,67 @@ public function store_milestone(Request $request)
         }
     }
 }
-  /**
+/**
+ * Add a comment to a model (e.g., project, task) with optional attachments and user mentions.
+ *
+ * This endpoint allows the authenticated user to post a comment on any model (like a project or task)
+ * using polymorphic relationships. It supports file attachments (images, PDFs, documents)
+ * and also handles user mentions (e.g., @username), sending notifications to mentioned users.
+ *
  * @group Project Comments
  *
- * create Comments
- *@header Authorization required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @bodyParam model_type string required The fully qualified model class name. Example: App\Models\Project
+ * @bodyParam model_id int required The ID of the model being commented on. Example: 14
+ * @bodyParam content string required The comment content. Mentions like "@john" are supported. Example: This is a comment with a mention to @jane.
+ * @bodyParam parent_id int Optional. The ID of the parent comment (for replies). Example: 5
+ * @bodyParam attachments file[] Optional. Files to attach with the comment (jpg, jpeg, png, pdf, xlsx, txt, docx). Max size: 2MB per file.
  *
- * @bodyParam model_type string required The type of the model being commented on (e.g., "App\\Models\\Project").
- * @bodyParam model_id integer required The ID of the model being commented on (e.g., project ID).
- * @bodyParam content string required The content of the comment, can contain mentions (e.g., "This is a comment with @user1 and @user2").
- * @bodyParam parent_id integer optional The ID of the parent comment, if this is a reply to an existing comment.
- * @bodyParam attachments[] file optional The files attached to the comment (e.g., images, PDFs).
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
  * @response 200 {
- *  "success": true,
- *  "comment": {
- *    "id": 1,
- *    "commentable_type": "App\\Models\\Project",
- *    "commentable_id": 123,
- *    "content": "This is a comment with @user1 and @user2 mentions.",
- *    "user_id": 1,
- *    "parent_id": 45,
- *    "created_at": "2023-05-21T10:00:00",
- *    "updated_at": "2023-05-21T10:00:00",
- *    "attachments": [
- *      {
+ *   "success": true,
+ *   "message": "Comment Added Successfully",
+ *   "comment": {
+ *     "id": 21,
+ *     "commentable_type": "App\\Models\\Project",
+ *     "commentable_id": 14,
+ *     "content": "This is a comment with mention to <a href='/users/5'>@jane</a>",
+ *     "user_id": 1,
+ *     "parent_id": null,
+ *     "created_at": "2025-06-12T10:31:02.000000Z",
+ *     "updated_at": "2025-06-12T10:31:02.000000Z",
+ *     "user": {
  *        "id": 1,
- *        "file_name": "attachment1.jpg",
- *        "file_path": "comment_attachments/attachment1.jpg",
- *        "file_type": "image/jpeg"
- *      },
- *      {
- *        "id": 2,
- *        "file_name": "attachment2.pdf",
- *        "file_path": "comment_attachments/attachment2.pdf",
- *        "file_type": "application/pdf"
- *      }
- *    ]
- *  },
- *  "message": "Comment Added Successfully",
- *  "user": {
- *    "id": 1,
- *    "first_name": "John",
- *    "last_name": "Doe"
- *  },
- *  "created_at": "1 minute ago"
+ *        "first_name": "John",
+ *        "last_name": "Doe",
+ *        "email": "john@example.com"
+ *     },
+ *     "attachments": [
+ *       {
+ *         "id": 1,
+ *         "comment_id": 21,
+ *         "file_name": "screenshot.png",
+ *         "file_path": "comment_attachments/screenshot.png",
+ *         "file_type": "image/png"
+ *       }
+ *     ]
+ *   }
  * }
  *
  * @response 422 {
- *  "error": true,
- *  "message": "Validation Error",
- *  "errors": {
- *    "model_type": ["The model type field is required."],
- *    "model_id": ["The model id field is required."],
- *    "content": ["The content field is required."]
- *  }
+ *   "success": false,
+ *   "message": "Validation failed.",
+ *   "errors": {
+ *     "model_type": ["The model_type field is required."],
+ *     "content": ["The content field is required."]
+ *   }
  * }
  *
  * @response 500 {
- *  "error": true,
- *  "message": "Internal Server Error"
+ *   "success": false,
+ *   "message": "An error occurred: [error details]"
  * }
  */
-  /*  public function comments(Request $request)
-    {
-        $is_Api = $request->get('isApi', false);
-        try{
-        $request->validate([
-            'model_type' => 'required|string',
-            'model_id' => 'required|integer',
-            'content' => 'required|string',
-            'parent_id' => 'nullable|integer|exists:comments,id',
-            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,xlsx,txt,docx|max:2048', // Add more file types and size limits if needed
-        ]);
-        list($processedContent, $mentionedUserIds) = replaceUserMentionsWithLinks($request->content);
-        $comment = Comment::with('user')->create([
-            'commentable_type' => $request->model_type,
-            'commentable_id' => $request->model_id,
-            'content' => $processedContent,
-            'user_id' => auth()->id(), // Associate with authenticated user
-            'parent_id' => $request->parent_id, // Set the parent_id for replies
-        ]);
-        // dd($comment);
-        $directoryPath = storage_path('app/public/comment_attachments');
-        // Create the directory with permissions if it does not exist
-        // dd($directoryPath);
-        if (!is_dir($directoryPath)) {
-            mkdir($directoryPath, 0755, true); // 0755 for directories
-        }
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('public/comment_attachments');
-                $path = str_replace('public/', '', $path);
-                CommentAttachment::create([
-                    'comment_id' => $comment->id,
-                    'file_name' => $file->getClientOriginalName(),
-                    'file_path' => $path,
-                    'file_type' => $file->getClientMimeType(),
-                ]);
-            }
-        }
-        } catch (\Exception $e) {
-            if ($is_Api) {
-                return formatApiResponse(true, 'Internal Server Error', [], 500);
-            } else {
-                return response()->json(['error' => true, 'message' => 'Internal Server Error'], 500);
-            }
-        }
 
-        sendMentionNotification($comment, $mentionedUserIds, session()->get('workspace_id'), auth()->id());
 
-        return response()->json([
-            'success' => true,
-            'message' => get_label('comment_added_successfully', 'Comment Added Successfully'),
-            'comment' =>formatComments($comment),
-        ]);
-    }
-*/
 public function comments(Request $request)
 {
     $isApi = $request->get('isApi', false);
@@ -2646,48 +2563,42 @@ public function comments(Request $request)
     }
 }
 
-
-    /**
+/**
+ * Get a specific comment by ID.
+ *
+ * This endpoint retrieves the details of a specific comment, including any attachments associated with it.
+ *
  * @group Project Comments
  *
- *  get Cpmment By Id
+ * @urlParam id integer required The ID of the comment to retrieve. Example: 21
  *
- * @urlParam id integer required The ID of the comment to retrieve.
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
  * @response 200 {
- *  "comment": {
- *    "id": 1,
- *    "commentable_type": "App\\Models\\Project",
- *    "commentable_id": 123,
- *    "content": "This is a comment with @user1 mention.",
- *    "user_id": 1,
- *    "parent_id": null,
- *    "created_at": "2023-05-21T10:00:00",
- *    "updated_at": "2023-05-21T10:00:00",
- *    "attachments": [
- *      {
- *        "id": 1,
- *        "file_name": "attachment1.jpg",
- *        "file_path": "comment_attachments/attachment1.jpg",
- *        "file_type": "image/jpeg"
- *      },
- *      {
- *        "id": 2,
- *        "file_name": "attachment2.pdf",
- *        "file_path": "comment_attachments/attachment2.pdf",
- *        "file_type": "application/pdf"
- *      }
- *    ]
- *  }
+ *   "comment": {
+ *     "id": 21,
+ *     "commentable_type": "App\\Models\\Project",
+ *     "commentable_id": 14,
+ *     "content": "This is a comment with mention to <a href='/users/5'>@jane</a>",
+ *     "user_id": 1,
+ *     "parent_id": null,
+ *     "created_at": "2025-06-12T10:31:02.000000Z",
+ *     "updated_at": "2025-06-12T10:31:02.000000Z",
+ *     "attachments": [
+ *       {
+ *         "id": 1,
+ *         "comment_id": 21,
+ *         "file_name": "report.pdf",
+ *         "file_path": "comment_attachments/report.pdf",
+ *         "file_type": "application/pdf"
+ *       }
+ *     ]
+ *   }
  * }
  *
  * @response 404 {
- *  "error": true,
- *  "message": "Comment not found"
+ *   "message": "No query results for model [App\\Models\\Comment] 99"
  * }
  */
+
     public function get_comment(Request $request, $id)
     {
         $comment = Comment::with('attachments')->findOrFail($id);
@@ -2695,53 +2606,42 @@ public function comments(Request $request)
             'comment' => $comment,
         ]);
     }
-    /**
+   /**
+ * Update a comment
+ *
+ * This endpoint updates the content of an existing comment. It also handles user mention parsing and sends notifications to mentioned users.
+ *
  * @group Project Comments
  *
- * update Comment
- * The content of the comment is required and may contain user mentions (e.g., `@user1`),
- * which will be processed and linked appropriately. Notifications are sent to the mentioned users.
+ * @bodyParam comment_id int required The ID of the comment to update. Example: 12
+ * @bodyParam content string required The new content of the comment. Mentions can be included using @username format. Example: "Updated comment with mention to @john"
+ * @bodyParam isApi boolean Optional flag to determine if it's an API request. Example: true
  *
- * @bodyParam comment_id integer required The ID of the comment to be updated. Example: 1
- * @bodyParam content string required The new content for the comment, which can include user mentions. Example: "This is the updated comment with @user1 mention."
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
  * @response 200 {
- *  "error": false,
- *  "message": "Comment updated successfully.",
- *  "id": 1,
- *  "type": "project"
- * }
- *
- * @response 400 {
- *  "error": true,
- *  "message": "Comment couldn't updated."
- * }
- *
- * @response 404 {
- *  "error": true,
- *  "message": "Comment not found."
+ *   "error": false,
+ *   "message": "Comment updated successfully.",
+ *   "id": 12,
+ *   "type": "project"
  * }
  *
  * @response 422 {
- *  "error": true,
- *  "message": "The given data was invalid.",
- *  "errors": {
- *    "comment_id": [
- *      "The comment_id field is required."
- *    ],
- *    "content": [
- *      "The content field is required."
- *    ]
- *  }
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "comment_id": [
+ *       "The comment_id field is required."
+ *     ],
+ *     "content": [
+ *       "The content field is required."
+ *     ]
+ *   }
  * }
  *
  * @response 500 {
- *  "error": true,
- *  "message": "Internal server error."
+ *   "error": true,
+ *   "message": "Internal Server Error"
  * }
  */
+
 
         public function update_comment(Request $request)
         {
@@ -2769,46 +2669,38 @@ public function comments(Request $request)
                 }
             }
         }
-    /**
+/**
+ * Delete a comment
+ *
+ * This endpoint permanently deletes a comment and all of its associated attachments from the storage.
+ *
  * @group Project Comments
  *
- *  Delete Comments
- * The associated attachments are also deleted from the file system.
+ * @bodyParam comment_id int required The ID of the comment to delete. Example: 15
  *
- * @bodyParam comment_id integer required The ID of the comment to be deleted. Example: 1
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
  * @response 200 {
- *  "error": false,
- *  "message": "Comment deleted successfully.",
- *  "id": 1,
- *  "type": "project"
- * }
- *
- * @response 400 {
- *  "error": true,
- *  "message": "Comment couldn't deleted."
- * }
- *
- * @response 404 {
- *  "error": true,
- *  "message": "Comment not found."
+ *   "error": false,
+ *   "message": "Comment deleted successfully.",
+ *   "id": 15,
+ *   "type": "project"
  * }
  *
  * @response 422 {
- *  "error": true,
- *  "message": "The given data was invalid.",
- *  "errors": {
- *    "comment_id": [
- *      "The comment_id field is required."
- *    ]
- *  }
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "comment_id": [
+ *       "The comment_id field is required."
+ *     ]
+ *   }
+ * }
+ *
+ * @response 404 {
+ *   "message": "No query results for model [App\\Models\\Comment] 15"
  * }
  *
  * @response 500 {
- *  "error": true,
- *  "message": "Internal server error."
+ *   "error": true,
+ *   "message": "Comment couldn't deleted."
  * }
  */
 

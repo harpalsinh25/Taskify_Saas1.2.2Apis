@@ -1,28 +1,24 @@
-name: 'Workspace Managemant'
+name: 'Todos Managemant'
 description: |-
-  This endpoint allows authenticated users to create a new workspace. It automatically associates users and clients,
-  sets the workspace as primary (if requested), and logs activity. Notifications are sent to the participants.
+  Updates a specific Todo item based on the provided ID and new data.
+  Requires the `id`, `title`, and `priority` fields in the request.
 endpoints:
   -
     httpMethods:
       - POST
-    uri: api/master-panel/workspace
+    uri: api/master-panel/todo
     metadata:
-      groupName: 'Workspace Managemant'
-      groupDescription: |-
-        This endpoint allows authenticated users to create a new workspace. It automatically associates users and clients,
-        sets the workspace as primary (if requested), and logs activity. Notifications are sent to the participants.
+      groupName: 'Todos Managemant'
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create a new workspace'
-      description: ''
-      authenticated: false
+      title: 'Create a new Todo item.'
+      description: 'This endpoint creates a new todo item associated with the current workspace and admin.'
+      authenticated: true
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -30,68 +26,38 @@ endpoints:
     bodyParameters:
       title:
         name: title
-        description: 'The name of the workspace.'
+        description: 'The title of the todo item.'
         required: true
-        example: 'Design Team'
+        example: '"Finish report"'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      user_ids:
-        name: user_ids
-        description: 'List of user IDs to attach to the workspace.'
-        required: false
-        example:
-          - 3
-          - 5
-        type: 'string[]'
+      priority:
+        name: priority
+        description: 'The priority level of the todo.'
+        required: true
+        example: '"High"'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      client_ids:
-        name: client_ids
-        description: 'List of client IDs to attach to the workspace.'
+      description:
+        name: description
+        description: 'nullable Optional detailed description of the todo.'
         required: false
-        example:
-          - 101
-          - 102
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      primaryWorkspace:
-        name: primaryWorkspace
-        description: 'Indicates if this workspace should be set as the primary workspace.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      isApi:
-        name: isApi
-        description: 'Optional flag to return API-formatted response.'
-        required: false
-        example: true
-        type: boolean
+        example: '"Complete the monthly sales report."'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      title: 'Design Team'
-      user_ids:
-        - 3
-        - 5
-      client_ids:
-        - 101
-        - 102
-      primaryWorkspace: true
-      isApi: true
+      title: '"Finish report"'
+      priority: '"High"'
+      description: '"Complete the monthly sales report."'
     fileParameters: []
     responses:
       -
@@ -99,31 +65,28 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "Workspace created successfully.",
-            "id": 438,
+            "message": "Todo created successfully.",
             "data": {
-              "id": 438,
-              "title": "Design Team",
-              "is_primary": true,
-              "users": [
-                {
-                  "id": 7,
-                  "first_name": "Madhavan",
-                  "last_name": "Vaidya",
-                  "photo": "https://yourdomain.com/storage/photos/user.png"
-                }
-              ],
-              "clients": [
-                {
-                  "id": 103,
-                  "first_name": "Test",
-                  "last_name": "Test",
-                  "photo": "https://yourdomain.com/storage/photos/no-image.jpg"
-                }
-              ],
-              "created_at": "07-08-2024 14:38:51",
-              "updated_at": "07-08-2024 14:38:51"
+              "id": 1,
+              "title": "Finish report",
+              "priority": "High",
+              "description": "Complete the monthly sales report.",
+              "workspace_id": 5,
+              "admin_id": 3,
+              "created_at": "2025-06-05 10:00:00",
+              "updated_at": "2025-06-05 10:00:00"
             }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "Workspace not found in session.",
+            "data": []
           }
         headers: []
         description: ''
@@ -132,12 +95,25 @@ endpoints:
         status: 422
         content: |-
           {
-            "message": "The given data was invalid.",
+            "error": true,
+            "message": "Validation error.",
             "errors": {
-              "title": [
-                "The title field is required."
-              ]
+              "title": ["The title field is required."],
+              "priority": ["The priority field is required."]
             }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Lead Couldn't Created.",
+            "error": "SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row",
+            "line": 45,
+            "file": "/var/www/html/app/Http/Controllers/TodoController.php"
           }
         headers: []
         description: ''
@@ -151,44 +127,42 @@ endpoints:
   -
     httpMethods:
       - PUT
-    uri: 'api/master-panel/workspace/{id}'
+    uri: 'api/master-panel/todo/{id}'
     metadata:
-      groupName: 'Workspace Managemant'
+      groupName: 'Todos Managemant'
       groupDescription: |-
-        Updates the details of an existing workspace such as title, primary status,
-        assigned users, and clients. It also handles updating notifications for newly added members.
+        Updates a specific Todo item based on the provided ID and new data.
+        Requires the `id`, `title`, and `priority` fields in the request.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update an existing workspace'
+      title: 'Update an existing Todo'
       description: ''
       authenticated: false
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters:
       id:
         name: id
-        description: 'The ID of the workspace.'
+        description: 'The ID of the todo.'
         required: true
-        example: 1
-        type: integer
+        example: consequatur
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 1
+      id: consequatur
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
       id:
         name: id
-        description: 'The ID of the workspace.'
+        description: 'The ID of the Todo to update.'
         required: true
-        example: 12
+        example: 5
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -196,41 +170,37 @@ endpoints:
         custom: []
       title:
         name: title
-        description: 'The updated title of the workspace.'
+        description: 'The updated title for the Todo.'
         required: true
-        example: 'Design Team'
+        example: 'Complete Report'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      user_ids:
-        name: user_ids
-        description: 'optional List of user IDs to associate with the workspace.'
-        required: false
-        example:
-          - 1
-          - 3
-        type: 'string[]'
+      priority:
+        name: priority
+        description: 'The updated priority level.'
+        required: true
+        example: High
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      client_ids:
-        name: client_ids
-        description: 'optional List of client IDs to associate with the workspace.'
+      description:
+        name: description
+        description: 'The updated description for the Todo (optional).'
         required: false
-        example:
-          - 101
-          - 104
-        type: 'string[]'
+        example: 'Submit final version to manager'
+        type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      primaryWorkspace:
-        name: primaryWorkspace
-        description: 'optional Whether this workspace is set as the primary one.'
+      isApi:
+        name: isApi
+        description: 'Whether the request is from API.'
         required: false
         example: true
         type: boolean
@@ -239,47 +209,42 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      id: 12
-      title: 'Design Team'
-      user_ids:
-        - 1
-        - 3
-      client_ids:
-        - 101
-        - 104
-      primaryWorkspace: true
+      id: 5
+      title: 'Complete Report'
+      priority: High
+      description: 'Submit final version to manager'
+      isApi: true
     fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-             "error": false,
-             "id": 12,
-             "message": "Workspace updated successfully.",
-             "data": {
-               "id": 12,
-               "title": "Design Team",
-               "is_primary": true,
-               "users": [
-                 {
-                   "id": 3,
-                   "first_name": "Alice",
-                   "last_name": "Doe",
-                   "photo": "https://example.com/photos/user3.jpg"
-                 }
-               ],
-               "clients": [
-                 {
-                   "id": 101,
-                   "first_name": "Bob",
-                   "last_name": "Client",
-                   "photo": "https://example.com/photos/client101.jpg"
-                 }
-               ],
-               "created_at": "07-08-2024 14:38:51",
-               "updated_at": "07-08-2024 15:10:02"
-             }
+            "error": false,
+            "message": "Todo updated successfully.",
+            "data": {
+              "id": 5,
+              "data": {
+                "id": 5,
+                "title": "Complete Report",
+                "priority": "High",
+                "description": "Submit final version to manager",
+                "workspace_id": 2,
+                "admin_id": 1,
+                "created_at": "2025-06-05 14:45:23",
+                "updated_at": "2025-06-06 10:12:45"
+              }
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "No query results for model [App\\Models\\Todo] 999."
           }
         headers: []
         description: ''
@@ -288,16 +253,27 @@ endpoints:
         status: 422
         content: |-
           {
-             "error": true,
-             "message": "Validation failed.",
-             "errors": {
-               "title": [
-                 "The title field is required."
-               ],
-               "id": [
-                 "The selected id is invalid."
-               ]
-             }
+            "error": true,
+            "message": "The given data was invalid.",
+            "errors": {
+              "title": ["The title field is required."],
+              "priority": ["The priority field is required."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Todo couldn't be updated.",
+            "data": {
+              "error": "Error message details...",
+              "line": 45,
+              "file": "/app/Http/Controllers/TodoController.php"
+            }
           }
         headers: []
         description: ''
@@ -311,34 +287,32 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/master-panel/workspace/{id}'
+    uri: 'api/master-panel/todo/{id}'
     metadata:
-      groupName: 'Workspace Managemant'
-      groupDescription: "This API deletes a workspace by its ID, if it's not the currently active workspace."
+      groupName: 'Todos Managemant'
+      groupDescription: 'This endpoint will delete a Todo from the database. It returns a success response if the deletion was successful, or appropriate error messages otherwise.'
       subgroup: ''
       subgroupDescription: ''
-      title: 'Delete a workspace'
-      description: ''
+      title: 'Delete a Todo'
+      description: 'Deletes a specific todo item by ID.'
       authenticated: false
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters:
       id:
         name: id
-        description: 'The ID of the workspace.'
+        description: 'The ID of the todo to delete.'
         required: true
-        example: 12
+        example: 42
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 12
+      id: 42
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -349,21 +323,16 @@ endpoints:
         status: 200
         content: |-
           {
-          "error": false,
-            "message": "Workspace deleted successfully.",
-             "id": "3",
-             "title": "Design Team Workspace",
-             "data": []
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 400
-        content: |-
-          {
-            "error": true,
-            "message": "Cannot delete the currently active workspace."
+            "error": false,
+            "message": "Todo deleted successfully.",
+            "data": {
+              "id": 42,
+              "title": "Call client",
+              "priority": "High",
+              "description": "Discuss contract terms",
+              "created_at": "2025-06-05T12:00:00Z",
+              "updated_at": "2025-06-05T14:00:00Z"
+            }
           }
         headers: []
         description: ''
@@ -373,7 +342,23 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "Workspace not found or already deleted."
+            "message": "Todo not found.",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An error occurred while deleting Todo.",
+            "data": {
+              "error": "SQLSTATE[23000]: Integrity constraint violation: ...",
+              "line": 88,
+              "file": "/app/Http/Controllers/TodoController.php"
+            }
           }
         headers: []
         description: ''
@@ -387,81 +372,38 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/master-panel/workspace/{id?}'
+    uri: 'api/master-panel/todo/{id?}'
     metadata:
-      groupName: 'Workspace Managemant'
+      groupName: 'Todos Managemant'
       groupDescription: |-
-        This endpoint retrieves all workspaces associated with the currently authenticated admin,
-        including their related users and clients. It supports filtering by search, sorting, and pagination.
-        If an ID is provided, it returns the details of that specific workspace.
+        This endpoint returns all todos for the current workspace with optional filtering,
+        sorting, and pagination. If an ID is provided, it returns the specific todo.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Get a list of workspaces or a specific workspace.'
+      title: 'Display a listing of todos or a specific todo by ID.'
       description: ''
       authenticated: false
       custom: []
     headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters:
       id:
         name: id
-        description: 'optional The ID of the workspace to retrieve.'
+        description: 'The ID of the .'
         required: false
-        example: 17
-        type: integer
+        example: consequatur
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 17
+      id: consequatur
     queryParameters:
-      search:
-        name: search
-        description: 'optional Search by workspace title or ID.'
-        required: false
-        example: first
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      sort:
-        name: sort
-        description: 'optional Column to sort by. Default is "id".'
-        required: false
-        example: title
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      order:
-        name: order
-        description: 'optional Sort direction ("ASC" or "DESC"). Default is "DESC".'
-        required: false
-        example: ASC
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      limit:
-        name: limit
-        description: 'optional Number of results per page. Default is 10.'
-        required: false
-        example: 20
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
       isApi:
         name: isApi
-        description: 'optional Set true if called from API. Default is true.'
+        description: 'Optional. Defaults to true. Set to true to receive API formatted response.'
         required: false
         example: false
         type: boolean
@@ -469,12 +411,63 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
+      id:
+        name: id
+        description: 'Optional. If provided, fetch a specific todo by this ID.'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      search:
+        name: search
+        description: 'Optional. Search term to filter todos by title or description.'
+        required: false
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'Optional. Column name to sort by. Default: id.'
+        required: false
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'Optional. Sort order: asc or desc. Default: desc.'
+        required: false
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      limit:
+        name: limit
+        description: 'Optional. Number of items per page for pagination. Default: 10.'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
     cleanQueryParameters:
-      search: first
-      sort: title
-      order: ASC
-      limit: 20
       isApi: false
+      id: 17
+      search: consequatur
+      sort: consequatur
+      order: consequatur
+      limit: 17
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -483,53 +476,25 @@ endpoints:
         status: 200
         content: |-
           {
-           "error": false,
-           "message": "Workspaces retrieved successfully.",
-           "total": 2,
-           "data": [
-               {
-                   "id": 1,
-                   "title": "Marketing Team",
-                   "is_primary": true,
-                   "users": [
-                       {
-                           "id": 2,
-                           "first_name": "Jane",
-                           "last_name": "Doe",
-                           "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                       }
-                   ],
-                   "clients": [
-                       {
-                           "id": 5,
-                           "first_name": "Client",
-                           "last_name": "One",
-                           "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                       }
-                   ],
-                   "created_at": "2025-05-19 09:53:37",
-                   "updated_at": "2025-06-05 11:35:18"
-               }
-           ]
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 200
-        content: |-
-          {
-           "error": false,
-           "message": "Workspace retrieved successfully.",
-           "data": {
-               "id": 2,
-               "title": "Design Department",
-               "is_primary": false,
-               "users": [...],
-               "clients": [...],
-               "created_at": "2025-05-19 09:53:37",
-               "updated_at": "2025-06-05 11:35:18"
-           }
+            "error": false,
+            "message": "Todos retrieved successfully.",
+            "total": 25,
+            "data": [
+              {
+                "id": 1,
+                "title": "Sample Todo",
+                "description": "Description here",
+                "priority": "High",
+                "is_completed": false,
+                "creator": {
+                  "id": 2,
+                  "first_name": "John",
+                  "last_name": "Doe"
+                },
+                "created_at": "2025-06-05 10:00:00",
+                "updated_at": "2025-06-05 10:30:00"
+              }
+            ]
           }
         headers: []
         description: ''
@@ -538,9 +503,9 @@ endpoints:
         status: 404
         content: |-
           {
-           "error": true,
-           "message": "No query results for model [App\\Models\\Workspace] 999.",
-           "data": []
+            "error": true,
+            "message": "Todo not found.",
+            "data": []
           }
         headers: []
         description: ''
@@ -549,9 +514,12 @@ endpoints:
         status: 500
         content: |-
           {
-           "error": true,
-           "message": "Internal Server Error",
-           "data": []
+            "error": true,
+            "message": "Internal Server Error",
+            "data": {
+              "line": 123,
+              "file": "/app/Http/Controllers/TodoController.php"
+            }
           }
         headers: []
         description: ''

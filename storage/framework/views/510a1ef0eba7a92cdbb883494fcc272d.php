@@ -86,12 +86,6 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-settings--variable-">
                                 <a href="#endpoints-GETapi-settings--variable-">GET api/settings/{variable}</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-master-panel-dashboard">
-                                <a href="#endpoints-GETapi-master-panel-dashboard">Get dashboard data for the authenticated user.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-master-panel-upcoming-birthdays">
-                                <a href="#endpoints-GETapi-master-panel-upcoming-birthdays">GET api/master-panel/upcoming-birthdays</a>
-                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-master-panel-get-milestones--id--">
                                 <a href="#endpoints-GETapi-master-panel-get-milestones--id--">Get the milestones for a specific project with optional filters and pagination.</a>
                             </li>
@@ -112,7 +106,7 @@
                 </li>
                                     <ul id="tocify-subheader-user-authentication" class="tocify-subheader">
                                                     <li class="tocify-item level-2" data-unique="user-authentication-POSTapi-register">
-                                <a href="#user-authentication-POSTapi-register">Register a New User</a>
+                                <a href="#user-authentication-POSTapi-register">Register a new user</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="user-authentication-POSTapi-login">
                                 <a href="#user-authentication-POSTapi-login">login</a>
@@ -127,7 +121,13 @@
                     <a href="#dashboard">Dashboard</a>
                 </li>
                                     <ul id="tocify-subheader-dashboard" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-work-anniversaries">
+                                                    <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-dashboardList">
+                                <a href="#dashboard-GETapi-master-panel-dashboardList">Get Dashboard Data</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-birthdays">
+                                <a href="#dashboard-GETapi-master-panel-upcoming-birthdays">Get Upcoming Birthdays</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-work-anniversaries">
                                 <a href="#dashboard-GETapi-master-panel-upcoming-work-anniversaries">Get Upcoming Work Anniversaries</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-members-on-leave">
@@ -171,6 +171,9 @@
                                                     <li class="tocify-item level-2" data-unique="project-media-POSTapi-master-panel-projects-upload-media">
                                 <a href="#project-media-POSTapi-master-panel-projects-upload-media">Upload media files to a specific project.</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-media-GETapi-master-panel-projects--id--media">
+                                <a href="#project-media-GETapi-master-panel-projects--id--media">Get project media files</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="project-media-DELETEapi-master-panel-media--id-">
                                 <a href="#project-media-DELETEapi-master-panel-media--id-">Delete a single media file by ID.</a>
                             </li>
@@ -185,7 +188,7 @@
                 </li>
                                     <ul id="tocify-subheader-project-milestones" class="tocify-subheader">
                                                     <li class="tocify-item level-2" data-unique="project-milestones-POSTapi-master-panel-create-milestone">
-                                <a href="#project-milestones-POSTapi-master-panel-create-milestone">Store a new project milestone.</a>
+                                <a href="#project-milestones-POSTapi-master-panel-create-milestone">Create a new milestone for a project</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="project-milestones-PUTapi-master-panel-update-milestone--id-">
                                 <a href="#project-milestones-PUTapi-master-panel-update-milestone--id-">Update a milestone.</a>
@@ -206,6 +209,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="project-status-and-priority-PUTapi-master-panel-update-status--id-">
                                 <a href="#project-status-and-priority-PUTapi-master-panel-update-status--id-">Update the status of a project.</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-status-and-priority-PUTapi-master-panel-update-priority--id-">
+                                <a href="#project-status-and-priority-PUTapi-master-panel-update-priority--id-">Update the priority of a project.</a>
+                            </li>
                                                                         </ul>
                             </ul>
                     <ul id="tocify-header-project-comments" class="tocify-header">
@@ -214,7 +220,7 @@
                 </li>
                                     <ul id="tocify-subheader-project-comments" class="tocify-subheader">
                                                     <li class="tocify-item level-2" data-unique="project-comments-POSTapi-master-panel-comments">
-                                <a href="#project-comments-POSTapi-master-panel-comments">create Comments</a>
+                                <a href="#project-comments-POSTapi-master-panel-comments">Add a comment to a model (e.g., project, task) with optional attachments and user mentions.</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -484,16 +490,6 @@ Notes are filtered by the current workspace and admin context.</a>
                             </li>
                                                                         </ul>
                             </ul>
-                    <ul id="tocify-header-project-management" class="tocify-header">
-                <li class="tocify-item level-1" data-unique="project-management">
-                    <a href="#project-management">Project Management</a>
-                </li>
-                                    <ul id="tocify-subheader-project-management" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="project-management-PUTapi-master-panel-update-priority--id-">
-                                <a href="#project-management-PUTapi-master-panel-update-priority--id-">Update the priority of a project.</a>
-                            </li>
-                                                                        </ul>
-                            </ul>
                     <ul id="tocify-header-leaverequest-managemant" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="leaverequest-managemant">
                     <a href="#leaverequest-managemant">leaverequest Managemant</a>
@@ -526,7 +522,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 11, 2025</li>
+        <li>Last updated: June 12, 2025</li>
     </ul>
 </div>
 
@@ -1036,7 +1032,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 60
-x-ratelimit-remaining: 59
+x-ratelimit-remaining: 56
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
@@ -1179,7 +1175,7 @@ fetch(url, {
             <pre><code class="language-http">cache-control: no-cache, private
 content-type: application/json
 x-ratelimit-limit: 60
-x-ratelimit-remaining: 58
+x-ratelimit-remaining: 55
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
@@ -1278,286 +1274,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-GETapi-master-panel-dashboard">Get dashboard data for the authenticated user.</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-master-panel-dashboard">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/master-panel/dashboard" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/dashboard"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-master-panel-dashboard">
-            <blockquote>
-            <p>Example response (302):</p>
-        </blockquote>
-                <details class="annotation">
-            <summary style="cursor: pointer;">
-                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
-            </summary>
-            <pre><code class="language-http">cache-control: no-cache, private
-location: http://localhost:8000
-content-type: text/html; charset=utf-8
-x-ratelimit-limit: 60
-x-ratelimit-remaining: 57
-x-xss-protection: 1; mode=block
-x-content-type-options: nosniff
-referrer-policy: strict-origin-when-cross-origin
-x-frame-options: SAMEORIGIN
-access-control-allow-origin: *
- </code></pre></details>         <pre>
-
-<code class="language-json" style="max-height: 300px;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;meta charset=&quot;UTF-8&quot; /&gt;
-        &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=&#039;http://localhost:8000&#039;&quot; /&gt;
-
-        &lt;title&gt;Redirecting to http://localhost:8000&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        Redirecting to &lt;a href=&quot;http://localhost:8000&quot;&gt;http://localhost:8000&lt;/a&gt;.
-    &lt;/body&gt;
-&lt;/html&gt;</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-master-panel-dashboard" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-master-panel-dashboard"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-master-panel-dashboard"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-master-panel-dashboard" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-master-panel-dashboard">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-master-panel-dashboard" data-method="GET"
-      data-path="api/master-panel/dashboard"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-dashboard', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-master-panel-dashboard"
-                    onclick="tryItOut('GETapi-master-panel-dashboard');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-master-panel-dashboard"
-                    onclick="cancelTryOut('GETapi-master-panel-dashboard');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-master-panel-dashboard"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/master-panel/dashboard</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-dashboard"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-master-panel-dashboard"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="endpoints-GETapi-master-panel-upcoming-birthdays">GET api/master-panel/upcoming-birthdays</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-GETapi-master-panel-upcoming-birthdays">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/master-panel/upcoming-birthdays" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/upcoming-birthdays"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-master-panel-upcoming-birthdays">
-            <blockquote>
-            <p>Example response (302):</p>
-        </blockquote>
-                <details class="annotation">
-            <summary style="cursor: pointer;">
-                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
-            </summary>
-            <pre><code class="language-http">cache-control: no-cache, private
-location: http://localhost:8000
-content-type: text/html; charset=utf-8
-x-ratelimit-limit: 60
-x-ratelimit-remaining: 56
-x-xss-protection: 1; mode=block
-x-content-type-options: nosniff
-referrer-policy: strict-origin-when-cross-origin
-x-frame-options: SAMEORIGIN
-access-control-allow-origin: *
- </code></pre></details>         <pre>
-
-<code class="language-json" style="max-height: 300px;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;meta charset=&quot;UTF-8&quot; /&gt;
-        &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=&#039;http://localhost:8000&#039;&quot; /&gt;
-
-        &lt;title&gt;Redirecting to http://localhost:8000&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        Redirecting to &lt;a href=&quot;http://localhost:8000&quot;&gt;http://localhost:8000&lt;/a&gt;.
-    &lt;/body&gt;
-&lt;/html&gt;</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-master-panel-upcoming-birthdays" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-master-panel-upcoming-birthdays"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-master-panel-upcoming-birthdays"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-master-panel-upcoming-birthdays" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-master-panel-upcoming-birthdays">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-master-panel-upcoming-birthdays" data-method="GET"
-      data-path="api/master-panel/upcoming-birthdays"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-upcoming-birthdays', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-master-panel-upcoming-birthdays"
-                    onclick="tryItOut('GETapi-master-panel-upcoming-birthdays');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-master-panel-upcoming-birthdays"
-                    onclick="cancelTryOut('GETapi-master-panel-upcoming-birthdays');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-master-panel-upcoming-birthdays"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/master-panel/upcoming-birthdays</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        </form>
-
                     <h2 id="endpoints-GETapi-master-panel-get-milestones--id--">Get the milestones for a specific project with optional filters and pagination.</h2>
 
 <p>
@@ -1572,8 +1288,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/get-milestones/consequatur" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -1582,8 +1300,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -1595,17 +1315,16 @@ fetch(url, {
 
 <span id="example-responses-GETapi-master-panel-get-milestones--id--">
             <blockquote>
-            <p>Example response (302):</p>
+            <p>Example response (404):</p>
         </blockquote>
                 <details class="annotation">
             <summary style="cursor: pointer;">
                 <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
             </summary>
             <pre><code class="language-http">cache-control: no-cache, private
-location: http://localhost:8000
-content-type: text/html; charset=utf-8
+content-type: application/json
 x-ratelimit-limit: 60
-x-ratelimit-remaining: 55
+x-ratelimit-remaining: 59
 x-xss-protection: 1; mode=block
 x-content-type-options: nosniff
 referrer-policy: strict-origin-when-cross-origin
@@ -1613,18 +1332,10 @@ x-frame-options: SAMEORIGIN
 access-control-allow-origin: *
  </code></pre></details>         <pre>
 
-<code class="language-json" style="max-height: 300px;">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-    &lt;head&gt;
-        &lt;meta charset=&quot;UTF-8&quot; /&gt;
-        &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=&#039;http://localhost:8000&#039;&quot; /&gt;
-
-        &lt;title&gt;Redirecting to http://localhost:8000&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-        Redirecting to &lt;a href=&quot;http://localhost:8000&quot;&gt;http://localhost:8000&lt;/a&gt;.
-    &lt;/body&gt;
-&lt;/html&gt;</code>
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Milestone not found.&quot;
+}</code>
  </pre>
     </span>
 <span id="execution-results-GETapi-master-panel-get-milestones--id--" hidden>
@@ -1675,15 +1386,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-get-milestones--id--"
-               value="application/json"
+                              name="Authorization"                data-endpoint="GETapi-master-panel-get-milestones--id--"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -1691,6 +1402,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-master-panel-get-milestones--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-get-milestones--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-get-milestones--id--"
                value="application/json"
                data-component="header">
     <br>
@@ -2260,13 +1993,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     <p>This endpoint allows a user or client to authenticate using email and password. It applies rate limiting and returns a Bearer token upon successful login.</p>
 
-                                <h2 id="user-authentication-POSTapi-register">Register a New User</h2>
+                                <h2 id="user-authentication-POSTapi-register">Register a new user</h2>
 
 <p>
 </p>
 
-<p>This endpoint allows a user to register by providing first name, last name, email, password, confirm password, and phone number.
-On success, it returns the user data along with an access token.</p>
+<p>This endpoint allows a new user to register with first name, last name, email, phone, and password.
+The system ensures the email and phone are unique across both users and clients.
+Upon successful registration, the user is assigned the &quot;admin&quot; role, an admin record is created, and a token is issued.</p>
 
 <span id="example-requests-POSTapi-register">
 <blockquote>Example request:</blockquote>
@@ -2278,14 +2012,12 @@ On success, it returns the user data along with an access token.</p>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"first_name\": \"harpalsinh\",
-    \"last_name\": \"sarvaiya\",
-    \"email\": \"harpalsinh@gmail.com\",
-    \"phone\": \"1562\",
-    \"password\": \"password\",
-    \"password_confirmation\": \"consequatur\",
-    \"confirm_password\": \"password\",
-    \"phone_number\": \"+1234567890\"
+    \"first_name\": \"John\",
+    \"last_name\": \"ramanandi\",
+    \"email\": \"bhurabhai@example.com\",
+    \"phone\": \"9876543210\",
+    \"password\": \"secret123\",
+    \"password_confirmation\": \"secret123\"
 }"
 </code></pre></div>
 
@@ -2301,14 +2033,12 @@ const headers = {
 };
 
 let body = {
-    "first_name": "harpalsinh",
-    "last_name": "sarvaiya",
-    "email": "harpalsinh@gmail.com",
-    "phone": "1562",
-    "password": "password",
-    "password_confirmation": "consequatur",
-    "confirm_password": "password",
-    "phone_number": "+1234567890"
+    "first_name": "John",
+    "last_name": "ramanandi",
+    "email": "bhurabhai@example.com",
+    "phone": "9876543210",
+    "password": "secret123",
+    "password_confirmation": "secret123"
 };
 
 fetch(url, {
@@ -2321,63 +2051,43 @@ fetch(url, {
 
 <span id="example-responses-POSTapi-register">
             <blockquote>
-            <p>Example response (201):</p>
+            <p>Example response (200, Successful Registration):</p>
         </blockquote>
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;status&quot;: true,
-    &quot;message&quot;: &quot;Registration successful.&quot;,
-    &quot;data&quot;: {
-        &quot;user&quot;: {
-            &quot;id&quot;: 1,
-            &quot;first_name&quot;: &quot;harpalsinh&quot;,
-            &quot;last_name&quot;: &quot;sarvaiya&quot;,
-            &quot;email&quot;: &quot;harpalsinh@gmail.com&quot;,
-            &quot;phone_number&quot;: &quot;+1234567890&quot;
-        },
-        &quot;token&quot;: &quot;eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...&quot;
-    }
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;User registered successfully&quot;,
+    &quot;redirect_url&quot;: &quot;http://localhost:8000/login&quot;,
+    &quot;access_token&quot;: &quot;1|ABCDEF1234567890...&quot;,
+    &quot;token_type&quot;: &quot;Bearer&quot;
 }</code>
  </pre>
             <blockquote>
-            <p>Example response (422):</p>
+            <p>Example response (422, Validation Failed):</p>
         </blockquote>
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;status&quot;: false,
-    &quot;message&quot;: &quot;The given data was invalid.&quot;,
-    &quot;errors&quot;: {
-        &quot;first_name&quot;: [
-            &quot;The first name field is required.&quot;
-        ],
-        &quot;last_name&quot;: [
-            &quot;The last name field is required.&quot;
-        ],
+    &quot;error&quot;: true,
+    &quot;message&quot;: {
         &quot;email&quot;: [
-            &quot;The email has already been taken.&quot;
+            &quot;The email has already been taken in users or clients.&quot;
         ],
         &quot;password&quot;: [
-            &quot;The password must be at least 6 characters.&quot;
-        ],
-        &quot;confirm_password&quot;: [
-            &quot;The confirm password and password must match.&quot;
-        ],
-        &quot;phone_number&quot;: [
-            &quot;The phone number field is required.&quot;
+            &quot;Password must be at least 6 characters long.&quot;
         ]
     }
 }</code>
  </pre>
             <blockquote>
-            <p>Example response (500):</p>
+            <p>Example response (500, Server Error):</p>
         </blockquote>
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;status&quot;: false,
-    &quot;message&quot;: &quot;Something went wrong. Please try again later.&quot;
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Something went wrong on the server.&quot;
 }</code>
  </pre>
     </span>
@@ -2457,10 +2167,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="first_name"                data-endpoint="POSTapi-register"
-               value="harpalsinh"
+               value="John"
                data-component="body">
     <br>
-<p>The user's first name. Example: <code>harpalsinh</code></p>
+<p>The first name of the user. Must not contain numbers. Example: <code>John</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>last_name</code></b>&nbsp;&nbsp;
@@ -2468,10 +2178,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="last_name"                data-endpoint="POSTapi-register"
-               value="sarvaiya"
+               value="ramanandi"
                data-component="body">
     <br>
-<p>The user's last name. Example: <code>sarvaiya</code></p>
+<p>The last name of the user. Must not contain numbers. Example: <code>ramanandi</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2479,10 +2189,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="email"                data-endpoint="POSTapi-register"
-               value="harpalsinh@gmail.com"
+               value="bhurabhai@example.com"
                data-component="body">
     <br>
-<p>The user's email address. Must be unique. Example: <code>harpalsinh@gmail.com</code></p>
+<p>Must be a valid email and unique across users and clients. Example: <code>bhurabhai@example.com</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
@@ -2490,10 +2200,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="phone"                data-endpoint="POSTapi-register"
-               value="1562"
+               value="9876543210"
                data-component="body">
     <br>
-<p>Must match the regex /^\d+$/. Example: <code>1562</code></p>
+<p>Must be a string of digits and unique among users. Example: <code>9876543210</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
@@ -2501,10 +2211,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="password"                data-endpoint="POSTapi-register"
-               value="password"
+               value="secret123"
                data-component="body">
     <br>
-<p>The user's password. Minimum 6 characters. Example: <code>password</code></p>
+<p>Minimum 6 characters. Example: <code>secret123</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
@@ -2512,32 +2222,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="password_confirmation"                data-endpoint="POSTapi-register"
-               value="consequatur"
+               value="secret123"
                data-component="body">
     <br>
-<p>Example: <code>consequatur</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>confirm_password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="confirm_password"                data-endpoint="POSTapi-register"
-               value="password"
-               data-component="body">
-    <br>
-<p>Must match the password field. Example: <code>password</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>phone_number</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="phone_number"                data-endpoint="POSTapi-register"
-               value="+1234567890"
-               data-component="body">
-    <br>
-<p>The user's phone number. Example: <code>+1234567890</code></p>
+<p>Must match the password. Example: <code>secret123</code></p>
         </div>
         </form>
 
@@ -2928,16 +2616,449 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
                 <h1 id="dashboard">Dashboard</h1>
 
-    
+    <p>Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
+This endpoint supports filtering, sorting, searching, and pagination.</p>
 
-                                <h2 id="dashboard-GETapi-master-panel-upcoming-work-anniversaries">Get Upcoming Work Anniversaries</h2>
+                                <h2 id="dashboard-GETapi-master-panel-dashboardList">Get Dashboard Data</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
 </p>
 
-<p>Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
-This endpoint supports filtering, sorting, searching, and pagination.</p>
+<p>This endpoint returns a comprehensive dashboard summary for the authenticated user within the selected workspace.
+It includes counts and detailed lists of users, clients, projects, tasks, to-dos, meetings, activities, and statuses.</p>
+
+<span id="example-requests-GETapi-master-panel-dashboardList">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/dashboardList" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/dashboardList"
+);
+
+const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-dashboardList">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+  &quot;error&quot;: false,
+  &quot;message&quot;: &quot;Dashboard data fetched successfully.&quot;,
+  &quot;data&quot;: {
+    &quot;counts&quot;: {
+      &quot;users_count&quot;: 5,
+      &quot;clients_count&quot;: 3,
+      &quot;projects_count&quot;: 8,
+      &quot;tasks_count&quot;: 22,
+      &quot;todos_count&quot;: 5,
+      &quot;meetings_count&quot;: 2,
+      &quot;statuses_count&quot;: 6,
+      &quot;activities_count&quot;: 10
+    },
+    &quot;users&quot;: [...],
+    &quot;clients&quot;: [...],
+    &quot;projects&quot;: [...],
+    &quot;tasks&quot;: [...],
+    &quot;todos&quot;: [...],
+    &quot;total_todos&quot;: [...],
+    &quot;meetings&quot;: [...],
+    &quot;auth_user&quot;: {
+      &quot;id&quot;: 1,
+      &quot;first_name&quot;: &quot;John&quot;,
+      &quot;last_name&quot;: &quot;Doe&quot;,
+      ...
+    },
+    &quot;statuses&quot;: [...],
+    &quot;activities&quot;: [...]
+  }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (400):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Missing or invalid workspace-id header.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (401):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Unauthorized: User not authenticated.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Workspace not found.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Something went wrong.&quot;,
+    &quot;data&quot;: {
+        &quot;line&quot;: 123,
+        &quot;file&quot;: &quot;app/Http/Controllers/DashboardController.php&quot;,
+        &quot;error&quot;: &quot;Exception message here&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-dashboardList" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-dashboardList"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-dashboardList"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-dashboardList" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-dashboardList">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-dashboardList" data-method="GET"
+      data-path="api/master-panel/dashboardList"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-dashboardList', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-dashboardList"
+                    onclick="tryItOut('GETapi-master-panel-dashboardList');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-dashboardList"
+                    onclick="cancelTryOut('GETapi-master-panel-dashboardList');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-dashboardList"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/dashboardList</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-master-panel-dashboardList"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-dashboardList"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-dashboardList"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-dashboardList"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="dashboard-GETapi-master-panel-upcoming-birthdays">Get Upcoming Birthdays</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+<p>This endpoint retrieves a list of users within the current workspace whose birthdays are coming up within the next given number of days (default is 30).
+It calculates the number of days left for each birthday and includes user details like name, photo, age, and profile link.</p>
+
+<span id="example-requests-GETapi-master-panel-upcoming-birthdays">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/upcoming-birthdays?upcoming_days=15&amp;isApi=1" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/upcoming-birthdays"
+);
+
+const params = {
+    "upcoming_days": "15",
+    "isApi": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-upcoming-birthdays">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Upcoming birthdays fetched successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;data&quot;: [
+            {
+                &quot;id&quot;: 5,
+                &quot;member&quot;: &quot;John Doe&quot;,
+                &quot;dob&quot;: &quot;1995-07-18&quot;,
+                &quot;days_left&quot;: 12,
+                &quot;age&quot;: 28,
+                &quot;photo&quot;: &quot;http://example.com/storage/photos/user5.jpg&quot;,
+                &quot;profile_url&quot;: &quot;http://example.com/users/5&quot;
+            }
+        ],
+        &quot;total&quot;: 1
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Internal Server Error: Something went wrong.&quot;,
+    &quot;data&quot;: [],
+    &quot;status_code&quot;: 500
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-upcoming-birthdays" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-upcoming-birthdays"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-upcoming-birthdays"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-upcoming-birthdays" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-upcoming-birthdays">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-upcoming-birthdays" data-method="GET"
+      data-path="api/master-panel/upcoming-birthdays"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-upcoming-birthdays', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-upcoming-birthdays"
+                    onclick="tryItOut('GETapi-master-panel-upcoming-birthdays');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-upcoming-birthdays"
+                    onclick="cancelTryOut('GETapi-master-panel-upcoming-birthdays');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-upcoming-birthdays"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/upcoming-birthdays</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-master-panel-upcoming-birthdays"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>upcoming_days</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="upcoming_days"                data-endpoint="GETapi-master-panel-upcoming-birthdays"
+               value="15"
+               data-component="query">
+    <br>
+<p>Optional. Number of upcoming days to look for birthdays. Defaults to 30. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="GETapi-master-panel-upcoming-birthdays" style="display: none">
+            <input type="radio" name="isApi"
+                   value="1"
+                   data-endpoint="GETapi-master-panel-upcoming-birthdays"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-master-panel-upcoming-birthdays" style="display: none">
+            <input type="radio" name="isApi"
+                   value="0"
+                   data-endpoint="GETapi-master-panel-upcoming-birthdays"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Optional. Pass true to get formatted API response. Example: <code>true</code></p>
+            </div>
+                </form>
+
+                    <h2 id="dashboard-GETapi-master-panel-upcoming-work-anniversaries">Get Upcoming Work Anniversaries</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
 
 <span id="example-requests-GETapi-master-panel-upcoming-work-anniversaries">
 <blockquote>Example request:</blockquote>
@@ -2946,8 +3067,10 @@ This endpoint supports filtering, sorting, searching, and pagination.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/upcoming-work-anniversaries?search=John&amp;sort=doj&amp;order=ASC&amp;upcoming_days=30&amp;user_id=15&amp;limit=10" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -2967,8 +3090,10 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -3087,15 +3212,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-upcoming-work-anniversaries"
-               value="application/json"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-master-panel-upcoming-work-anniversaries"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -3103,6 +3228,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-master-panel-upcoming-work-anniversaries"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-upcoming-work-anniversaries"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-upcoming-work-anniversaries"
                value="application/json"
                data-component="header">
     <br>
@@ -3194,8 +3341,10 @@ user ID, and respects permission-based visibility for the requesting user.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/members-on-leave?search=Jane&amp;sort=from_date&amp;order=DESC&amp;upcoming_days=15&amp;user_id=5&amp;limit=10" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -3215,8 +3364,10 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -3338,15 +3489,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-members-on-leave"
-               value="application/json"
+                              name="Authorization" class="auth-value"               data-endpoint="GETapi-master-panel-members-on-leave"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -3354,6 +3505,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-master-panel-members-on-leave"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-members-on-leave"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-members-on-leave"
                value="application/json"
                data-component="header">
     <br>
@@ -3448,8 +3621,9 @@ based on applied filters such as status, users, clients, date range, search term
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/projects/23?search=redesign&amp;sort=title&amp;order=asc&amp;limit=5&amp;offset=10&amp;status=1&amp;user_id=2&amp;client_id=1&amp;project_start_date_from=2025-01-01&amp;project_start_date_to=2025-12-31&amp;project_end_date_from=2025-01-01&amp;project_end_date_to=2025-12-31&amp;is_favorites=1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -3476,8 +3650,9 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Content-Type": "application/json",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -3626,22 +3801,33 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-projects--id--"
+                              name="Accept"                data-endpoint="GETapi-master-panel-projects--id--"
                value="application/json"
                data-component="header">
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-master-panel-projects--id--"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-projects--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-projects--id--"
                value="application/json"
                data-component="header">
     <br>
@@ -3829,12 +4015,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/projects" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"title\": \"Website Redesign\",
     \"status_id\": 1,
-    \"priority_id\": 1,
+    \"priority_id\": 4,
     \"start_date\": \"2025-05-01\",
     \"end_date\": \"2025-05-31\",
     \"budget\": \"5000\",
@@ -3842,9 +4030,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description\": \"A complete redesign of the company website.\",
     \"note\": \"Client prefers Figma for designs.\",
     \"enable_tasks_time_entries\": true,
-    \"user_id\": \"[1, 2, 3]\",
-    \"client_id\": \"[1, 43]\",
-    \"tag_ids\": \"[1]\",
+    \"user_id\": [
+        1,
+        2,
+        3
+    ],
+    \"client_id\": [
+        1,
+        43
+    ],
+    \"tag_ids\": [
+        1
+    ],
     \"isApi\": true,
     \"workspace_id\": 17
 }"
@@ -3857,14 +4054,16 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
     "title": "Website Redesign",
     "status_id": 1,
-    "priority_id": 1,
+    "priority_id": 4,
     "start_date": "2025-05-01",
     "end_date": "2025-05-31",
     "budget": "5000",
@@ -3872,9 +4071,18 @@ let body = {
     "description": "A complete redesign of the company website.",
     "note": "Client prefers Figma for designs.",
     "enable_tasks_time_entries": true,
-    "user_id": "[1, 2, 3]",
-    "client_id": "[1, 43]",
-    "tag_ids": "[1]",
+    "user_id": [
+        1,
+        2,
+        3
+    ],
+    "client_id": [
+        1,
+        43
+    ],
+    "tag_ids": [
+        1
+    ],
     "isApi": true,
     "workspace_id": 17
 };
@@ -4049,15 +4257,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects"
-               value="application/json"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-projects"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -4065,6 +4273,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-projects"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-projects"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects"
                value="application/json"
                data-component="header">
     <br>
@@ -4099,10 +4329,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="priority_id"                data-endpoint="POSTapi-master-panel-projects"
-               value="1"
+               value="4"
                data-component="body">
     <br>
-<p>The priority ID. Must exist in priorities table. Example: <code>1</code></p>
+<p>The priority ID. Must exist in priorities table. Example: <code>4</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>start_date</code></b>&nbsp;&nbsp;
@@ -4193,36 +4423,42 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="user_id"                data-endpoint="POSTapi-master-panel-projects"
-               value="[1, 2, 3]"
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id[0]"                data-endpoint="POSTapi-master-panel-projects"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="user_id[1]"                data-endpoint="POSTapi-master-panel-projects"
                data-component="body">
     <br>
-<p>Array of user IDs to assign. Example: <code>[1, 2, 3]</code></p>
+<p>Array of user IDs to assign.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>client_id</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="client_id"                data-endpoint="POSTapi-master-panel-projects"
-               value="[1, 43]"
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="client_id[0]"                data-endpoint="POSTapi-master-panel-projects"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="client_id[1]"                data-endpoint="POSTapi-master-panel-projects"
                data-component="body">
     <br>
-<p>Array of client IDs to assign. Example: <code>[1, 43]</code></p>
+<p>Array of client IDs to assign.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tag_ids</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="tag_ids"                data-endpoint="POSTapi-master-panel-projects"
-               value="[1]"
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="tag_ids[0]"                data-endpoint="POSTapi-master-panel-projects"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="tag_ids[1]"                data-endpoint="POSTapi-master-panel-projects"
                data-component="body">
     <br>
-<p>Array of tag IDs to attach. Example: <code>[1]</code></p>
+<p>Array of tag IDs to attach.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
@@ -4273,9 +4509,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/projects/consequatur?isApi=1" \
-    --header "workspace_id: int required The ID of the workspace to which the project belongs." \
-    --header "Content-Type: application/json" \
+    --header "workspace_id: 2" \
     --header "Accept: application/json" \
+    --header "Content-Type: application/json" \
     --data "{
     \"id\": 111,
     \"title\": \"\\\"Website Redesign\\\"\",
@@ -4286,10 +4522,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"end_date\": \"2025-05-31\",
     \"task_accessibility\": \"project_users\",
     \"description\": \"\\\"A complete redesign of the company website.\\\"\",
-    \"note\": \"\\\"Client prefers Figma for designs.\\\"\",
-    \"user_id\": \"[2, 3]\",
-    \"client_id\": \"[1, 5]\",
-    \"tag_ids\": \"[1]\",
+    \"note\": \"[1, 2, 3]\",
+    \"client_id\": [
+        1,
+        43
+    ],
+    \"tag_ids\": [
+        1
+    ],
     \"enable_tasks_time_entries\": true
 }"
 </code></pre></div>
@@ -4307,9 +4547,9 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "workspace_id": "int required The ID of the workspace to which the project belongs.",
-    "Content-Type": "application/json",
+    "workspace_id": "2",
     "Accept": "application/json",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -4322,10 +4562,14 @@ let body = {
     "end_date": "2025-05-31",
     "task_accessibility": "project_users",
     "description": "\"A complete redesign of the company website.\"",
-    "note": "\"Client prefers Figma for designs.\"",
-    "user_id": "[2, 3]",
-    "client_id": "[1, 5]",
-    "tag_ids": "[1]",
+    "note": "[1, 2, 3]",
+    "client_id": [
+        1,
+        43
+    ],
+    "tag_ids": [
+        1
+    ],
     "enable_tasks_time_entries": true
 };
 
@@ -4469,21 +4713,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="workspace_id"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="int required The ID of the workspace to which the project belongs."
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>int required The ID of the workspace to which the project belongs.</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -4491,6 +4724,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="PUTapi-master-panel-projects--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-projects--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -4636,43 +4880,37 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="note"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value=""Client prefers Figma for designs.""
+               value="[1, 2, 3]"
                data-component="body">
     <br>
-<p>Additional notes for the project. Nullable. Example: <code>"Client prefers Figma for designs."</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="user_id"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="[2, 3]"
-               data-component="body">
-    <br>
-<p>Array of user IDs to assign to the project. Example: <code>[2, 3]</code></p>
+<p>Additional notes for the project. Nullable. Example: &quot;Client prefers Figma for designs.&quot;
+@bodyParam user_id int[] required Array of user IDs to assign. Example: <code>[1, 2, 3]</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>client_id</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="client_id"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="[1, 5]"
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="client_id[0]"                data-endpoint="PUTapi-master-panel-projects--id-"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="client_id[1]"                data-endpoint="PUTapi-master-panel-projects--id-"
                data-component="body">
     <br>
-<p>Array of client IDs to assign to the project. Example: <code>[1, 5]</code></p>
+<p>Array of client IDs to assign.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>tag_ids</code></b>&nbsp;&nbsp;
-<small>array[int]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="tag_ids"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="[1]"
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="tag_ids[0]"                data-endpoint="PUTapi-master-panel-projects--id-"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="tag_ids[1]"                data-endpoint="PUTapi-master-panel-projects--id-"
                data-component="body">
     <br>
-<p>Array of tag IDs to associate with the project. Example: <code>[1]</code></p>
+<p>Array of tag IDs to attach.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>enable_tasks_time_entries</code></b>&nbsp;&nbsp;
@@ -4712,8 +4950,9 @@ Files are permanently removed from the public storage disk.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/projects/85" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -4722,8 +4961,9 @@ Files are permanently removed from the public storage disk.</p>
 );
 
 const headers = {
-    "Content-Type": "application/json",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -4820,22 +5060,33 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-projects--id-"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-projects--id-"
                value="application/json"
                data-component="header">
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="DELETEapi-master-panel-projects--id-"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-projects--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-projects--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -4871,8 +5122,9 @@ All related comments and attachments will also be permanently deleted.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/destroy-multiple-projects" \
-    --header "Content-Type: application/json" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"ids\": [
         1,
@@ -4889,8 +5141,9 @@ All related comments and attachments will also be permanently deleted.</p>
 );
 
 const headers = {
-    "Content-Type": "application/json",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -4993,22 +5246,33 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-destroy-multiple-projects"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-destroy-multiple-projects"
                value="application/json"
                data-component="header">
     <br>
 <p>Example: <code>application/json</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="DELETEapi-master-panel-destroy-multiple-projects"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-destroy-multiple-projects"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-destroy-multiple-projects"
                value="application/json"
                data-component="header">
     <br>
@@ -5054,8 +5318,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/update_favorite/17" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"is_favorite\": 17
 }"
@@ -5068,8 +5334,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -5217,15 +5485,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-update_favorite--id-"
-               value="application/json"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-master-panel-update_favorite--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -5233,6 +5501,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-update_favorite--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-update_favorite--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-update_favorite--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -5279,8 +5569,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/projects/12/duplicate?title=New+Project+Copy&amp;reload=1" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -5296,8 +5588,10 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -5378,15 +5672,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects--id--duplicate"
-               value="application/json"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-master-panel-projects--id--duplicate"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -5394,6 +5688,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-projects--id--duplicate"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-projects--id--duplicate"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects--id--duplicate"
                value="application/json"
                data-component="header">
     <br>
@@ -5464,10 +5780,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/projects/upload-media" \
-    --header "Content-Type: multipart/form-data" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php3DC2.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpBC64.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5476,8 +5794,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "multipart/form-data",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "multipart/form-data",
 };
 
 const body = new FormData();
@@ -5616,15 +5936,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects-upload-media"
-               value="multipart/form-data"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-projects-upload-media"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>multipart/form-data</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -5636,6 +5956,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="header">
     <br>
 <p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-projects-upload-media"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects-upload-media"
+               value="multipart/form-data"
+               data-component="header">
+    <br>
+<p>Example: <code>multipart/form-data</code></p>
             </div>
                                 <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -5658,9 +6000,273 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php3DC2.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpBC64.tmp</code></p>
         </div>
         </form>
+
+                    <h2 id="project-media-GETapi-master-panel-projects--id--media">Get project media files</h2>
+
+<p>
+</p>
+
+<p>Retrieves all media files uploaded to a specific project. Supports sorting and filtering. Returns a formatted list of media with file URL, preview, and action buttons.</p>
+
+<span id="example-requests-GETapi-master-panel-projects--id--media">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/projects/1/media?search=report&amp;sort=file_name&amp;order=asc&amp;isApi=1" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/projects/1/media"
+);
+
+const params = {
+    "search": "report",
+    "sort": "file_name",
+    "order": "asc",
+    "isApi": "1",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-projects--id--media">
+            <blockquote>
+            <p>Example response (200, Success - API response):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Media retrieved successfully.&quot;,
+    &quot;data&quot;: [
+        {
+            &quot;id&quot;: 4,
+            &quot;file&quot;: &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; data-lightbox=\&quot;project-media\&quot;&gt; &lt;img src=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; alt=\&quot;images.jpg\&quot; width=\&quot;50\&quot;&gt;&lt;/a&gt;&quot;,
+            &quot;file_name&quot;: &quot;images.jpg&quot;,
+            &quot;file_size&quot;: &quot;11.89 KB&quot;,
+            &quot;created_at&quot;: &quot;2025-06-02&quot;,
+            &quot;updated_at&quot;: &quot;2025-06-02&quot;,
+            &quot;actions&quot;: [
+                &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; title=Download download&gt;&lt;i class=\&quot;bx bx-download bx-sm\&quot;&gt;&lt;/i&gt;&lt;/a&gt;&lt;button title=Delete type=\&quot;button\&quot; class=\&quot;btn delete\&quot; data-id=\&quot;4\&quot; data-type=\&quot;project-media\&quot; data-table=\&quot;project_media_table\&quot;&gt;&lt;i class=\&quot;bx bx-trash text-danger\&quot;&gt;&lt;/i&gt;&lt;/button&gt;&quot;
+            ]
+        }
+    ]
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (200, Success - Non-API JSON table response):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;rows&quot;: [
+        {
+            &quot;id&quot;: 4,
+            &quot;file&quot;: &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; data-lightbox=\&quot;project-media\&quot;&gt; &lt;img src=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; alt=\&quot;images.jpg\&quot; width=\&quot;50\&quot;&gt;&lt;/a&gt;&quot;,
+            &quot;file_name&quot;: &quot;images.jpg&quot;,
+            &quot;file_size&quot;: &quot;11.89 KB&quot;,
+            &quot;created_at&quot;: &quot;2025-06-02&quot;,
+            &quot;updated_at&quot;: &quot;2025-06-02&quot;,
+            &quot;actions&quot;: [
+                &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; title=Download download&gt;&lt;i class=\&quot;bx bx-download bx-sm\&quot;&gt;&lt;/i&gt;&lt;/a&gt;&lt;button title=Delete type=\&quot;button\&quot; class=\&quot;btn delete\&quot; data-id=\&quot;4\&quot; data-type=\&quot;project-media\&quot; data-table=\&quot;project_media_table\&quot;&gt;&lt;i class=\&quot;bx bx-trash text-danger\&quot;&gt;&lt;/i&gt;&lt;/button&gt;&quot;
+            ]
+        }
+    ],
+    &quot;total&quot;: 1
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404, Project not found):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\Project] 99&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-projects--id--media" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-projects--id--media"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-projects--id--media"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-projects--id--media" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-projects--id--media">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-projects--id--media" data-method="GET"
+      data-path="api/master-panel/projects/{id}/media"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-projects--id--media', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-projects--id--media"
+                    onclick="tryItOut('GETapi-master-panel-projects--id--media');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-projects--id--media"
+                    onclick="cancelTryOut('GETapi-master-panel-projects--id--media');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-projects--id--media"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/projects/{id}/media</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the project. Example: <code>1</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="report"
+               data-component="query">
+    <br>
+<p>Optional. Search term to filter media by ID, file name, or creation date. Example: <code>report</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>sort</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="sort"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="file_name"
+               data-component="query">
+    <br>
+<p>Optional. Field to sort by (e.g., id, file_name). Default: id. Example: <code>file_name</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>order</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="order"                data-endpoint="GETapi-master-panel-projects--id--media"
+               value="asc"
+               data-component="query">
+    <br>
+<p>Optional. Sorting order: <code>asc</code> or <code>desc</code>. Default: desc. Example: <code>asc</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="GETapi-master-panel-projects--id--media" style="display: none">
+            <input type="radio" name="isApi"
+                   value="1"
+                   data-endpoint="GETapi-master-panel-projects--id--media"
+                   data-component="query"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="GETapi-master-panel-projects--id--media" style="display: none">
+            <input type="radio" name="isApi"
+                   value="0"
+                   data-endpoint="GETapi-master-panel-projects--id--media"
+                   data-component="query"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Optional. When true, returns a formatted API response instead of JSON table structure. Example: <code>true</code></p>
+            </div>
+                </form>
 
                     <h2 id="project-media-DELETEapi-master-panel-media--id-">Delete a single media file by ID.</h2>
 
@@ -5676,8 +6282,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/media/consequatur" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -5686,8 +6294,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -5772,15 +6382,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-media--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="DELETEapi-master-panel-media--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -5788,6 +6398,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="DELETEapi-master-panel-media--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-media--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-media--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -5832,8 +6464,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/media/delete-multiple" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"ids\": [
         101,
@@ -5850,8 +6484,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -5961,15 +6597,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-media-delete-multiple"
-               value="application/json"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-media-delete-multiple"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -5977,6 +6613,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-media-delete-multiple"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-media-delete-multiple"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-media-delete-multiple"
                value="application/json"
                data-component="header">
     <br>
@@ -6011,13 +6669,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     
 
-                                <h2 id="project-milestones-POSTapi-master-panel-create-milestone">Store a new project milestone.</h2>
+                                <h2 id="project-milestones-POSTapi-master-panel-create-milestone">Create a new milestone for a project</h2>
 
 <p>
 </p>
 
-<p>This endpoint allows users to create a new milestone for a project. It validates required fields, formats dates,
-sets the workspace and creator info, and stores the milestone in the database.</p>
+<p>This endpoint allows users to create a milestone under a specific project.</p>
 
 <span id="example-requests-POSTapi-master-panel-create-milestone">
 <blockquote>Example request:</blockquote>
@@ -6026,16 +6683,17 @@ sets the workspace and creator info, and stores the milestone in the database.</
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/create-milestone" \
+    --header "workspace_id: integer required The ID of the workspace. Example: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"project_id\": 1,
-    \"title\": \"\\\"Design Phase\\\"\",
-    \"status\": \"\\\"pending\\\"\",
-    \"start_date\": \"2025-05-20\",
-    \"end_date\": \"2025-06-15\",
-    \"cost\": \"1200.50\",
-    \"description\": \"\\\"Initial design and prototyping\\\"\"
+    \"project_id\": 5,
+    \"title\": \"Final Design Review\",
+    \"status\": \"incomplete\",
+    \"start_date\": \"2025-06-10\",
+    \"end_date\": \"2025-06-20\",
+    \"cost\": \"2000.50\",
+    \"description\": \"All screens finalized and approved by client.\"
 }"
 </code></pre></div>
 
@@ -6046,18 +6704,19 @@ sets the workspace and creator info, and stores the milestone in the database.</
 );
 
 const headers = {
+    "workspace_id": "integer required The ID of the workspace. Example: 2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
 let body = {
-    "project_id": 1,
-    "title": "\"Design Phase\"",
-    "status": "\"pending\"",
-    "start_date": "2025-05-20",
-    "end_date": "2025-06-15",
-    "cost": "1200.50",
-    "description": "\"Initial design and prototyping\""
+    "project_id": 5,
+    "title": "Final Design Review",
+    "status": "incomplete",
+    "start_date": "2025-06-10",
+    "end_date": "2025-06-20",
+    "cost": "2000.50",
+    "description": "All screens finalized and approved by client."
 };
 
 fetch(url, {
@@ -6077,10 +6736,12 @@ fetch(url, {
 <code class="language-json" style="max-height: 300px;">{
     &quot;error&quot;: false,
     &quot;message&quot;: &quot;Milestone created successfully.&quot;,
-    &quot;id&quot;: 12,
-    &quot;type&quot;: &quot;milestone&quot;,
-    &quot;parent_type&quot;: &quot;project&quot;,
-    &quot;parent_id&quot;: 1
+    &quot;data&quot;: {
+        &quot;id&quot;: 12,
+        &quot;type&quot;: &quot;milestone&quot;,
+        &quot;parent_type&quot;: &quot;project&quot;,
+        &quot;parent_id&quot;: 5
+    }
 }</code>
  </pre>
             <blockquote>
@@ -6091,14 +6752,11 @@ fetch(url, {
 <code class="language-json" style="max-height: 300px;">{
     &quot;message&quot;: &quot;The given data was invalid.&quot;,
     &quot;errors&quot;: {
+        &quot;project_id&quot;: [
+            &quot;The project_id field is required.&quot;
+        ],
         &quot;title&quot;: [
             &quot;The title field is required.&quot;
-        ],
-        &quot;cost&quot;: [
-            &quot;The cost format is invalid.&quot;
-        ],
-        &quot;start_date&quot;: [
-            &quot;The start date must be a date before or equal to end date.&quot;
         ]
     }
 }</code>
@@ -6109,10 +6767,8 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
- &quot;message&quot;: &quot;The separation symbol could not be found\r\nTrailing data&quot;,
- &quot;exception&quot;: &quot;Carbon\\Exceptions\\InvalidFormatException&quot;,
- &quot;file&quot;: &quot;.../vendor/nesbot/carbon/src/Carbon/Traits/Creator.php&quot;,
- ...
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Milestone couldn&#039;t be created: Milestone creation failed due to mass assignment or DB error.&quot;
 }</code>
  </pre>
     </span>
@@ -6164,6 +6820,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-create-milestone"
+               value="integer required The ID of the workspace. Example: 2"
+               data-component="header">
+    <br>
+<p>Example: <code>integer required The ID of the workspace. Example: 2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -6192,10 +6859,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="project_id"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value="1"
+               value="5"
                data-component="body">
     <br>
-<p>The ID of the project this milestone belongs to. Example: <code>1</code></p>
+<p>The ID of the project the milestone belongs to. Example: <code>5</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
@@ -6203,10 +6870,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="title"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value=""Design Phase""
+               value="Final Design Review"
                data-component="body">
     <br>
-<p>The title of the milestone. Example: <code>"Design Phase"</code></p>
+<p>The title of the milestone. Example: <code>Final Design Review</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -6214,43 +6881,43 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value=""pending""
+               value="incomplete"
                data-component="body">
     <br>
-<p>The status of the milestone (e.g., pending, in_progress, completed). Example: <code>"pending"</code></p>
+<p>The status of the milestone. Must be one of: incomplete, complete, pending. Example: <code>incomplete</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>start_date</code></b>&nbsp;&nbsp;
-<small>date</small>&nbsp;
+<small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value="2025-05-20"
+               value="2025-06-10"
                data-component="body">
     <br>
-<p>The start date of the milestone. Must be in Y-m-d format and before or equal to end_date. Example: <code>2025-05-20</code></p>
+<p>The start date of the milestone in the current PHP date format. Must be before or equal to end_date. Example: <code>2025-06-10</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
-<small>date</small>&nbsp;
+<small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value="2025-06-15"
+               value="2025-06-20"
                data-component="body">
     <br>
-<p>The end date of the milestone. Must be in Y-m-d format. Example: <code>2025-06-15</code></p>
+<p>The end date of the milestone. Example: <code>2025-06-20</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cost</code></b>&nbsp;&nbsp;
-<small>decimal</small>&nbsp;
+<small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="cost"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value="1200.50"
+               value="2000.50"
                data-component="body">
     <br>
-<p>The cost of the milestone. Must be a valid number (integer or decimal). Example: <code>1200.50</code></p>
+<p>The cost of the milestone. Example: <code>2000.50</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
@@ -6258,10 +6925,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="description"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value=""Initial design and prototyping""
+               value="All screens finalized and approved by client."
                data-component="body">
     <br>
-<p>optional A description of the milestone. Example: <code>"Initial design and prototyping"</code></p>
+<p>The description of the milestone (optional). Example: <code>All screens finalized and approved by client.</code></p>
         </div>
         </form>
 
@@ -6279,8 +6946,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/update-milestone/consequatur" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"title\": \"\\\"Design Phase\\\"\",
     \"status\": \"\\\"incomplete\\\"\",
@@ -6300,8 +6969,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -6444,15 +7115,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-milestone--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="PUTapi-master-panel-update-milestone--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -6460,6 +7131,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="PUTapi-master-panel-update-milestone--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-update-milestone--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-milestone--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -6582,8 +7275,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/delete-milestone/3" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -6592,8 +7287,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -6687,15 +7384,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -6703,6 +7400,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -6747,8 +7466,10 @@ The view preference is stored in the <code>user_client_preferences</code> table.
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/save-view-preference" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"view\": \"kanban\"
 }"
@@ -6761,8 +7482,10 @@ The view preference is stored in the <code>user_client_preferences</code> table.
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -6861,15 +7584,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-save-view-preference"
-               value="application/json"
+                              name="Authorization" class="auth-value"               data-endpoint="POSTapi-master-panel-save-view-preference"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -6877,6 +7600,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-save-view-preference"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-save-view-preference"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-save-view-preference"
                value="application/json"
                data-component="header">
     <br>
@@ -6910,8 +7655,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/update-status/consequatur" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"id\": 438,
     \"statusId\": 5,
@@ -6927,8 +7674,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -7080,15 +7829,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-status--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="PUTapi-master-panel-update-status--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -7096,6 +7845,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="PUTapi-master-panel-update-status--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-update-status--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-status--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -7170,16 +7941,291 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                <h1 id="project-comments">Project Comments</h1>
-
-    
-
-                                <h2 id="project-comments-POSTapi-master-panel-comments">create Comments</h2>
+                    <h2 id="project-status-and-priority-PUTapi-master-panel-update-priority--id-">Update the priority of a project.</h2>
 
 <p>
 </p>
 
 
+
+<span id="example-requests-PUTapi-master-panel-update-priority--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8000/api/master-panel/update-priority/consequatur" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
+    --data "{
+    \"id\": 123,
+    \"priorityId\": \"5\",
+    \"note\": \"\\\"Urgent priority needed\\\"\",
+    \"isApi\": false
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/update-priority/consequatur"
+);
+
+const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+let body = {
+    "id": 123,
+    "priorityId": "5",
+    "note": "\"Urgent priority needed\"",
+    "isApi": false
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-master-panel-update-priority--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+  &quot;error&quot;: false,
+  &quot;message&quot;: &quot;Priority updated successfully.&quot;,
+  &quot;id&quot;: 123,
+  &quot;type&quot;: &quot;project&quot;,
+  &quot;old_priority&quot;: &quot;Medium&quot;,
+  &quot;new_priority&quot;: &quot;High&quot;,
+  &quot;activity_message&quot;: &quot;John Doe updated project priority from Medium to High&quot;,
+  &quot;data&quot;: {
+    // Detailed formatted project data as returned by formatProject helper
+  }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (403):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;You are not authorized to update this priority.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;id&quot;: [
+            &quot;The selected id is invalid.&quot;
+        ],
+        &quot;priorityId&quot;: [
+            &quot;The selected priority id is invalid.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Error: Exception message here&quot;,
+    &quot;line&quot;: 45,
+    &quot;file&quot;: &quot;/path/to/file.php&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-PUTapi-master-panel-update-priority--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-master-panel-update-priority--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-update-priority--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-master-panel-update-priority--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-master-panel-update-priority--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-master-panel-update-priority--id-" data-method="PUT"
+      data-path="api/master-panel/update-priority/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-update-priority--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-master-panel-update-priority--id-"
+                    onclick="tryItOut('PUTapi-master-panel-update-priority--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-master-panel-update-priority--id-"
+                    onclick="cancelTryOut('PUTapi-master-panel-update-priority--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-master-panel-update-priority--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/master-panel/update-priority/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>The ID of the update priority. Example: <code>consequatur</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="123"
+               data-component="body">
+    <br>
+<p>The ID of the project to update. Example: <code>123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>priorityId</code></b>&nbsp;&nbsp;
+<small>int|null</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="priorityId"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value="5"
+               data-component="body">
+    <br>
+<p>The ID of the new priority to set. Pass null to reset. Example: <code>5</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>note</code></b>&nbsp;&nbsp;
+<small>string|null</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="note"                data-endpoint="PUTapi-master-panel-update-priority--id-"
+               value=""Urgent priority needed""
+               data-component="body">
+    <br>
+<p>Optional note related to the priority update. Example: <code>"Urgent priority needed"</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="PUTapi-master-panel-update-priority--id-" style="display: none">
+            <input type="radio" name="isApi"
+                   value="true"
+                   data-endpoint="PUTapi-master-panel-update-priority--id-"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PUTapi-master-panel-update-priority--id-" style="display: none">
+            <input type="radio" name="isApi"
+                   value="false"
+                   data-endpoint="PUTapi-master-panel-update-priority--id-"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Optional flag (true/false) indicating if the request expects an API-formatted response. Default is false. Example: <code>false</code></p>
+        </div>
+        </form>
+
+                <h1 id="project-comments">Project Comments</h1>
+
+    
+
+                                <h2 id="project-comments-POSTapi-master-panel-comments">Add a comment to a model (e.g., project, task) with optional attachments and user mentions.</h2>
+
+<p>
+</p>
+
+<p>This endpoint allows the authenticated user to post a comment on any model (like a project or task)
+using polymorphic relationships. It supports file attachments (images, PDFs, documents)
+and also handles user mentions (e.g., @username), sending notifications to mentioned users.</p>
 
 <span id="example-requests-POSTapi-master-panel-comments">
 <blockquote>Example request:</blockquote>
@@ -7188,14 +8234,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/comments" \
-    --header "Authorization: required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "model_type=consequatur"\
-    --form "model_id=17"\
-    --form "content=consequatur"\
-    --form "parent_id=17"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php3FF7.tmp" </code></pre></div>
+    --form "model_type=App\Models\Project"\
+    --form "model_id=14"\
+    --form "content=This is a comment with a mention to @jane."\
+    --form "parent_id=5"\
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpBEF6.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7204,16 +8249,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Authorization": "required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
 
 const body = new FormData();
-body.append('model_type', 'consequatur');
-body.append('model_id', '17');
-body.append('content', 'consequatur');
-body.append('parent_id', '17');
+body.append('model_type', 'App\Models\Project');
+body.append('model_id', '14');
+body.append('content', 'This is a comment with a mention to @jane.');
+body.append('parent_id', '5');
 body.append('attachments[]', document.querySelector('input[name="attachments[]"]').files[0]);
 
 fetch(url, {
@@ -7232,37 +8276,32 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Comment Added Successfully&quot;,
     &quot;comment&quot;: {
-        &quot;id&quot;: 1,
+        &quot;id&quot;: 21,
         &quot;commentable_type&quot;: &quot;App\\Models\\Project&quot;,
-        &quot;commentable_id&quot;: 123,
-        &quot;content&quot;: &quot;This is a comment with @user1 and @user2 mentions.&quot;,
+        &quot;commentable_id&quot;: 14,
+        &quot;content&quot;: &quot;This is a comment with mention to &lt;a href=&#039;/users/5&#039;&gt;@jane&lt;/a&gt;&quot;,
         &quot;user_id&quot;: 1,
-        &quot;parent_id&quot;: 45,
-        &quot;created_at&quot;: &quot;2023-05-21T10:00:00&quot;,
-        &quot;updated_at&quot;: &quot;2023-05-21T10:00:00&quot;,
+        &quot;parent_id&quot;: null,
+        &quot;created_at&quot;: &quot;2025-06-12T10:31:02.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-12T10:31:02.000000Z&quot;,
+        &quot;user&quot;: {
+            &quot;id&quot;: 1,
+            &quot;first_name&quot;: &quot;John&quot;,
+            &quot;last_name&quot;: &quot;Doe&quot;,
+            &quot;email&quot;: &quot;john@example.com&quot;
+        },
         &quot;attachments&quot;: [
             {
                 &quot;id&quot;: 1,
-                &quot;file_name&quot;: &quot;attachment1.jpg&quot;,
-                &quot;file_path&quot;: &quot;comment_attachments/attachment1.jpg&quot;,
-                &quot;file_type&quot;: &quot;image/jpeg&quot;
-            },
-            {
-                &quot;id&quot;: 2,
-                &quot;file_name&quot;: &quot;attachment2.pdf&quot;,
-                &quot;file_path&quot;: &quot;comment_attachments/attachment2.pdf&quot;,
-                &quot;file_type&quot;: &quot;application/pdf&quot;
+                &quot;comment_id&quot;: 21,
+                &quot;file_name&quot;: &quot;screenshot.png&quot;,
+                &quot;file_path&quot;: &quot;comment_attachments/screenshot.png&quot;,
+                &quot;file_type&quot;: &quot;image/png&quot;
             }
         ]
-    },
-    &quot;message&quot;: &quot;Comment Added Successfully&quot;,
-    &quot;user&quot;: {
-        &quot;id&quot;: 1,
-        &quot;first_name&quot;: &quot;John&quot;,
-        &quot;last_name&quot;: &quot;Doe&quot;
-    },
-    &quot;created_at&quot;: &quot;1 minute ago&quot;
+    }
 }</code>
  </pre>
             <blockquote>
@@ -7271,14 +8310,11 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Validation Error&quot;,
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;Validation failed.&quot;,
     &quot;errors&quot;: {
         &quot;model_type&quot;: [
-            &quot;The model type field is required.&quot;
-        ],
-        &quot;model_id&quot;: [
-            &quot;The model id field is required.&quot;
+            &quot;The model_type field is required.&quot;
         ],
         &quot;content&quot;: [
             &quot;The content field is required.&quot;
@@ -7292,8 +8328,8 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Internal Server Error&quot;
+    &quot;success&quot;: false,
+    &quot;message&quot;: &quot;An error occurred: [error details]&quot;
 }</code>
  </pre>
     </span>
@@ -7345,17 +8381,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization"                data-endpoint="POSTapi-master-panel-comments"
-               value="required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>required Example: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -7384,10 +8409,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="model_type"                data-endpoint="POSTapi-master-panel-comments"
-               value="consequatur"
+               value="App\Models\Project"
                data-component="body">
     <br>
-<p>The type of the model being commented on (e.g., &quot;App\Models\Project&quot;). Example: <code>consequatur</code></p>
+<p>The fully qualified model class name. Example: <code>App\Models\Project</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>model_id</code></b>&nbsp;&nbsp;
@@ -7395,10 +8420,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="model_id"                data-endpoint="POSTapi-master-panel-comments"
-               value="17"
+               value="14"
                data-component="body">
     <br>
-<p>The ID of the model being commented on (e.g., project ID). Example: <code>17</code></p>
+<p>The ID of the model being commented on. Example: <code>14</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>content</code></b>&nbsp;&nbsp;
@@ -7406,10 +8431,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="content"                data-endpoint="POSTapi-master-panel-comments"
-               value="consequatur"
+               value="This is a comment with a mention to @jane."
                data-component="body">
     <br>
-<p>The content of the comment, can contain mentions (e.g., &quot;This is a comment with @user1 and @user2&quot;). Example: <code>consequatur</code></p>
+<p>The comment content. Mentions like &quot;@john&quot; are supported. Example: <code>This is a comment with a mention to @jane.</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
@@ -7417,21 +8442,23 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="parent_id"                data-endpoint="POSTapi-master-panel-comments"
-               value="17"
+               value="5"
                data-component="body">
     <br>
-<p>optional The ID of the parent comment, if this is a reply to an existing comment. Example: <code>17</code></p>
+<p>Optional. The ID of the parent comment (for replies). Example: <code>5</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>attachments[]</code></b>&nbsp;&nbsp;
-<small>file</small>&nbsp;
+            <b style="line-height: 2;"><code>attachments</code></b>&nbsp;&nbsp;
+<small>file[]</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="file" style="display: none"
-                              name="attachments.0"                data-endpoint="POSTapi-master-panel-comments"
-               value=""
+                              name="attachments[0]"                data-endpoint="POSTapi-master-panel-comments"
+               data-component="body">
+        <input type="file" style="display: none"
+               name="attachments[1]"                data-endpoint="POSTapi-master-panel-comments"
                data-component="body">
     <br>
-<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php3FF7.tmp</code></p>
+<p>Optional. Files to attach with the comment (jpg, jpeg, png, pdf, xlsx, txt, docx). Max size: 2MB per file.</p>
         </div>
         </form>
 
@@ -10167,7 +11194,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php4400.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpC1F6.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -10906,7 +11933,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php4597.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpC2D1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11145,7 +12172,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php4101.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpBFD2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13531,7 +14558,7 @@ profile photo upload, email verification logic, and account creation emails.</p>
     --form "internal_purpose=consequatur"\
     --form "status=17"\
     --form "require_ev=17"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\php4923.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpC43A.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13922,7 +14949,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php4923.tmp</code></p>
+<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpC43A.tmp</code></p>
         </div>
         </form>
 
@@ -15328,7 +16355,6 @@ Optionally, a verification email and account creation email are sent based on sy
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/user" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
@@ -15361,7 +16387,6 @@ Optionally, a verification email and account creation email are sent based on sy
 );
 
 const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
     "workspace_id": "2",
     "Content-Type": "application/json",
@@ -15502,17 +16527,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/user</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization"                data-endpoint="POSTapi-master-panel-user"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -15788,7 +16802,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/user/18" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
@@ -15819,7 +16832,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -15952,17 +16964,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/user/{id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-master-panel-user--id-"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16211,7 +17212,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/user/6" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -16223,7 +17223,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -16318,17 +17317,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization"                data-endpoint="DELETEapi-master-panel-user--id-"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -16389,7 +17377,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/user/5?search=John&amp;sort=first_name&amp;order=ASC&amp;status=1&amp;role_ids[]=1&amp;role_ids[]=2&amp;type=project&amp;typeId=3&amp;limit=10&amp;isApi=1" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
@@ -16416,7 +17403,6 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -16545,17 +17531,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/user/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization"                data-endpoint="GETapi-master-panel-user--id--"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -17024,7 +17999,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/master-panel/workspace/consequatur" \
+    "http://localhost:8000/api/master-panel/workspace/1" \
     --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
     --header "workspace_id: 2" \
@@ -17047,7 +18022,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/workspace/consequatur"
+    "http://localhost:8000/api/master-panel/workspace/1"
 );
 
 const headers = {
@@ -17227,14 +18202,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="id"                data-endpoint="PUTapi-master-panel-workspace--id-"
-               value="consequatur"
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-workspace--id-"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the workspace. Example: <code>consequatur</code></p>
+<p>The ID of the workspace. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -20742,262 +21717,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>optional The ID of the note to retrieve. Example: <code>3</code></p>
             </div>
                     </form>
-
-                <h1 id="project-management">Project Management</h1>
-
-    
-
-                                <h2 id="project-management-PUTapi-master-panel-update-priority--id-">Update the priority of a project.</h2>
-
-<p>
-</p>
-
-<ul>
-<li>@group Project status and priority
-This endpoint allows updating the priority of a specified project.
-The request must include the project ID and optionally the new priority ID.
-It returns the updated project details along with an activity message.</li>
-</ul>
-
-<span id="example-requests-PUTapi-master-panel-update-priority--id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/master-panel/update-priority/consequatur" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"id\": 123,
-    \"priorityId\": \"5\",
-    \"note\": \"\\\"Urgent priority needed\\\"\",
-    \"isApi\": false
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/update-priority/consequatur"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-let body = {
-    "id": 123,
-    "priorityId": "5",
-    "note": "\"Urgent priority needed\"",
-    "isApi": false
-};
-
-fetch(url, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-PUTapi-master-panel-update-priority--id-">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-  &quot;error&quot;: false,
-  &quot;message&quot;: &quot;Priority updated successfully.&quot;,
-  &quot;id&quot;: 123,
-  &quot;type&quot;: &quot;project&quot;,
-  &quot;old_priority&quot;: &quot;Medium&quot;,
-  &quot;new_priority&quot;: &quot;High&quot;,
-  &quot;activity_message&quot;: &quot;John Doe updated project priority from Medium to High&quot;,
-  &quot;data&quot;: {
-    // Detailed formatted project data as returned by formatProject helper
-  }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (403):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;You are not authorized to update this priority.&quot;
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (422):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;The given data was invalid.&quot;,
-    &quot;errors&quot;: {
-        &quot;id&quot;: [
-            &quot;The selected id is invalid.&quot;
-        ],
-        &quot;priorityId&quot;: [
-            &quot;The selected priority id is invalid.&quot;
-        ]
-    }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (500):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Error: Exception message here&quot;,
-    &quot;line&quot;: 45,
-    &quot;file&quot;: &quot;/path/to/file.php&quot;
-}</code>
- </pre>
-    </span>
-<span id="execution-results-PUTapi-master-panel-update-priority--id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-PUTapi-master-panel-update-priority--id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-update-priority--id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-PUTapi-master-panel-update-priority--id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-PUTapi-master-panel-update-priority--id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-PUTapi-master-panel-update-priority--id-" data-method="PUT"
-      data-path="api/master-panel/update-priority/{id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-update-priority--id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-PUTapi-master-panel-update-priority--id-"
-                    onclick="tryItOut('PUTapi-master-panel-update-priority--id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-PUTapi-master-panel-update-priority--id-"
-                    onclick="cancelTryOut('PUTapi-master-panel-update-priority--id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-PUTapi-master-panel-update-priority--id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-darkblue">PUT</small>
-            <b><code>api/master-panel/update-priority/{id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="id"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value="consequatur"
-               data-component="url">
-    <br>
-<p>The ID of the update priority. Example: <code>consequatur</code></p>
-            </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="id"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value="123"
-               data-component="body">
-    <br>
-<p>The ID of the project to update. Example: <code>123</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>priorityId</code></b>&nbsp;&nbsp;
-<small>int|null</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="priorityId"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value="5"
-               data-component="body">
-    <br>
-<p>The ID of the new priority to set. Pass null to reset. Example: <code>5</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>note</code></b>&nbsp;&nbsp;
-<small>string|null</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="note"                data-endpoint="PUTapi-master-panel-update-priority--id-"
-               value=""Urgent priority needed""
-               data-component="body">
-    <br>
-<p>Optional note related to the priority update. Example: <code>"Urgent priority needed"</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
-<i>optional</i> &nbsp;
-                <label data-endpoint="PUTapi-master-panel-update-priority--id-" style="display: none">
-            <input type="radio" name="isApi"
-                   value="true"
-                   data-endpoint="PUTapi-master-panel-update-priority--id-"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="PUTapi-master-panel-update-priority--id-" style="display: none">
-            <input type="radio" name="isApi"
-                   value="false"
-                   data-endpoint="PUTapi-master-panel-update-priority--id-"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
-    <br>
-<p>Optional flag (true/false) indicating if the request expects an API-formatted response. Default is false. Example: <code>false</code></p>
-        </div>
-        </form>
 
                 <h1 id="leaverequest-managemant">leaverequest Managemant</h1>
 

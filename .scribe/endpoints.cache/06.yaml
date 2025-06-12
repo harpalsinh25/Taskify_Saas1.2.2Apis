@@ -267,3 +267,146 @@ endpoints:
     method: null
     route: null
     custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/master-panel/update-priority/{id}'
+    metadata:
+      groupName: 'Project status and priority'
+      groupDescription: |-
+        This endpoint allows updating the priority of a specified project.
+        The request must include the project ID and optionally the new priority ID.
+        It returns the updated project details along with an activity message.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update the priority of a project.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
+      Accept: application/json
+      workspace_id: '2'
+      Content-Type: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the update priority.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      id:
+        name: id
+        description: 'The ID of the project to update.'
+        required: true
+        example: 123
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      priorityId:
+        name: priorityId
+        description: 'The ID of the new priority to set. Pass null to reset.'
+        required: false
+        example: '5'
+        type: int|null
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      note:
+        name: note
+        description: 'Optional note related to the priority update.'
+        required: false
+        example: '"Urgent priority needed"'
+        type: string|null
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      isApi:
+        name: isApi
+        description: 'Optional flag (true/false) indicating if the request expects an API-formatted response. Default is false.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      id: 123
+      priorityId: '5'
+      note: '"Urgent priority needed"'
+      isApi: false
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Priority updated successfully.",
+            "id": 123,
+            "type": "project",
+            "old_priority": "Medium",
+            "new_priority": "High",
+            "activity_message": "John Doe updated project priority from Medium to High",
+            "data": {
+              // Detailed formatted project data as returned by formatProject helper
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 403
+        content: |-
+          {
+            "error": true,
+            "message": "You are not authorized to update this priority."
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "id": ["The selected id is invalid."],
+              "priorityId": ["The selected priority id is invalid."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Error: Exception message here",
+            "line": 45,
+            "file": "/path/to/file.php"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

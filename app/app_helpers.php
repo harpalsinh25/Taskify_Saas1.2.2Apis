@@ -3303,7 +3303,7 @@ if (!function_exists('formatProject')) {
             'description' => $project->description,
             'note' => $project->note,
             // dd($project->note),
-            'favorite' => $project->is_favorited ? 1 : 0,
+            'favorite' => $project->is_favorite ? 1 : 0,
             'client_can_discuss' => $project->client_can_discuss,
             'created_at' => format_date($project->created_at, to_format: 'Y-m-d'),
             'updated_at' => format_date($project->updated_at, to_format: 'Y-m-d'),
