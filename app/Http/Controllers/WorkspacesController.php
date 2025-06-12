@@ -63,7 +63,9 @@ class WorkspacesController extends Controller
  * @bodyParam client_ids array List of client IDs to attach to the workspace. Example: [101, 102]
  * @bodyParam primaryWorkspace boolean Indicates if this workspace should be set as the primary workspace. Example: true
  * @bodyParam isApi boolean Optional flag to return API-formatted response. Example: true
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Workspace created successfully.",
@@ -102,12 +104,10 @@ class WorkspacesController extends Controller
  *   }
  * }
  */
-
-    public function store(Request $request)
-{
-    $isApi = $request->get('isApi', false);
-
-    try {
+public function store(Request $request)
+    {
+          $isApi = request()->get('isApi', false);
+           try {
         $adminId = null;
         if (Auth::guard('web')->check() && $this->user->hasRole('admin')) {
             $admin = Admin::where('user_id', $this->user->id)->first();
@@ -122,39 +122,38 @@ class WorkspacesController extends Controller
 
         $formFields['user_id'] = $this->user->id;
         $formFields['admin_id'] = $adminId;
+        $userIds = $request->input('user_ids') ?? [];
+        $clientIds = $request->input('client_ids') ?? [];
 
-        $userIds = $request->input('user_ids', []);
-        $clientIds = $request->input('client_ids', []);
+        // Set creator as a participant automatically
 
-        // Ensure creator is part of assigned users or clients
         if (Auth::guard('client')->check() && !in_array($this->user->id, $clientIds)) {
-            array_unshift($clientIds, $this->user->id);
-        } elseif (Auth::guard('web')->check() && !in_array($this->user->id, $userIds)) {
-            array_unshift($userIds, $this->user->id);
+            array_splice($clientIds, 0, 0, $this->user->id);
+        } else if (Auth::guard('web')->check() && !in_array($this->user->id, $userIds)) {
+            array_splice($userIds, 0, 0, $this->user->id);
         }
-
-        $primaryWorkspace = isAdminOrHasAllDataAccess()
-            && $request->filled('primaryWorkspace')
-            && $request->input('primaryWorkspace') == 'on' ? 1 : 0;
+        $primaryWorkspace = isAdminOrHasAllDataAccess() && $request->input('primaryWorkspace') && $request->filled('primaryWorkspace') && $request->input('primaryWorkspace') == 'on' ? 1 : 0;
 
         $formFields['is_primary'] = $primaryWorkspace;
 
-        $newWorkspace = Workspace::create($formFields);
+        // Create new workspace
 
+        $new_workspace = Workspace::create($formFields);
         if ($primaryWorkspace) {
-            Workspace::where('id', '!=', $newWorkspace->id)->update(['is_primary' => 0]);
+            // Set all other workspaces to non-primary
+            Workspace::where('id', '!=', $new_workspace->id)->update(['is_primary' => 0]);
         }
-
-        $workspace_id = $newWorkspace->id;
-
-        if ($this->workspace === null) {
+        $workspace_id = $new_workspace->id;
+        if ($this->workspace == null) {
             session()->put('workspace_id', $workspace_id);
         }
+        $workspace = Workspace::find($workspace_id);
+        // Attach users and clients to the workspace
+        $workspace->users()->attach($userIds, ['admin_id' => $adminId]);
+        $workspace->clients()->attach($clientIds, ['admin_id' => $adminId]);
 
-        $newWorkspace->users()->attach($userIds, ['admin_id' => $adminId]);
-        $newWorkspace->clients()->attach($clientIds, ['admin_id' => $adminId]);
-
-        ActivityLog::create([
+        //Create activity log
+        $activityLogData = [
             'workspace_id' => $workspace_id,
             'admin_id' => $adminId,
             'actor_id' => $this->user->id,
@@ -162,47 +161,58 @@ class WorkspacesController extends Controller
             'type_id' => $workspace_id,
             'type' => 'workspace',
             'activity' => 'created',
-            'message' => $this->user->name . ' created workspace ' . $newWorkspace->title,
-        ]);
+            'message' => $this->user->name . ' created workspace ' . $new_workspace->title,
+        ];
 
+        ActivityLog::create($activityLogData);
         $notification_data = [
             'type' => 'workspace',
             'type_id' => $workspace_id,
-            'type_title' => $newWorkspace->title,
+            'type_title' => $workspace->title,
             'action' => 'assigned',
             'title' => 'Added in a workspace',
-            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $newWorkspace->title . ', ID #' . $workspace_id . '.'
+            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $workspace->title . ', ID #' . $workspace_id . '.'
+
         ];
 
+        // Combine user and client IDs for notification recipients
         $recipients = array_merge(
-            array_map(fn($id) => 'u_' . $id, $userIds),
-            array_map(fn($id) => 'c_' . $id, $clientIds)
+            array_map(function ($userId) {
+                return 'u_' . $userId;
+            }, $userIds),
+            array_map(function ($clientId) {
+                return 'c_' . $clientId;
+            }, $clientIds)
         );
 
+        // Process notifications
         processNotifications($notification_data, $recipients);
 
-        Session::flash('message', 'Workspace created successfully.');
-
-      return formatApiResponse(
-    false,
-    'Workspace created successfully.',
-    [
-        'id' => $newWorkspace->id,
-        'data' => formatWorkspace($newWorkspace)
-    ]
-);
-    } catch (\Exception $e) {
-        // dd($e);
-        return formatApiResponse(
-            true,
-            'Failed to create workspace.',
-            [],
-            500,
-            $isApi ? $e->getMessage() : null
-        );
+            // Return JSON response with workspace ID
+            return formatApiResponse(
+                false,
+                'Workspace created successfully.',
+                [
+                    'id' => $workspace_id,
+                    'data' => formatWorkspace($workspace)
+                ]
+            );
+        } catch (ValidationException $e) {
+            return formatApiValidationError($isApi, $e->errors());
+        } catch (\Exception $e) {
+            // Handle any unexpected errors
+            return response()->json([
+                'error' => true,
+                'message' => 'An error occurred while creating the workspace.'
+            ], 500);
+        }
     }
-}
 
+    public function get($id)
+    {
+        $workspace = Workspace::with('users', 'clients')->findOrFail($id);
+        return response()->json(['error' => false, 'workspace' => $workspace]);
+    }
     public function list()
     {
         $search = request('search');
@@ -326,7 +336,9 @@ class WorkspacesController extends Controller
  * @queryParam order string optional Sort direction ("ASC" or "DESC"). Default is "DESC". Example: ASC
  * @queryParam limit integer optional Number of results per page. Default is 10. Example: 20
  * @queryParam isApi boolean optional Set true if called from API. Default is true.
- *
+* @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "error": false,
  *  "message": "Workspaces retrieved successfully.",
@@ -457,7 +469,9 @@ class WorkspacesController extends Controller
  * @bodyParam user_ids array optional List of user IDs to associate with the workspace. Example: [1, 3]
  * @bodyParam client_ids array optional List of client IDs to associate with the workspace. Example: [101, 104]
  * @bodyParam primaryWorkspace boolean optional Whether this workspace is set as the primary one. Example: true
- *
+  * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *    "error": false,
  *    "id": 12,
@@ -501,107 +515,71 @@ class WorkspacesController extends Controller
  * }
  */
 
-  public function update(Request $request)
-{
-    $isApi = $request->get('isApi', false); // Determine if it's an API request
-
-    try {
-        // For API, validate and use provided ID
-        if ($isApi) {
-            $request->validate([
-                'id' => ['required', 'exists:workspaces,id'],
-                'title' => ['required'],
-            ]);
-            $id = $request->input('id');
-            $workspace = getWorkspaceId();
-        } else {
-            // For web, use selected workspace from middleware
-            $workspace = $this->workspace;
-
-            if (!$workspace) {
-                return redirect()->back()->withErrors(['workspace' => 'No workspace selected.']);
-            }
-
-            $request->validate([
-                'title' => ['required'],
-            ]);
-        }
-
-        $formFields = $request->only(['title']);
-
+ public function update(Request $request)
+    {
+         $isApi = request()->get('isApi', false);
+        $formFields = $request->validate([
+            'id' => 'required|exists:workspaces,id',
+            'title' => ['required']
+        ]);
+        $id = $request->input('id');
+        $workspace = Workspace::findOrFail($id);
         $userIds = $request->input('user_ids') ?? [];
         $clientIds = $request->input('client_ids') ?? [];
-
-        // Add creator if not included
+        // Set creator as a participant automatically
         if (User::where('id', $workspace->user_id)->exists() && !in_array($workspace->user_id, $userIds)) {
-            array_unshift($userIds, $workspace->user_id);
+            array_splice($userIds, 0, 0, $workspace->user_id);
         } elseif (Client::where('id', $workspace->user_id)->exists() && !in_array($workspace->user_id, $clientIds)) {
-            array_unshift($clientIds, $workspace->user_id);
+            array_splice($clientIds, 0, 0, $workspace->user_id);
         }
-
         $existingUserIds = $workspace->users->pluck('id')->toArray();
         $existingClientIds = $workspace->clients->pluck('id')->toArray();
-
-        // Handle primary workspace
         if (isAdminOrHasAllDataAccess()) {
-            $primaryWorkspace = $request->boolean('primaryWorkspace', false);
-            $formFields['is_primary'] = $primaryWorkspace;
+            if ($request->has('primaryWorkspace')) {
+                $primaryWorkspace = $request->boolean('primaryWorkspace', false) ? 1 : 0;
+                $formFields['is_primary'] = $primaryWorkspace;
+            } else {
+                $primaryWorkspace = 0;
+            }
         } else {
             $primaryWorkspace = $workspace->is_primary;
         }
-
         $workspace->update($formFields);
-
         if ($primaryWorkspace) {
+            // Set all other workspaces to non-primary
             Workspace::where('id', '!=', $workspace->id)->update(['is_primary' => 0]);
         }
-
         $workspace->users()->sync($userIds);
         $workspace->clients()->sync($clientIds);
-
-        $newUserIds = array_diff($userIds, $existingUserIds);
-        $newClientIds = array_diff($clientIds, $existingClientIds);
-
-        // Notification data
+        $userIds = array_diff($userIds, $existingUserIds);
+        $clientIds = array_diff($clientIds, $existingClientIds);
+        // Prepare notification data
         $notification_data = [
             'type' => 'workspace',
-            'type_id' => $workspace->id,
+            'type_id' => $id,
             'type_title' => $workspace->title,
             'action' => 'assigned',
             'title' => 'Added in a workspace',
-            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $workspace->title . ', ID #' . $workspace->id . '.'
+            'message' => $this->user->first_name . ' ' . $this->user->last_name . ' added you in workspace: ' . $workspace->title . ', ID #' . $id . '.'
         ];
-
+        // Combine user and client IDs for notification recipients
         $recipients = array_merge(
-            array_map(fn($userId) => 'u_' . $userId, $newUserIds),
-            array_map(fn($clientId) => 'c_' . $clientId, $newClientIds)
+            array_map(function ($userId) {
+                return 'u_' . $userId;
+            }, $userIds),
+            array_map(function ($clientId) {
+                return 'c_' . $clientId;
+            }, $clientIds)
         );
-
+        // Process notifications
         processNotifications($notification_data, $recipients);
-
-        if ($isApi) {
-            return formatApiResponse(false, 'Workspace updated successfully.', [
-                'id' => $workspace->id,
-                'data' => formatWorkspace($workspace->fresh(['users', 'clients']))
-            ]);
-        } else {
-            Session::flash('message', 'Workspace updated successfully.');
-            return redirect()->back();
-        }
-
-    } catch (\Exception $e) {
-        $message = 'Error: ' . $e->getMessage();
-        if ($isApi) {
-            return formatApiResponse(true, $message, [
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ], 500);
-        } else {
-            return redirect()->back()->withErrors(['message' => $message]);
-        }
+        Session::flash('message', 'Workspace updated successfully.');
+        return response()->json(['error' => false,
+        'message' => 'Workspace updated successfully.',
+        'id' => $id,
+          'data' => formatWorkspace($workspace->fresh(['users', 'clients']))
+        ]);
     }
-}
-
 /**
  *
  *
@@ -610,7 +588,9 @@ class WorkspacesController extends Controller
  * This API deletes a workspace by its ID, if it's not the currently active workspace.
  *
  * @urlParam id integer required The ID of the workspace. Example: 12
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
 *"error": false,
 *   "message": "Workspace deleted successfully.",

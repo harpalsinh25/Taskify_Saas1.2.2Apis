@@ -17,8 +17,10 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: multipart/form-data
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
+      workspace_id: '2'
+      Content-Type: multipart/form-data
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -137,8 +139,10 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: application/json
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
+      workspace_id: '2'
+      Content-Type: application/json
     urlParameters:
       id:
         name: id
@@ -214,8 +218,10 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: application/json
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
+      workspace_id: '2'
+      Content-Type: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []

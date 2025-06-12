@@ -427,7 +427,7 @@ $(document).on("click", ".edit-note", function () {
                     }
                 }, 300);
             }
-            
+
         },
         error: function (xhr, status, error) {
             console.error("Error fetching note data:", error);
@@ -2973,6 +2973,7 @@ $(document).on("click", ".save-column-visibility", function (e) {
 // Edit Workspace Modal
 $(document).on("click", ".edit-workspace", function () {
     var id = $(this).data("id");
+
     $("#editWorkspaceModal").modal("show");
     $.ajax({
         url: "/master-panel/workspaces/get/" + id,
@@ -3820,7 +3821,7 @@ function calenderView() {
         WAcalendar.render();
     }
 }
-function fetchProjects( 
+function fetchProjects(
     startDate,
     endDate,
     successCallback,
@@ -3877,7 +3878,7 @@ function projectsCalendarView() {
             editable: false,
             height: "auto",
             selectable: true, // Enable date selection
-            
+
             events: function (fetchInfo, successCallback, failureCallback) {
                 // Fetch tasks for the current month
                 fetchProjects(
@@ -3887,7 +3888,7 @@ function projectsCalendarView() {
                     failureCallback
                 );
             },
-         
+
             eventClick: function (info) {
                 // Show the edit modal
                 var id = info.event.id;
@@ -4130,7 +4131,7 @@ function meetingsCalendarView(){
                 // if()
             },
         });
-        meetingCalendar.render();    
+        meetingCalendar.render();
     }
 }
 
@@ -4195,17 +4196,17 @@ function leaveRequestCalendarView(){
                     successCallback,
                     failureCallback
                 );
-            },  
+            },
             datesSet: function (info) {
                 // Fetch tasks when the month changes
                 leaveRequestCalendar.removeAllEvents();
                 leaveRequestCalendar.refetchEvents();
             },
-    
-    
+
+
             eventMouseEnter: function (info) {
     // Create a tooltip element
-    
+
                 var tooltip = document.createElement("div");
                 tooltip.innerHTML = info.event.extendedProps.description || "No description available";
                 tooltip.style.position = "absolute";
@@ -4229,7 +4230,7 @@ function leaveRequestCalendarView(){
                     },
                     { once: true }
                 );
-            },  
+            },
         });
         WAcalendar.render();
     }
@@ -4263,7 +4264,7 @@ function formatDate(date) {
 }
 function initActivityLogCalendar() {
     var calendarEl = document.getElementById("activityLogCalendar");
-    
+
     // Check if the calendar element exists
     if (calendarEl) {
         var activityCalendar = new FullCalendar.Calendar(calendarEl, {
@@ -4292,8 +4293,8 @@ function initActivityLogCalendar() {
                 activityCalendar.removeAllEvents();
                 activityCalendar.refetchEvents();
             },
-    
-    
+
+
             eventMouseEnter: function (info) {
                 // Create a tooltip element
                 var tooltip = document.createElement("div");
@@ -4327,8 +4328,8 @@ function initActivityLogCalendar() {
             },
         });
         activityCalendar.render();
-        
-        
+
+
     }
 }
 

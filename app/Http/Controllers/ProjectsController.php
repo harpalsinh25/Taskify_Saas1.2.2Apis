@@ -195,6 +195,9 @@ class ProjectsController extends Controller
  * @bodyParam isApi boolean Optional flag to determine API-specific behavior. Example: true
  * @bodyParam workspace_id int Workspace Id . Must exist in wprkspaces table . example:2
  *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 scenario="Success" {
  *   "error": false,
  *   "message": "Project created successfully.",
@@ -442,7 +445,9 @@ public function store(Request $request)
  * @bodyParam client_id array[int] Array of client IDs to assign to the project. Example: [1, 5]
  * @bodyParam tag_ids array[int] Array of tag IDs to associate with the project. Example: [1]
  * @bodyParam enable_tasks_time_entries boolean Whether to enable time entries on tasks. Example: true
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 scenario="Success" {
  *   "error": false,
  *   "message": "Project updated successfully.",
@@ -641,7 +646,9 @@ public function update(Request $request)
  * Files are permanently removed from the public storage disk.
  *@group Project Managemant
  * @urlParam id integer required The ID of the project to delete. Example: 85
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Project deleted successfully.",
@@ -701,7 +708,9 @@ else {
  *@group Project Managemant
  * @bodyParam ids array required An array of project IDs to delete. Example: [1, 2, 3]
  * @bodyParam ids.* integer required Each ID must exist in the projects table.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Project(s) deleted successfully.",
@@ -948,7 +957,9 @@ else {
  * @queryParam project_end_date_from date optional Filter by project end date from (YYYY-MM-DD). Example: 2025-01-01
  * @queryParam project_end_date_to date optional Filter by project end date to (YYYY-MM-DD). Example: 2025-12-31
  * @queryParam is_favorites boolean optional Filter for favorite projects. Accepts 1 or 0. Example: 1
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 scenario="Single project found" {
  *   "error": false,
  *   "message": "Project retrieved successfully",
@@ -1146,7 +1157,9 @@ public function apiList(Request $request, $id = null)
      *
      * @urlParam id int required The ID of the project to update.
      * @bodyParam is_favorite int required Indicates whether the project is a favorite. Use 1 for true and 0 for false.
-     *
+     * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
      * @response 200 {
      * "error": false,
      * "message": "Project favorite status updated successfully",
@@ -1290,7 +1303,9 @@ public function update_favorite(Request $request, $id)
  * @urlParam id integer required The ID of the project to duplicate. Example: 12
  * @queryParam title string Optional. A new title for the duplicated project. Example: New Project Copy
  * @queryParam reload boolean Optional. If true, flashes a session message. Example: true
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Project duplicated successfully.",
@@ -1325,7 +1340,9 @@ public function update_favorite(Request $request, $id)
  *@group Project Media
  * @bodyParam id integer required The ID of the project to attach media to. Example: 15
  * @bodyParam media_files[] file required One or more files to upload (multipart/form-data).
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Media uploaded successfully.",
@@ -1452,7 +1469,9 @@ public function update_favorite(Request $request, $id)
  * @queryParam sort string Optional. Field to sort by (e.g., id, file_name). Default: id. Example: file_name
  * @queryParam order string Optional. Sorting order: `asc` or `desc`. Default: desc. Example: asc
  * @queryParam isApi boolean Optional. When true, returns a formatted API response instead of JSON table structure. Example: true
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 scenario="Success - API response"
  * {
  *   "error": false,
@@ -1570,7 +1589,9 @@ public function update_favorite(Request $request, $id)
  * Deletes a media file record and its associated file from storage.
  *@group Project Media
  * @urlParam mediaId int required The ID of the media file to delete. Example: 101
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "File deleted successfully.",
@@ -1639,7 +1660,9 @@ public function update_favorite(Request $request, $id)
  *@group Project Media
  * @bodyParam ids array required Array of media IDs to delete. Example: [101, 102, 103]
  * @bodyParam ids.* integer required Each media ID must exist in the media table.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Files(s) deleted successfully.",
@@ -1698,7 +1721,9 @@ public function update_favorite(Request $request, $id)
  * @bodyParam end_date date required The end date of the milestone. Must be in Y-m-d format. Example: 2025-06-15
  * @bodyParam cost decimal required The cost of the milestone. Must be a valid number (integer or decimal). Example: 1200.50
  * @bodyParam description string optional A description of the milestone. Example: "Initial design and prototyping"
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "error": false,
  *  "message": "Milestone created successfully.",
@@ -1784,7 +1809,9 @@ public function store_milestone(Request $request)
  *@grpoup Project Milestones
  * This method returns a paginated list of milestones associated with a project.
  * The milestones can be filtered by search term, date range, and status.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @param  int  $id The ID of the project for which to retrieve milestones.
  *
  * @return \Illuminate\Http\JsonResponse JSON response containing the list of milestones and total count.
@@ -1955,7 +1982,9 @@ public function store_milestone(Request $request)
  * @bodyParam cost decimal required Must be a number (integer or decimal). Example: "2500.00"
  * @bodyParam progress string required Progress information. Can be a percentage string or descriptive. Example: "75"
  * @bodyParam description string Optional description of the milestone. Example: "Initial development phase."
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Milestone updated successfully.",
@@ -2033,7 +2062,9 @@ public function store_milestone(Request $request)
  * This endpoint deletes a single milestone by its ID. The milestone must exist. Once deleted, a confirmation message with related metadata is returned.
  *@group Project Milestones
  * @urlParam id int required The ID of the milestone to delete. Example: 3
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Milestone deleted successfully.",
@@ -2087,7 +2118,9 @@ public function store_milestone(Request $request)
  * The view preference is stored in the `user_client_preferences` table.
  *@group Project status and priority
  * @authenticated
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @bodyParam view string required The preferred default view type. Valid options might include "kanban", "list", or "calendar". Example: kanban
  *
  * @response 200 {
@@ -2140,7 +2173,9 @@ public function store_milestone(Request $request)
  * @bodyParam statusId int required The ID of the new status to set. Example: 5
  * @bodyParam note string Optional note about the status update.
  * @bodyParam isApi bool Optional flag to specify if request is API (true or false). Defaults to false.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Status updated successfully.",
@@ -2306,7 +2341,9 @@ public function store_milestone(Request $request)
  * @bodyParam priorityId int|null The ID of the new priority to set. Pass null to reset. Example: 5
  * @bodyParam note string|null Optional note related to the priority update. Example: "Urgent priority needed"
  * @bodyParam isApi bool Optional flag (true/false) indicating if the request expects an API-formatted response. Default is false.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Priority updated successfully.",
@@ -2420,7 +2457,9 @@ public function store_milestone(Request $request)
  * @bodyParam content string required The content of the comment, can contain mentions (e.g., "This is a comment with @user1 and @user2").
  * @bodyParam parent_id integer optional The ID of the parent comment, if this is a reply to an existing comment.
  * @bodyParam attachments[] file optional The files attached to the comment (e.g., images, PDFs).
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "success": true,
  *  "comment": {
@@ -2614,7 +2653,9 @@ public function comments(Request $request)
  *  get Cpmment By Id
  *
  * @urlParam id integer required The ID of the comment to retrieve.
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "comment": {
  *    "id": 1,
@@ -2663,7 +2704,9 @@ public function comments(Request $request)
  *
  * @bodyParam comment_id integer required The ID of the comment to be updated. Example: 1
  * @bodyParam content string required The new content for the comment, which can include user mentions. Example: "This is the updated comment with @user1 mention."
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "error": false,
  *  "message": "Comment updated successfully.",
@@ -2733,7 +2776,9 @@ public function comments(Request $request)
  * The associated attachments are also deleted from the file system.
  *
  * @bodyParam comment_id integer required The ID of the comment to be deleted. Example: 1
- *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  * @response 200 {
  *  "error": false,
  *  "message": "Comment deleted successfully.",

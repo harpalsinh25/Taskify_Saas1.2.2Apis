@@ -66,75 +66,78 @@ class UserController extends Controller
             ->get();
         return view('users.create_user', ['roles' => $roles]);
     }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    /**
+
+/**
  * Create a new user
  *@group User Managemant
- * This endpoint allows you to create a new user account with optional profile image,
- * address info, and role assignment. It also attaches the user to the workspace and
- * sends email notifications if configured.
- *
- * Requires authentication as an admin user.
+ * This endpoint allows admins to create a new user within a workspace.
+ * Email uniqueness is checked across both users and clients.
+ * Optionally, a verification email and account creation email are sent based on system configuration.
  *
  * @bodyParam first_name string required The user's first name. Example: John
  * @bodyParam last_name string required The user's last name. Example: Doe
- * @bodyParam email string required The user's email address. Must be unique. Example: john.doe@example.com
- * @bodyParam password string required The user's password. Minimum 6 characters. Example: secret123
- * @bodyParam password_confirmation string required Must match the password field. Example: secret123
+ * @bodyParam email string required The user's unique email address. Must not exist in users or clients. Example: john.smith@example.com
+ * @bodyParam password string required The password (minimum 6 characters). Example: secret123
+ * @bodyParam password_confirmation string required Must match the password. Example: secret123
  * @bodyParam address string The user's address. Example: 123 Main St
  * @bodyParam phone string The user's phone number. Example: +1234567890
- * @bodyParam country_code string ISO country dialing code. Example: +91
- * @bodyParam city string The user's city. Example: Mumbai
- * @bodyParam state string The user's state. Example: Maharashtra
- * @bodyParam country string The user's country. Example: India
- * @bodyParam zip string The user's postal/ZIP code. Example: 400001
- * @bodyParam dob string The user's date of birth. Format: Y-m-d. Example: 1990-05-15
- * @bodyParam doj string The user's date of joining. Format: Y-m-d. Example: 2024-01-01
- * @bodyParam role string required The role to assign to the user. Example: employee
- * @bodyParam country_iso_code string ISO country code. Example: IN
- * @bodyParam profile file The user's profile image. JPEG, JPG, PNG. Max 2MB.
- * @bodyParam require_ev boolean Whether to require email verification. Default is true.
- * @bodyParam status boolean Whether to set the user as active. Default is false.
+ * @bodyParam country_code string Country dialing code. Example: +91
+ * @bodyParam city string The city. Example: Mumbai
+ * @bodyParam state string The state. Example: Maharashtra
+ * @bodyParam country string The country. Example: India
+ * @bodyParam zip string The zip/postal code. Example: 400001
+ * @bodyParam dob date The user's date of birth (in 'Y-m-d' format). Example: 1990-01-01
+ * @bodyParam doj date The user's date of joining (in 'Y-m-d' format). Example: 2022-01-01
+ * @bodyParam role string required The role to assign to the user. Example: admin
+ * @bodyParam country_iso_code string Optional country ISO code. Example: IN
+ * @bodyParam require_ev boolean Whether email verification is required. 1 = yes, 0 = no. Example: 1
+ * @bodyParam status boolean Whether the user account should be active immediately. Example: 1
+ *
+ * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header Accept application/json
+ * @header workspace_id 2
  *
  * @response 200 {
- *   "success": true,
- *   "message": "User created successfully.",
- *   "data": {
- *     "id": 123,
- *     "data": {
- *       "id": 123,
- *       "first_name": "John",
- *       "last_name": "Doe",
- *       "email": "john.doe@example.com",
- *       "status": 1,
- *       "email_verified_at": "2025-06-04T11:03:41.000000Z",
- *       "photo": "photos/john.png",
- *       ...
- *     }
- *   }
+ *  "error": false,
+ *  "message": "User created successfully.",
+ *  "id": 54,
+ *  "data": {
+ *      "id": 54,
+ *      "first_name": "John",
+ *      "last_name": "Doe",
+ *      "full_name": "John Doe",
+ *      "email": "john.smith@example.com",
+ *      "phone": "+1234567890",
+ *      "address": "123 Main St",
+ *      "country_code": "+91",
+ *      "city": "Mumbai",
+ *      "state": "Maharashtra",
+ *      "country": "India",
+ *      "zip": "400001",
+ *      "dob": null,
+ *      "doj": null,
+ *      "role": "admin",
+ *      "status": 1,
+ *      "email_verified": false,
+ *      "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
+ *      "created_at": "2025-06-11 06:48:45",
+ *      "updated_at": "2025-06-11 06:48:45",
+ *      "require_ev": 1
+ *  }
  * }
  *
  * @response 422 {
- *   "success": false,
- *   "message": "The given data was invalid.",
- *   "errors": {
- *     "email": ["The email has already been taken."]
- *   }
+ *  "errors": {
+ *      "email": ["The email has already been taken in users or clients."]
+ *  }
  * }
  *
  * @response 500 {
- *   "success": false,
- *   "message": "User could not be created.",
- *   "error": "Call to a member function hasRole() on null",
- *   "line": 81,
- *   "file": "/path/to/UserController.php"
+ *  "error": true,
+ *  "message": "User couldn't be created, please make sure email settings are operational."
  * }
  */
+
 
 public function store(Request $request, User $user)
     {
@@ -175,7 +178,9 @@ $isApi = request()->get('isApi', false);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $workspace =  session()->get('workspace_id') ?? $request->header('workspace_id');
+        $workspaceId =  session()->get('workspace_id') ?? $request->header('workspace_id');
+        $workspace = \App\Models\Workspace::find($workspaceId);
+        // dd($workspace);
         // dd($workspace);
         if ($request->input('dob')) {
             $dob = $request->input('dob');
@@ -202,7 +207,9 @@ $isApi = request()->get('isApi', false);
             $status = isAdminOrHasAllDataAccess() && $request->has('status') && $request->input('status') == 1 ? 1 : 0;
             $formFields['email_verified_at'] = $require_ev == 0 ? now()->tz(config('app.timezone')) : null;
             $formFields['status'] = $status;
+            // dd($formFields);
         $user = User::create($formFields);
+        // dd($user);
         TeamMember::create([
             'admin_id' => $adminId,
             'user_id' => $user->id,
@@ -287,48 +294,7 @@ $isApi = request()->get('isApi', false);
             ->get();
         return view('users.edit_user', ['user' => $user, 'roles' => $roles]);
     }
-    /**
- * Update an existing user
- */
-/**
- * Update user profile details.
- *
- * @group User Managemant
- *
- * @urlParam id integer required The ID of the user to update.
- *
- * @bodyParam first_name string required The user's first name. Example: John
- * @bodyParam last_name string required The user's last name. Example: Doe
- * @bodyParam phone string nullable The user's phone number. Example: +1234567890
- * @bodyParam country_code string nullable The user's country code. Example: US
- * @bodyParam address string nullable The user's address. Example: 123 Main St
- * @bodyParam city string nullable The city of the user. Example: New York
- * @bodyParam state string nullable The state of the user. Example: NY
- * @bodyParam country string nullable The country of the user. Example: USA
- * @bodyParam zip string nullable The postal/zip code. Example: 10001
- * @bodyParam dob date nullable Date of birth in app-specific format. Example: 1990-01-01
- * @bodyParam doj date nullable Date of joining in app-specific format. Example: 2020-01-01
- * @bodyParam password string nullable Minimum 6 characters, to update password.
- * @bodyParam password_confirmation string required_with:password Must match password.
- * @bodyParam country_iso_code string nullable ISO code of country. Example: US
- * @bodyParam upload file image nullable User profile image (jpeg, jpg, png). Max size 2048 KB.
- * @bodyParam status boolean nullable User active status (only admin or full access users).
- * @bodyParam role string nullable Role to assign to the user (cannot update admin's role).
- *
- * @response 200 {
- *   "error": false,
- *   "id": 1
- * }
- *
- * @response 422 {
- *   "error": true,
- *   "message": "The given data was invalid.",
- *   "errors": {
- *     "first_name": ["The first name field is required."],
- *     "password": ["The password must be at least 6 characters."]
- *   }
- * }
- */
+
 public function update_user(Request $request, $id)
     {
 
@@ -382,8 +348,84 @@ public function update_user(Request $request, $id)
         $user->update($formFields);
 
         Session::flash('message', 'Profile details updated successfully.');
-        return response()->json(['error' => false, 'id' => $user->id]);
+        return response()->json(['error' => false, 'id' => $user->id,'message' => 'User updated successfully.']);
     }
+
+/**
+ * Update user details.
+ *
+ * This endpoint allows updating user profile information. The request must be sent in **raw JSON format**.
+ *
+ * 📎 Required Headers:
+ * - `Authorization: Bearer {YOUR_API_TOKEN}`
+ * - `workspace_id: {WORKSPACE_ID}`
+ * - `Content-Type: application/json`
+ *
+ * @group User Managemant
+ *
+ * @authenticated
+ *
+ * @urlParam id integer required The ID of the user to update. Example: 18
+ *
+ * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header workspace_id 2
+ * @header Content-Type application/json
+ *
+ * @bodyParam first_name string required The user's first name. Example: John
+ * @bodyParam last_name string required The user's last name. Example: Doe
+ * @bodyParam phone string nullable The user's phone number. Example: +1234567890
+ * @bodyParam country_code string nullable Country calling code. Example: US
+ * @bodyParam address string nullable Street address. Example: 123 Main St
+ * @bodyParam city string nullable City name. Example: New York
+ * @bodyParam state string nullable State name. Example: NY
+ * @bodyParam country string nullable Country name. Example: USA
+ * @bodyParam zip string nullable Zip or postal code. Example: 10001
+ * @bodyParam dob date nullable Date of birth (Y-m-d). Example: 1990-01-01
+ * @bodyParam doj date nullable Date of joining (Y-m-d). Example: 2020-01-01
+ * @bodyParam password string nullable Minimum 6 characters to change password. Example: newsecret
+ * @bodyParam password_confirmation string required_with:password Must match the password. Example: newsecret
+ * @bodyParam country_iso_code string nullable ISO country code. Example: US
+ * @bodyParam status boolean nullable Whether the user is active. Example: true
+ * @bodyParam role string nullable Role to assign (not for admins). Example: admin
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "User updated successfully.",
+ *   "id": 18,
+ *   "data": {
+ *     "id": 18,
+ *     "first_name": "John",
+ *     "last_name": "Doe",
+ *     "full_name": "John Doe",
+ *     "email": "john.doe27@example.com",
+ *     "phone": "+1234567890",
+ *     "address": "123 Main St",
+ *     "country_code": "US",
+ *     "city": "New York",
+ *     "state": "NY",
+ *     "country": "USA",
+ *     "zip": "10001",
+ *     "dob": null,
+ *     "doj": null,
+ *     "role": "admin",
+ *     "status": true,
+ *     "email_verified": true,
+ *     "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
+ *     "created_at": "2025-06-10 10:00:16",
+ *     "updated_at": "2025-06-11 06:41:43"
+ *   }
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "first_name": ["The first name field is required."],
+ *     "password": ["The password must be at least 6 characters."]
+ *   }
+ * }
+ */
+
 public function update(Request $request, $id)
 {
     $isApi = $request->get('api', true);
@@ -482,7 +524,8 @@ public function update(Request $request, $id)
  * Delete a user
  *@group User Managemant
  * This endpoint deletes a user by their ID. It also removes all associated todos for the user. If the user does not exist, a 404 error is returned.
- *
+  * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header workspace_id 2
  * @urlParam id integer required The ID of the user to delete. Example: 6
  *
  * @response 200 {
@@ -1175,7 +1218,8 @@ public function update(Request $request, $id)
  * @group User Managemant
  * This API endpoint retrieves a list of users within the current workspace or a specific user by ID.
  * Supports filtering by search term, status, roles, type (project/task), sorting, and pagination.
- *
+  * @header Authorization Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+ * @header workspace_id 2
  * @urlParam id integer optional The ID of the user to retrieve. Leave blank to get all users. Example: 5
  *
  * @queryParam search string optional Filter users by name, email, or phone. Example: John

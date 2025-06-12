@@ -1,10 +1,8 @@
 name: 'User Managemant'
 description: |-
-  This endpoint allows you to create a new user account with optional profile image,
-  address info, and role assignment. It also attaches the user to the workspace and
-  sends email notifications if configured.
-
-  Requires authentication as an admin user.
+  This endpoint allows admins to create a new user within a workspace.
+  Email uniqueness is checked across both users and clients.
+  Optionally, a verification email and account creation email are sent based on system configuration.
 endpoints:
   -
     httpMethods:
@@ -13,11 +11,9 @@ endpoints:
     metadata:
       groupName: 'User Managemant'
       groupDescription: |-
-        This endpoint allows you to create a new user account with optional profile image,
-        address info, and role assignment. It also attaches the user to the workspace and
-        sends email notifications if configured.
-
-        Requires authentication as an admin user.
+        This endpoint allows admins to create a new user within a workspace.
+        Email uniqueness is checked across both users and clients.
+        Optionally, a verification email and account creation email are sent based on system configuration.
       subgroup: ''
       subgroupDescription: ''
       title: 'Create a new user'
@@ -25,8 +21,10 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: multipart/form-data
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
+      workspace_id: '2'
+      Content-Type: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
@@ -54,9 +52,9 @@ endpoints:
         custom: []
       email:
         name: email
-        description: "The user's email address. Must be unique."
+        description: "The user's unique email address. Must not exist in users or clients."
         required: true
-        example: john.doe@example.com
+        example: john.smith@example.com
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -64,7 +62,7 @@ endpoints:
         custom: []
       password:
         name: password
-        description: "The user's password. Minimum 6 characters."
+        description: 'The password (minimum 6 characters).'
         required: true
         example: secret123
         type: string
@@ -74,7 +72,7 @@ endpoints:
         custom: []
       password_confirmation:
         name: password_confirmation
-        description: 'Must match the password field.'
+        description: 'Must match the password.'
         required: true
         example: secret123
         type: string
@@ -104,7 +102,7 @@ endpoints:
         custom: []
       country_code:
         name: country_code
-        description: 'ISO country dialing code.'
+        description: 'Country dialing code.'
         required: false
         example: '+91'
         type: string
@@ -114,7 +112,7 @@ endpoints:
         custom: []
       city:
         name: city
-        description: "The user's city."
+        description: 'The city.'
         required: false
         example: Mumbai
         type: string
@@ -124,7 +122,7 @@ endpoints:
         custom: []
       state:
         name: state
-        description: "The user's state."
+        description: 'The state.'
         required: false
         example: Maharashtra
         type: string
@@ -134,7 +132,7 @@ endpoints:
         custom: []
       country:
         name: country
-        description: "The user's country."
+        description: 'The country.'
         required: false
         example: India
         type: string
@@ -144,7 +142,7 @@ endpoints:
         custom: []
       zip:
         name: zip
-        description: "The user's postal/ZIP code."
+        description: 'The zip/postal code.'
         required: false
         example: '400001'
         type: string
@@ -154,20 +152,20 @@ endpoints:
         custom: []
       dob:
         name: dob
-        description: "The user's date of birth. Format: Y-m-d."
+        description: "The user's date of birth (in 'Y-m-d' format)."
         required: false
-        example: '1990-05-15'
-        type: string
+        example: '1990-01-01'
+        type: date
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
       doj:
         name: doj
-        description: "The user's date of joining. Format: Y-m-d."
+        description: "The user's date of joining (in 'Y-m-d' format)."
         required: false
-        example: '2024-01-01'
-        type: string
+        example: '2022-01-01'
+        type: date
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -176,7 +174,7 @@ endpoints:
         name: role
         description: 'The role to assign to the user.'
         required: true
-        example: employee
+        example: admin
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -184,7 +182,7 @@ endpoints:
         custom: []
       country_iso_code:
         name: country_iso_code
-        description: 'ISO country code.'
+        description: 'Optional country ISO code.'
         required: false
         example: IN
         type: string
@@ -192,40 +190,30 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      profile:
-        name: profile
-        description: "The user's profile image. JPEG, JPG, PNG. Max 2MB."
-        required: false
-        example: null
-        type: file
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
       require_ev:
         name: require_ev
-        description: 'Whether to require email verification. Default is true.'
+        description: 'Whether email verification is required. 1 = yes, 0 = no.'
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       status:
         name: status
-        description: 'Whether to set the user as active. Default is false.'
+        description: 'Whether the user account should be active immediately.'
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
       first_name: John
       last_name: Doe
-      email: john.doe@example.com
+      email: john.smith@example.com
       password: secret123
       password_confirmation: secret123
       address: '123 Main St'
@@ -235,34 +223,44 @@ endpoints:
       state: Maharashtra
       country: India
       zip: '400001'
-      dob: '1990-05-15'
-      doj: '2024-01-01'
-      role: employee
+      dob: '1990-01-01'
+      doj: '2022-01-01'
+      role: admin
       country_iso_code: IN
-      require_ev: false
-      status: false
-    fileParameters:
-      profile: null
+      require_ev: true
+      status: true
+    fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-            "success": true,
-            "message": "User created successfully.",
-            "data": {
-              "id": 123,
-              "data": {
-                "id": 123,
-                "first_name": "John",
-                "last_name": "Doe",
-                "email": "john.doe@example.com",
-                "status": 1,
-                "email_verified_at": "2025-06-04T11:03:41.000000Z",
-                "photo": "photos/john.png",
-                ...
-              }
-            }
+           "error": false,
+           "message": "User created successfully.",
+           "id": 54,
+           "data": {
+               "id": 54,
+               "first_name": "John",
+               "last_name": "Doe",
+               "full_name": "John Doe",
+               "email": "john.smith@example.com",
+               "phone": "+1234567890",
+               "address": "123 Main St",
+               "country_code": "+91",
+               "city": "Mumbai",
+               "state": "Maharashtra",
+               "country": "India",
+               "zip": "400001",
+               "dob": null,
+               "doj": null,
+               "role": "admin",
+               "status": 1,
+               "email_verified": false,
+               "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
+               "created_at": "2025-06-11 06:48:45",
+               "updated_at": "2025-06-11 06:48:45",
+               "require_ev": 1
+           }
           }
         headers: []
         description: ''
@@ -271,11 +269,9 @@ endpoints:
         status: 422
         content: |-
           {
-            "success": false,
-            "message": "The given data was invalid.",
-            "errors": {
-              "email": ["The email has already been taken."]
-            }
+           "errors": {
+               "email": ["The email has already been taken in users or clients."]
+           }
           }
         headers: []
         description: ''
@@ -284,11 +280,8 @@ endpoints:
         status: 500
         content: |-
           {
-            "success": false,
-            "message": "User could not be created.",
-            "error": "Call to a member function hasRole() on null",
-            "line": 81,
-            "file": "/path/to/UserController.php"
+           "error": true,
+           "message": "User couldn't be created, please make sure email settings are operational."
           }
         headers: []
         description: ''
@@ -308,26 +301,34 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update user profile details.'
-      description: ''
-      authenticated: false
+      title: 'Update user details.'
+      description: |-
+        This endpoint allows updating user profile information. The request must be sent in **raw JSON format**.
+
+        📎 Required Headers:
+        - `Authorization: Bearer {YOUR_API_TOKEN}`
+        - `workspace_id: {WORKSPACE_ID}`
+        - `Content-Type: application/json`
+      authenticated: true
       custom: []
     headers:
-      Content-Type: multipart/form-data
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
+      workspace_id: '2'
+      Content-Type: application/json
       Accept: application/json
     urlParameters:
       id:
         name: id
         description: 'The ID of the user to update.'
         required: true
-        example: 17
+        example: 18
         type: integer
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 17
+      id: 18
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
@@ -363,7 +364,7 @@ endpoints:
         custom: []
       country_code:
         name: country_code
-        description: "nullable The user's country code."
+        description: 'nullable Country calling code.'
         required: false
         example: US
         type: string
@@ -373,7 +374,7 @@ endpoints:
         custom: []
       address:
         name: address
-        description: "nullable The user's address."
+        description: 'nullable Street address.'
         required: false
         example: '123 Main St'
         type: string
@@ -383,7 +384,7 @@ endpoints:
         custom: []
       city:
         name: city
-        description: 'nullable The city of the user.'
+        description: 'nullable City name.'
         required: false
         example: 'New York'
         type: string
@@ -393,7 +394,7 @@ endpoints:
         custom: []
       state:
         name: state
-        description: 'nullable The state of the user.'
+        description: 'nullable State name.'
         required: false
         example: NY
         type: string
@@ -403,7 +404,7 @@ endpoints:
         custom: []
       country:
         name: country
-        description: 'nullable The country of the user.'
+        description: 'nullable Country name.'
         required: false
         example: USA
         type: string
@@ -413,7 +414,7 @@ endpoints:
         custom: []
       zip:
         name: zip
-        description: 'nullable The postal/zip code.'
+        description: 'nullable Zip or postal code.'
         required: false
         example: '10001'
         type: string
@@ -423,7 +424,7 @@ endpoints:
         custom: []
       dob:
         name: dob
-        description: 'nullable Date of birth in app-specific format.'
+        description: 'nullable Date of birth (Y-m-d).'
         required: false
         example: '1990-01-01'
         type: date
@@ -433,7 +434,7 @@ endpoints:
         custom: []
       doj:
         name: doj
-        description: 'nullable Date of joining in app-specific format.'
+        description: 'nullable Date of joining (Y-m-d).'
         required: false
         example: '2020-01-01'
         type: date
@@ -443,27 +444,27 @@ endpoints:
         custom: []
       password:
         name: password
-        description: 'nullable Minimum 6 characters, to update password.'
+        description: 'nullable Minimum 6 characters to change password.'
         required: false
-        example: 'O[2UZ5ij-e/dl4m{o,'
+        example: newsecret
         type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       password_confirmation:
         name: password_confirmation
-        description: 'required_with:password Must match password.'
+        description: 'required_with:password Must match the password.'
         required: false
-        example: consequatur
+        example: newsecret
         type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       country_iso_code:
         name: country_iso_code
-        description: 'nullable ISO code of country.'
+        description: 'nullable ISO country code.'
         required: false
         example: US
         type: string
@@ -471,34 +472,24 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      upload:
-        name: upload
-        description: 'image nullable User profile image (jpeg, jpg, png). Max size 2048 KB.'
-        required: false
-        example: null
-        type: file
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
       status:
         name: status
-        description: 'nullable User active status (only admin or full access users).'
+        description: 'nullable Whether the user is active.'
         required: false
-        example: false
+        example: true
         type: boolean
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       role:
         name: role
-        description: "nullable Role to assign to the user (cannot update admin's role)."
+        description: 'nullable Role to assign (not for admins).'
         required: false
-        example: consequatur
+        example: admin
         type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
@@ -513,20 +504,42 @@ endpoints:
       zip: '10001'
       dob: '1990-01-01'
       doj: '2020-01-01'
-      password: 'O[2UZ5ij-e/dl4m{o,'
-      password_confirmation: consequatur
+      password: newsecret
+      password_confirmation: newsecret
       country_iso_code: US
-      status: false
-      role: consequatur
-    fileParameters:
-      upload: null
+      status: true
+      role: admin
+    fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
             "error": false,
-            "id": 1
+            "message": "User updated successfully.",
+            "id": 18,
+            "data": {
+              "id": 18,
+              "first_name": "John",
+              "last_name": "Doe",
+              "full_name": "John Doe",
+              "email": "john.doe27@example.com",
+              "phone": "+1234567890",
+              "address": "123 Main St",
+              "country_code": "US",
+              "city": "New York",
+              "state": "NY",
+              "country": "USA",
+              "zip": "10001",
+              "dob": null,
+              "doj": null,
+              "role": "admin",
+              "status": true,
+              "email_verified": true,
+              "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
+              "created_at": "2025-06-10 10:00:16",
+              "updated_at": "2025-06-11 06:41:43"
+            }
           }
         headers: []
         description: ''
@@ -565,6 +578,8 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -640,6 +655,8 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:

@@ -392,7 +392,7 @@ Requires a `workspace_id` header to identify the current workspace context.</a>
                                 <a href="#user-managemant-POSTapi-master-panel-user">Create a new user</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="user-managemant-PUTapi-master-panel-user--id-">
-                                <a href="#user-managemant-PUTapi-master-panel-user--id-">Update user profile details.</a>
+                                <a href="#user-managemant-PUTapi-master-panel-user--id-">Update user details.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="user-managemant-DELETEapi-master-panel-user--id-">
                                 <a href="#user-managemant-DELETEapi-master-panel-user--id-">Delete a user</a>
@@ -526,7 +526,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 10, 2025</li>
+        <li>Last updated: June 11, 2025</li>
     </ul>
 </div>
 
@@ -5467,7 +5467,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpEFE2.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php3DC2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5658,7 +5658,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpEFE2.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php3DC2.tmp</code></p>
         </div>
         </form>
 
@@ -7195,7 +7195,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=17"\
     --form "content=consequatur"\
     --form "parent_id=17"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF2E2.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php3FF7.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7431,7 +7431,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpF2E2.tmp</code></p>
+<p>optional The files attached to the comment (e.g., images, PDFs). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php3FF7.tmp</code></p>
         </div>
         </form>
 
@@ -10167,7 +10167,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF70A.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php4400.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -10906,7 +10906,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF8B1.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php4597.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11145,7 +11145,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF41B.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php4101.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13531,7 +13531,7 @@ profile photo upload, email verification logic, and account creation emails.</p>
     --form "internal_purpose=consequatur"\
     --form "status=17"\
     --form "require_ev=17"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpFB04.tmp" </code></pre></div>
+    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\php4923.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13922,7 +13922,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFB04.tmp</code></p>
+<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php4923.tmp</code></p>
         </div>
         </form>
 
@@ -15310,10 +15310,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
                 <h1 id="user-managemant">User Managemant</h1>
 
-    <p>This endpoint allows you to create a new user account with optional profile image,
-address info, and role assignment. It also attaches the user to the workspace and
-sends email notifications if configured.</p>
-<p>Requires authentication as an admin user.</p>
+    <p>This endpoint allows admins to create a new user within a workspace.
+Email uniqueness is checked across both users and clients.
+Optionally, a verification email and account creation email are sent based on system configuration.</p>
 
                                 <h2 id="user-managemant-POSTapi-master-panel-user">Create a new user</h2>
 
@@ -15329,27 +15328,31 @@ sends email notifications if configured.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/user" \
-    --header "Content-Type: multipart/form-data" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
-    --form "first_name=John"\
-    --form "last_name=Doe"\
-    --form "email=john.doe@example.com"\
-    --form "password=secret123"\
-    --form "password_confirmation=secret123"\
-    --form "address=123 Main St"\
-    --form "phone=+1234567890"\
-    --form "country_code=+91"\
-    --form "city=Mumbai"\
-    --form "state=Maharashtra"\
-    --form "country=India"\
-    --form "zip=400001"\
-    --form "dob=1990-05-15"\
-    --form "doj=2024-01-01"\
-    --form "role=employee"\
-    --form "country_iso_code=IN"\
-    --form "require_ev="\
-    --form "status="\
-    --form "profile=@C:\Users\Dikshita\AppData\Local\Temp\phpFC8B.tmp" </code></pre></div>
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
+    --data "{
+    \"first_name\": \"John\",
+    \"last_name\": \"Doe\",
+    \"email\": \"john.smith@example.com\",
+    \"password\": \"secret123\",
+    \"password_confirmation\": \"secret123\",
+    \"address\": \"123 Main St\",
+    \"phone\": \"+1234567890\",
+    \"country_code\": \"+91\",
+    \"city\": \"Mumbai\",
+    \"state\": \"Maharashtra\",
+    \"country\": \"India\",
+    \"zip\": \"400001\",
+    \"dob\": \"1990-01-01\",
+    \"doj\": \"2022-01-01\",
+    \"role\": \"admin\",
+    \"country_iso_code\": \"IN\",
+    \"require_ev\": true,
+    \"status\": true
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -15358,35 +15361,37 @@ sends email notifications if configured.</p>
 );
 
 const headers = {
-    "Content-Type": "multipart/form-data",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
-const body = new FormData();
-body.append('first_name', 'John');
-body.append('last_name', 'Doe');
-body.append('email', 'john.doe@example.com');
-body.append('password', 'secret123');
-body.append('password_confirmation', 'secret123');
-body.append('address', '123 Main St');
-body.append('phone', '+1234567890');
-body.append('country_code', '+91');
-body.append('city', 'Mumbai');
-body.append('state', 'Maharashtra');
-body.append('country', 'India');
-body.append('zip', '400001');
-body.append('dob', '1990-05-15');
-body.append('doj', '2024-01-01');
-body.append('role', 'employee');
-body.append('country_iso_code', 'IN');
-body.append('require_ev', '');
-body.append('status', '');
-body.append('profile', document.querySelector('input[name="profile"]').files[0]);
+let body = {
+    "first_name": "John",
+    "last_name": "Doe",
+    "email": "john.smith@example.com",
+    "password": "secret123",
+    "password_confirmation": "secret123",
+    "address": "123 Main St",
+    "phone": "+1234567890",
+    "country_code": "+91",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "country": "India",
+    "zip": "400001",
+    "dob": "1990-01-01",
+    "doj": "2022-01-01",
+    "role": "admin",
+    "country_iso_code": "IN",
+    "require_ev": true,
+    "status": true
+};
 
 fetch(url, {
     method: "POST",
     headers,
-    body,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -15398,21 +15403,32 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-  &quot;success&quot;: true,
-  &quot;message&quot;: &quot;User created successfully.&quot;,
-  &quot;data&quot;: {
-    &quot;id&quot;: 123,
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;User created successfully.&quot;,
+    &quot;id&quot;: 54,
     &quot;data&quot;: {
-      &quot;id&quot;: 123,
-      &quot;first_name&quot;: &quot;John&quot;,
-      &quot;last_name&quot;: &quot;Doe&quot;,
-      &quot;email&quot;: &quot;john.doe@example.com&quot;,
-      &quot;status&quot;: 1,
-      &quot;email_verified_at&quot;: &quot;2025-06-04T11:03:41.000000Z&quot;,
-      &quot;photo&quot;: &quot;photos/john.png&quot;,
-      ...
+        &quot;id&quot;: 54,
+        &quot;first_name&quot;: &quot;John&quot;,
+        &quot;last_name&quot;: &quot;Doe&quot;,
+        &quot;full_name&quot;: &quot;John Doe&quot;,
+        &quot;email&quot;: &quot;john.smith@example.com&quot;,
+        &quot;phone&quot;: &quot;+1234567890&quot;,
+        &quot;address&quot;: &quot;123 Main St&quot;,
+        &quot;country_code&quot;: &quot;+91&quot;,
+        &quot;city&quot;: &quot;Mumbai&quot;,
+        &quot;state&quot;: &quot;Maharashtra&quot;,
+        &quot;country&quot;: &quot;India&quot;,
+        &quot;zip&quot;: &quot;400001&quot;,
+        &quot;dob&quot;: null,
+        &quot;doj&quot;: null,
+        &quot;role&quot;: &quot;admin&quot;,
+        &quot;status&quot;: 1,
+        &quot;email_verified&quot;: false,
+        &quot;photo_url&quot;: &quot;http://localhost:8000/storage/photos/no-image.jpg&quot;,
+        &quot;created_at&quot;: &quot;2025-06-11 06:48:45&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-11 06:48:45&quot;,
+        &quot;require_ev&quot;: 1
     }
-  }
 }</code>
  </pre>
             <blockquote>
@@ -15421,11 +15437,9 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: false,
-    &quot;message&quot;: &quot;The given data was invalid.&quot;,
     &quot;errors&quot;: {
         &quot;email&quot;: [
-            &quot;The email has already been taken.&quot;
+            &quot;The email has already been taken in users or clients.&quot;
         ]
     }
 }</code>
@@ -15436,11 +15450,8 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: false,
-    &quot;message&quot;: &quot;User could not be created.&quot;,
-    &quot;error&quot;: &quot;Call to a member function hasRole() on null&quot;,
-    &quot;line&quot;: 81,
-    &quot;file&quot;: &quot;/path/to/UserController.php&quot;
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;User couldn&#039;t be created, please make sure email settings are operational.&quot;
 }</code>
  </pre>
     </span>
@@ -15462,7 +15473,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <form id="form-POSTapi-master-panel-user" data-method="POST"
       data-path="api/master-panel/user"
       data-authed="0"
-      data-hasfiles="1"
+      data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
       onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-user', this);">
@@ -15492,15 +15503,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-user"
-               value="multipart/form-data"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-user"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>multipart/form-data</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -15508,6 +15519,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-user"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-user"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-user"
                value="application/json"
                data-component="header">
     <br>
@@ -15542,10 +15575,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="email"                data-endpoint="POSTapi-master-panel-user"
-               value="john.doe@example.com"
+               value="john.smith@example.com"
                data-component="body">
     <br>
-<p>The user's email address. Must be unique. Example: <code>john.doe@example.com</code></p>
+<p>The user's unique email address. Must not exist in users or clients. Example: <code>john.smith@example.com</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
@@ -15556,7 +15589,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="secret123"
                data-component="body">
     <br>
-<p>The user's password. Minimum 6 characters. Example: <code>secret123</code></p>
+<p>The password (minimum 6 characters). Example: <code>secret123</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
@@ -15567,7 +15600,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="secret123"
                data-component="body">
     <br>
-<p>Must match the password field. Example: <code>secret123</code></p>
+<p>Must match the password. Example: <code>secret123</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>address</code></b>&nbsp;&nbsp;
@@ -15600,7 +15633,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="+91"
                data-component="body">
     <br>
-<p>ISO country dialing code. Example: <code>+91</code></p>
+<p>Country dialing code. Example: <code>+91</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>city</code></b>&nbsp;&nbsp;
@@ -15611,7 +15644,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="Mumbai"
                data-component="body">
     <br>
-<p>The user's city. Example: <code>Mumbai</code></p>
+<p>The city. Example: <code>Mumbai</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>state</code></b>&nbsp;&nbsp;
@@ -15622,7 +15655,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="Maharashtra"
                data-component="body">
     <br>
-<p>The user's state. Example: <code>Maharashtra</code></p>
+<p>The state. Example: <code>Maharashtra</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country</code></b>&nbsp;&nbsp;
@@ -15633,7 +15666,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="India"
                data-component="body">
     <br>
-<p>The user's country. Example: <code>India</code></p>
+<p>The country. Example: <code>India</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>zip</code></b>&nbsp;&nbsp;
@@ -15644,29 +15677,29 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="400001"
                data-component="body">
     <br>
-<p>The user's postal/ZIP code. Example: <code>400001</code></p>
+<p>The zip/postal code. Example: <code>400001</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>dob</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>date</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="dob"                data-endpoint="POSTapi-master-panel-user"
-               value="1990-05-15"
+               value="1990-01-01"
                data-component="body">
     <br>
-<p>The user's date of birth. Format: Y-m-d. Example: <code>1990-05-15</code></p>
+<p>The user's date of birth (in 'Y-m-d' format). Example: <code>1990-01-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>doj</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>date</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="doj"                data-endpoint="POSTapi-master-panel-user"
-               value="2024-01-01"
+               value="2022-01-01"
                data-component="body">
     <br>
-<p>The user's date of joining. Format: Y-m-d. Example: <code>2024-01-01</code></p>
+<p>The user's date of joining (in 'Y-m-d' format). Example: <code>2022-01-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>role</code></b>&nbsp;&nbsp;
@@ -15674,10 +15707,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="POSTapi-master-panel-user"
-               value="employee"
+               value="admin"
                data-component="body">
     <br>
-<p>The role to assign to the user. Example: <code>employee</code></p>
+<p>The role to assign to the user. Example: <code>admin</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_iso_code</code></b>&nbsp;&nbsp;
@@ -15688,18 +15721,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="IN"
                data-component="body">
     <br>
-<p>ISO country code. Example: <code>IN</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>profile</code></b>&nbsp;&nbsp;
-<small>file</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="file" style="display: none"
-                              name="profile"                data-endpoint="POSTapi-master-panel-user"
-               value=""
-               data-component="body">
-    <br>
-<p>The user's profile image. JPEG, JPG, PNG. Max 2MB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFC8B.tmp</code></p>
+<p>Optional country ISO code. Example: <code>IN</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>require_ev</code></b>&nbsp;&nbsp;
@@ -15720,7 +15742,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Whether to require email verification. Default is true. Example: <code>false</code></p>
+<p>Whether email verification is required. 1 = yes, 0 = no. Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -15741,16 +15763,23 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Whether to set the user as active. Default is false. Example: <code>false</code></p>
+<p>Whether the user account should be active immediately. Example: <code>true</code></p>
         </div>
         </form>
 
-                    <h2 id="user-managemant-PUTapi-master-panel-user--id-">Update user profile details.</h2>
+                    <h2 id="user-managemant-PUTapi-master-panel-user--id-">Update user details.</h2>
 
 <p>
+<small class="badge badge-darkred">requires authentication</small>
 </p>
 
-
+<p>This endpoint allows updating user profile information. The request must be sent in <strong>raw JSON format</strong>.</p>
+<p>📎 Required Headers:</p>
+<ul>
+<li><code>Authorization: Bearer {YOUR_API_TOKEN}</code></li>
+<li><code>workspace_id: {WORKSPACE_ID}</code></li>
+<li><code>Content-Type: application/json</code></li>
+</ul>
 
 <span id="example-requests-PUTapi-master-panel-user--id-">
 <blockquote>Example request:</blockquote>
@@ -15758,61 +15787,67 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/master-panel/user/17" \
-    --header "Content-Type: multipart/form-data" \
+    "http://localhost:8000/api/master-panel/user/18" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --form "first_name=John"\
-    --form "last_name=Doe"\
-    --form "phone=+1234567890"\
-    --form "country_code=US"\
-    --form "address=123 Main St"\
-    --form "city=New York"\
-    --form "state=NY"\
-    --form "country=USA"\
-    --form "zip=10001"\
-    --form "dob=1990-01-01"\
-    --form "doj=2020-01-01"\
-    --form "password=O[2UZ5ij-e/dl4m{o,"\
-    --form "password_confirmation=consequatur"\
-    --form "country_iso_code=US"\
-    --form "status="\
-    --form "role=consequatur"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpFCCB.tmp" </code></pre></div>
+    --data "{
+    \"first_name\": \"John\",
+    \"last_name\": \"Doe\",
+    \"phone\": \"+1234567890\",
+    \"country_code\": \"US\",
+    \"address\": \"123 Main St\",
+    \"city\": \"New York\",
+    \"state\": \"NY\",
+    \"country\": \"USA\",
+    \"zip\": \"10001\",
+    \"dob\": \"1990-01-01\",
+    \"doj\": \"2020-01-01\",
+    \"password\": \"newsecret\",
+    \"password_confirmation\": \"newsecret\",
+    \"country_iso_code\": \"US\",
+    \"status\": true,
+    \"role\": \"admin\"
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/user/17"
+    "http://localhost:8000/api/master-panel/user/18"
 );
 
 const headers = {
-    "Content-Type": "multipart/form-data",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
-const body = new FormData();
-body.append('first_name', 'John');
-body.append('last_name', 'Doe');
-body.append('phone', '+1234567890');
-body.append('country_code', 'US');
-body.append('address', '123 Main St');
-body.append('city', 'New York');
-body.append('state', 'NY');
-body.append('country', 'USA');
-body.append('zip', '10001');
-body.append('dob', '1990-01-01');
-body.append('doj', '2020-01-01');
-body.append('password', 'O[2UZ5ij-e/dl4m{o,');
-body.append('password_confirmation', 'consequatur');
-body.append('country_iso_code', 'US');
-body.append('status', '');
-body.append('role', 'consequatur');
-body.append('upload', document.querySelector('input[name="upload"]').files[0]);
+let body = {
+    "first_name": "John",
+    "last_name": "Doe",
+    "phone": "+1234567890",
+    "country_code": "US",
+    "address": "123 Main St",
+    "city": "New York",
+    "state": "NY",
+    "country": "USA",
+    "zip": "10001",
+    "dob": "1990-01-01",
+    "doj": "2020-01-01",
+    "password": "newsecret",
+    "password_confirmation": "newsecret",
+    "country_iso_code": "US",
+    "status": true,
+    "role": "admin"
+};
 
 fetch(url, {
     method: "PUT",
     headers,
-    body,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -15825,7 +15860,30 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
     &quot;error&quot;: false,
-    &quot;id&quot;: 1
+    &quot;message&quot;: &quot;User updated successfully.&quot;,
+    &quot;id&quot;: 18,
+    &quot;data&quot;: {
+        &quot;id&quot;: 18,
+        &quot;first_name&quot;: &quot;John&quot;,
+        &quot;last_name&quot;: &quot;Doe&quot;,
+        &quot;full_name&quot;: &quot;John Doe&quot;,
+        &quot;email&quot;: &quot;john.doe27@example.com&quot;,
+        &quot;phone&quot;: &quot;+1234567890&quot;,
+        &quot;address&quot;: &quot;123 Main St&quot;,
+        &quot;country_code&quot;: &quot;US&quot;,
+        &quot;city&quot;: &quot;New York&quot;,
+        &quot;state&quot;: &quot;NY&quot;,
+        &quot;country&quot;: &quot;USA&quot;,
+        &quot;zip&quot;: &quot;10001&quot;,
+        &quot;dob&quot;: null,
+        &quot;doj&quot;: null,
+        &quot;role&quot;: &quot;admin&quot;,
+        &quot;status&quot;: true,
+        &quot;email_verified&quot;: true,
+        &quot;photo_url&quot;: &quot;http://localhost:8000/storage/photos/no-image.jpg&quot;,
+        &quot;created_at&quot;: &quot;2025-06-10 10:00:16&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-11 06:41:43&quot;
+    }
 }</code>
  </pre>
             <blockquote>
@@ -15864,8 +15922,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 </span>
 <form id="form-PUTapi-master-panel-user--id-" data-method="PUT"
       data-path="api/master-panel/user/{id}"
-      data-authed="0"
-      data-hasfiles="1"
+      data-authed="1"
+      data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
       onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-user--id-', this);">
@@ -15895,15 +15953,37 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization" class="auth-value"               data-endpoint="PUTapi-master-panel-user--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-user--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="Content-Type"                data-endpoint="PUTapi-master-panel-user--id-"
-               value="multipart/form-data"
+               value="application/json"
                data-component="header">
     <br>
-<p>Example: <code>multipart/form-data</code></p>
+<p>Example: <code>application/json</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -15923,10 +16003,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="id"                data-endpoint="PUTapi-master-panel-user--id-"
-               value="17"
+               value="18"
                data-component="url">
     <br>
-<p>The ID of the user to update. Example: <code>17</code></p>
+<p>The ID of the user to update. Example: <code>18</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -15971,7 +16051,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="US"
                data-component="body">
     <br>
-<p>nullable The user's country code. Example: <code>US</code></p>
+<p>nullable Country calling code. Example: <code>US</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>address</code></b>&nbsp;&nbsp;
@@ -15982,7 +16062,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="123 Main St"
                data-component="body">
     <br>
-<p>nullable The user's address. Example: <code>123 Main St</code></p>
+<p>nullable Street address. Example: <code>123 Main St</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>city</code></b>&nbsp;&nbsp;
@@ -15993,7 +16073,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="New York"
                data-component="body">
     <br>
-<p>nullable The city of the user. Example: <code>New York</code></p>
+<p>nullable City name. Example: <code>New York</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>state</code></b>&nbsp;&nbsp;
@@ -16004,7 +16084,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="NY"
                data-component="body">
     <br>
-<p>nullable The state of the user. Example: <code>NY</code></p>
+<p>nullable State name. Example: <code>NY</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country</code></b>&nbsp;&nbsp;
@@ -16015,7 +16095,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="USA"
                data-component="body">
     <br>
-<p>nullable The country of the user. Example: <code>USA</code></p>
+<p>nullable Country name. Example: <code>USA</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>zip</code></b>&nbsp;&nbsp;
@@ -16026,7 +16106,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="10001"
                data-component="body">
     <br>
-<p>nullable The postal/zip code. Example: <code>10001</code></p>
+<p>nullable Zip or postal code. Example: <code>10001</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>dob</code></b>&nbsp;&nbsp;
@@ -16037,7 +16117,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="1990-01-01"
                data-component="body">
     <br>
-<p>nullable Date of birth in app-specific format. Example: <code>1990-01-01</code></p>
+<p>nullable Date of birth (Y-m-d). Example: <code>1990-01-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>doj</code></b>&nbsp;&nbsp;
@@ -16048,7 +16128,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="2020-01-01"
                data-component="body">
     <br>
-<p>nullable Date of joining in app-specific format. Example: <code>2020-01-01</code></p>
+<p>nullable Date of joining (Y-m-d). Example: <code>2020-01-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
@@ -16056,10 +16136,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="password"                data-endpoint="PUTapi-master-panel-user--id-"
-               value="O[2UZ5ij-e/dl4m{o,"
+               value="newsecret"
                data-component="body">
     <br>
-<p>nullable Minimum 6 characters, to update password. Example: <code>O[2UZ5ij-e/dl4m{o,</code></p>
+<p>nullable Minimum 6 characters to change password. Example: <code>newsecret</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
@@ -16067,10 +16147,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="password_confirmation"                data-endpoint="PUTapi-master-panel-user--id-"
-               value="consequatur"
+               value="newsecret"
                data-component="body">
     <br>
-<p>required_with:password Must match password. Example: <code>consequatur</code></p>
+<p>required_with:password Must match the password. Example: <code>newsecret</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_iso_code</code></b>&nbsp;&nbsp;
@@ -16081,18 +16161,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="US"
                data-component="body">
     <br>
-<p>nullable ISO code of country. Example: <code>US</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>upload</code></b>&nbsp;&nbsp;
-<small>file</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="file" style="display: none"
-                              name="upload"                data-endpoint="PUTapi-master-panel-user--id-"
-               value=""
-               data-component="body">
-    <br>
-<p>image nullable User profile image (jpeg, jpg, png). Max size 2048 KB. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpFCCB.tmp</code></p>
+<p>nullable ISO country code. Example: <code>US</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -16113,7 +16182,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>nullable User active status (only admin or full access users). Example: <code>false</code></p>
+<p>nullable Whether the user is active. Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>role</code></b>&nbsp;&nbsp;
@@ -16121,10 +16190,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="role"                data-endpoint="PUTapi-master-panel-user--id-"
-               value="consequatur"
+               value="admin"
                data-component="body">
     <br>
-<p>nullable Role to assign to the user (cannot update admin's role). Example: <code>consequatur</code></p>
+<p>nullable Role to assign (not for admins). Example: <code>admin</code></p>
         </div>
         </form>
 
@@ -16142,6 +16211,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/user/6" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16152,6 +16223,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16245,6 +16318,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization"                data-endpoint="DELETEapi-master-panel-user--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-user--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -16294,6 +16389,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/user/5?search=John&amp;sort=first_name&amp;order=ASC&amp;status=1&amp;role_ids[]=1&amp;role_ids[]=2&amp;type=project&amp;typeId=3&amp;limit=10&amp;isApi=1" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16319,6 +16416,8 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16446,6 +16545,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/user/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Authorization"                data-endpoint="GETapi-master-panel-user--id--"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
+               data-component="header">
+    <br>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-user--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -16613,8 +16734,10 @@ sets the workspace as primary (if requested), and logs activity. Notifications a
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/workspace" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"title\": \"Design Team\",
     \"user_ids\": [
@@ -16637,8 +16760,10 @@ sets the workspace as primary (if requested), and logs activity. Notifications a
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -16761,15 +16886,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-workspace"
-               value="application/json"
+                              name="Authorization"                data-endpoint="POSTapi-master-panel-workspace"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -16777,6 +16902,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-master-panel-workspace"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-workspace"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-workspace"
                value="application/json"
                data-component="header">
     <br>
@@ -16878,8 +17025,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/workspace/consequatur" \
-    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
     --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
     --data "{
     \"id\": 12,
     \"title\": \"Design Team\",
@@ -16902,8 +17051,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 let body = {
@@ -17030,15 +17181,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="PUTapi-master-panel-workspace--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="PUTapi-master-panel-workspace--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -17046,6 +17197,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="PUTapi-master-panel-workspace--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-workspace--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-workspace--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -17149,8 +17322,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/workspace/12" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -17159,8 +17334,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -17253,15 +17430,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-workspace--id-"
-               value="application/json"
+                              name="Authorization"                data-endpoint="DELETEapi-master-panel-workspace--id-"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -17269,6 +17446,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="DELETEapi-master-panel-workspace--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-workspace--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-workspace--id-"
                value="application/json"
                data-component="header">
     <br>
@@ -17302,8 +17501,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/workspace/17?search=first&amp;sort=title&amp;order=ASC&amp;limit=20&amp;isApi=" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json"</code></pre></div>
+    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
 
 
 <div class="javascript-example">
@@ -17322,8 +17523,10 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "Content-Type": "application/json",
+    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
     "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
 };
 
 fetch(url, {
@@ -17460,15 +17663,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-workspace--id--"
-               value="application/json"
+                              name="Authorization"                data-endpoint="GETapi-master-panel-workspace--id--"
+               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
                data-component="header">
     <br>
-<p>Example: <code>application/json</code></p>
+<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -17476,6 +17679,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="GETapi-master-panel-workspace--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-workspace--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-workspace--id--"
                value="application/json"
                data-component="header">
     <br>

@@ -428,8 +428,10 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      Content-Type: application/json
+      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
       Accept: application/json
+      workspace_id: '2'
+      Content-Type: application/json
     urlParameters:
       id:
         name: id
@@ -450,24 +452,11 @@ endpoints:
     fileParameters: []
     responses:
       -
-        status: 302
-        content: |-
-          <!DOCTYPE html>
-          <html>
-              <head>
-                  <meta charset="UTF-8" />
-                  <meta http-equiv="refresh" content="0;url='http://localhost:8000'" />
-
-                  <title>Redirecting to http://localhost:8000</title>
-              </head>
-              <body>
-                  Redirecting to <a href="http://localhost:8000">http://localhost:8000</a>.
-              </body>
-          </html>
+        status: 404
+        content: '{"error":true,"message":"Milestone not found."}'
         headers:
           cache-control: 'no-cache, private'
-          location: 'http://localhost:8000'
-          content-type: 'text/html; charset=utf-8'
+          content-type: application/json
           x-ratelimit-limit: '60'
           x-ratelimit-remaining: '55'
           x-xss-protection: '1; mode=block'
