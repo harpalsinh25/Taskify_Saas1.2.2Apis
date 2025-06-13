@@ -240,6 +240,7 @@ return [
                 'GET /comments/{id}',
                 'PUT /comments/{id}',
                 'DELETE /comments/{id}',
+                'POST /comments-create'
 
             ],
             'Status Management' => [

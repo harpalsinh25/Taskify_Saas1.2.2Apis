@@ -315,3 +315,140 @@ endpoints:
     method: null
     route: null
     custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/master-panel/comments-create
+    metadata:
+      groupName: 'Task Comments'
+      groupDescription: |-
+        This endpoint allows an authenticated user to add a comment to a specific model
+        such as a Task, Project, or any commentable entity. It also supports mentions
+        (e.g., @username) and file attachments (e.g., PNG, PDF).
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Add a comment to a model (e.g., task, project).'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      model_type:
+        name: model_type
+        description: 'The fully qualified model class name.'
+        required: true
+        example: App\Models\Task
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      model_id:
+        name: model_id
+        description: 'The ID of the model to comment on.'
+        required: true
+        example: 25
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      content:
+        name: content
+        description: 'The comment content. Mentions like @username will be parsed.'
+        required: true
+        example: 'This is a test comment mentioning @john_doe'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      parent_id:
+        name: parent_id
+        description: 'nullable The ID of the parent comment (for replies).'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      attachments:
+        name: attachments
+        description: 'Must be a file. Must not be greater than 2048 kilobytes.'
+        required: false
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+      'attachments[]':
+        name: 'attachments[]'
+        description: 'optional Optional file attachments (JPG, PNG, PDF, etc).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      model_type: App\Models\Task
+      model_id: 25
+      content: 'This is a test comment mentioning @john_doe'
+      parent_id: 5
+    fileParameters:
+      attachments:
+        - null
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "success": true,
+            "message": "Comment Added Successfully",
+            "comment": {
+              "id": 20,
+              "content": "This is a test comment mentioning @john_doe",
+              "user": {
+                "id": null,
+                "name": null,
+                "email": null
+              },
+              "attachments": [],
+              "parent_id": null,
+              "created_at": "2025-06-04 06:05:24",
+              "created_human": "1 second ago"
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "model_type": ["The model_type field is required."],
+              "model_id": ["The model_id field is required."],
+              "content": ["The content field is required."]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

@@ -1,7 +1,11 @@
 name: 'Task Management'
 description: |-
-  Validates and updates the specified task. Handles status changes,
-  reminders, recurring tasks, user assignments, and sends notifications.
+  This API endpoint updates a task with given details including reminders and recurring configurations.
+  It handles:
+  - Status change tracking with status timelines.
+  - Optional reminder creation or update.
+  - Optional recurring task creation or update.
+  - User reassignment with notification dispatching.
 endpoints:
   -
     httpMethods:
@@ -704,15 +708,20 @@ endpoints:
     metadata:
       groupName: 'Task Management'
       groupDescription: |-
-        Validates and updates the specified task. Handles status changes,
-        reminders, recurring tasks, user assignments, and sends notifications.
+        This API endpoint updates a task with given details including reminders and recurring configurations.
+        It handles:
+        - Status change tracking with status timelines.
+        - Optional reminder creation or update.
+        - Optional recurring task creation or update.
+        - User reassignment with notification dispatching.
       subgroup: ''
       subgroupDescription: ''
       title: 'Update an existing task.'
       description: ''
-      authenticated: false
+      authenticated: true
       custom: []
     headers:
+      workspace_id: 'required Workspace ID in which task exists. Example: 2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -733,271 +742,262 @@ endpoints:
     bodyParameters:
       id:
         name: id
-        description: 'The ID of the task to update. Must exist in tasks table.'
+        description: 'The ID of the task to update.'
         required: true
-        example: 17
+        example: 25
         type: integer
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       title:
         name: title
         description: 'The title of the task.'
         required: true
+        example: 'Test Task Title'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      description:
+        name: description
+        description: 'Optional description for the task.'
+        required: false
+        example: 'This is a test task description.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      status_id:
+        name: status_id
+        description: 'The status ID associated with the task.'
+        required: true
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      priority_id:
+        name: priority_id
+        description: 'nullable The priority ID associated with the task.'
+        required: false
+        example: 4
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      start_date:
+        name: start_date
+        description: 'Start date of the task (must be before or equal to due_date).'
+        required: true
+        example: '2025-06-01'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      due_date:
+        name: due_date
+        description: 'Due date of the task.'
+        required: true
+        example: '2025-06-10'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      note:
+        name: note
+        description: 'nullable Optional notes related to the task.'
+        required: false
         example: consequatur
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      status_id:
-        name: status_id
-        description: 'The status ID for the task.'
-        required: true
-        example: 17
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      priority_id:
-        name: priority_id
-        description: 'The priority ID for the task.'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      start_date:
-        name: start_date
-        description: 'The start date (YYYY-MM-DD). Must be before or equal to due_date.'
-        required: true
-        example: consequatur
-        type: date
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      due_date:
-        name: due_date
-        description: 'The due date (YYYY-MM-DD).'
-        required: true
-        example: consequatur
-        type: date
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      description:
-        name: description
-        description: 'Task description.'
-        required: false
-        example: 'Dolores dolorum amet iste laborum eius est dolor.'
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      note:
-        name: note
-        description: 'Additional notes.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
       billing_type:
         name: billing_type
-        description: 'Billing type. Allowed values: none, billable, non-billable.'
+        description: 'nullable Must be one of: none, billable, non-billable.'
         required: false
-        example: consequatur
-        type: string|null
+        example: billable
+        type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       completion_percentage:
         name: completion_percentage
-        description: 'Completion percentage. Allowed values: 0,10,20,...,100.'
+        description: 'Completion in steps of 10. Must be between 0 and 100.'
         required: true
-        example: 17
+        example: 0
         type: integer
         enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      enable_reminder:
-        name: enable_reminder
-        description: '"on" to enable reminder.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      frequency_type:
-        name: frequency_type
-        description: 'Reminder frequency. Allowed values: daily, weekly, monthly.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      day_of_week:
-        name: day_of_week
-        description: 'Day of week for weekly reminder (1-7).'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      day_of_month:
-        name: day_of_month
-        description: 'Day of month for monthly reminder (1-31).'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      time_of_day:
-        name: time_of_day
-        description: 'Reminder time in HH:mm format.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      enable_recurring_task:
-        name: enable_recurring_task
-        description: '"on" to enable recurring task.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_frequency:
-        name: recurrence_frequency
-        description: 'Recurrence frequency. Allowed: daily, weekly, monthly, yearly.'
-        required: false
-        example: consequatur
-        type: string|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_day_of_week:
-        name: recurrence_day_of_week
-        description: 'Recurrence day of week (1-7).'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_day_of_month:
-        name: recurrence_day_of_month
-        description: 'Recurrence day of month (1-31).'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_month_of_year:
-        name: recurrence_month_of_year
-        description: 'Recurrence month of year (1-12).'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_starts_from:
-        name: recurrence_starts_from
-        description: 'Recurrence start date (YYYY-MM-DD), must be today or later.'
-        required: false
-        example: consequatur
-        type: date|null
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      recurrence_occurrences:
-        name: recurrence_occurrences
-        description: 'Number of recurrence occurrences.'
-        required: false
-        example: consequatur
-        type: int|null
-        enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       user_id:
         name: user_id
-        description: 'Array of user IDs to assign to the task.'
+        description: 'Optional. Array of user IDs to assign to the task.'
         required: false
         example:
-          - 17
-        type: 'integer[]'
+          - 2
+          - 3
+        type: 'string[]'
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
-      isApi:
-        name: isApi
-        description: 'Internal flag indicating API request.'
+      enable_reminder:
+        name: enable_reminder
+        description: 'Optional. Pass "on" to enable reminders.'
         required: false
-        example: consequatur
-        type: bool|null
+        example: 'on'
+        type: string
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      frequency_type:
+        name: frequency_type
+        description: 'Optional. Reminder frequency. One of: daily, weekly, monthly.'
+        required: false
+        example: weekly
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      day_of_week:
+        name: day_of_week
+        description: 'Nullable. Day of the week if frequency is weekly (1=Monday ... 7=Sunday).'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      day_of_month:
+        name: day_of_month
+        description: 'Nullable. Day of the month if frequency is monthly.'
+        required: false
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      time_of_day:
+        name: time_of_day
+        description: 'Nullable. Time for the reminder (HH:MM format).'
+        required: false
+        example: '09:00'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      enable_recurring_task:
+        name: enable_recurring_task
+        description: 'Optional. Pass "on" to enable recurring tasks.'
+        required: false
+        example: 'on'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_frequency:
+        name: recurrence_frequency
+        description: 'Optional. One of: daily, weekly, monthly, yearly.'
+        required: false
+        example: monthly
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_day_of_week:
+        name: recurrence_day_of_week
+        description: 'Nullable. Used if recurrence_frequency is weekly.'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_day_of_month:
+        name: recurrence_day_of_month
+        description: 'Nullable. Used if recurrence_frequency is monthly.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_month_of_year:
+        name: recurrence_month_of_year
+        description: 'Nullable. Used if recurrence_frequency is yearly.'
+        required: false
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_starts_from:
+        name: recurrence_starts_from
+        description: 'Nullable. Start date for recurring tasks. Must be today or future.'
+        required: false
+        example: '2025-06-13'
+        type: date
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      recurrence_occurrences:
+        name: recurrence_occurrences
+        description: 'Nullable. Number of occurrences for recurrence.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      id: 17
-      title: consequatur
-      status_id: 17
-      priority_id: consequatur
-      start_date: consequatur
-      due_date: consequatur
-      description: 'Dolores dolorum amet iste laborum eius est dolor.'
+      id: 25
+      title: 'Test Task Title'
+      description: 'This is a test task description.'
+      status_id: 15
+      priority_id: 4
+      start_date: '2025-06-01'
+      due_date: '2025-06-10'
       note: consequatur
-      billing_type: consequatur
-      completion_percentage: 17
-      enable_reminder: consequatur
-      frequency_type: consequatur
-      day_of_week: consequatur
-      day_of_month: consequatur
-      time_of_day: consequatur
-      enable_recurring_task: consequatur
-      recurrence_frequency: consequatur
-      recurrence_day_of_week: consequatur
-      recurrence_day_of_month: consequatur
-      recurrence_month_of_year: consequatur
-      recurrence_starts_from: consequatur
-      recurrence_occurrences: consequatur
+      billing_type: billable
+      completion_percentage: 0
       user_id:
-        - 17
-      isApi: consequatur
+        - 2
+        - 3
+      enable_reminder: 'on'
+      frequency_type: weekly
+      day_of_week: 3
+      day_of_month: 15
+      time_of_day: '09:00'
+      enable_recurring_task: 'on'
+      recurrence_frequency: monthly
+      recurrence_day_of_week: 5
+      recurrence_day_of_month: 10
+      recurrence_month_of_year: 6
+      recurrence_starts_from: '2025-06-13'
+      recurrence_occurrences: 12
     fileParameters: []
     responses:
       -
@@ -1006,92 +1006,36 @@ endpoints:
           {
             "error": false,
             "message": "Task updated successfully.",
-            "id": 23,
-            "parent_id": 2,
-            "parent_type": "project",
             "data": {
-              "id": 23,
-              "workspace_id": 2,
-              "title": "Update client onboarding flow",
-              "status": "Open",
-              "status_id": 1,
-              "priority": "high",
-              "priority_id": 1,
-              "users": [
-                {
-                  "id": 3,
-                  "first_name": "John",
-                  "last_name": "Doe",
-                  "email": "admin2@gmail.com",
-                  "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-                },
+              "id": 25,
+              "parent_id": 2,
+              "parent_type": "project",
+              "data": {
+                "id": 25,
+                "title": "Test Task Title",
+                "status_id": 15,
+                "priority_id": 4,
+                "completion_percentage": 0,
                 ...
+              }
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": {
+              "title": [
+                "The title field is required."
               ],
-              "user_id": [3,5,6],
-              "clients": [],
-              "start_date": "2025-05-01",
-              "due_date": "2025-05-31",
-              "project": "favorite project",
-              "project_id": 2,
-              "description": "New UI design changes for onboarding.",
-              "note": "Prioritize before end of Q2.",
-              "favorite": 0,
-              "client_can_discuss": null,
-              "created_at": "2025-05-28",
-              "updated_at": "2025-06-03",
-              "enable_reminder": 1,
-              "last_reminder_sent": null,
-              "frequency_type": "weekly",
-              "day_of_week": 2,
-              "day_of_month": null,
-              "time_of_day": "10:00:00",
-              "enable_recurring_task": 1,
-              "recurrence_frequency": "monthly",
-              "recurrence_day_of_week": 2,
-              "recurrence_day_of_month": 5,
-              "recurrence_month_of_year": 12,
-              "recurrence_starts_from": "2025-06-06",
-              "recurrence_occurrences": 10,
-              "completed_occurrences": null,
-              "billing_type": "billable",
-              "completion_percentage": 40,
-              "task_list_id": null
+              "start_date": [
+                "The start date must be before or equal to due date."
+              ]
             }
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 403
-        content: |-
-          {
-            "error": true,
-            "message": "You are not authorized to set this status."
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 422
-        content: |-
-          {
-            "error": true,
-            "message": "The given data was invalid.",
-            "errors": {
-              "title": ["The title field is required."],
-              "status_id": ["The status id must exist in tasks table."]
-            }
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 422
-        content: |-
-          {
-            "error": true,
-            "message": "Invalid date format. Please use yyyy-mm-dd.",
-            "exception": "DateTimeException message"
           }
         headers: []
         description: ''
@@ -1101,7 +1045,7 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "An error occurred while updating the task. <Exception message>"
+            "message": "An error occurred while updating the task. [Error Details]"
           }
         headers: []
         description: ''

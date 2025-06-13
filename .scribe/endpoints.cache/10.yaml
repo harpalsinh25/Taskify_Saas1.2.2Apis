@@ -28,25 +28,25 @@ endpoints:
         name: id
         description: 'The ID of the task.'
         required: true
-        example: 25
-        type: integer
+        example: consequatur
+        type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         custom: []
       newStatus:
         name: newStatus
-        description: 'The ID of the new status.'
+        description: ''
         required: true
-        example: 8
-        type: integer
+        example: consequatur
+        type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 25
-      newStatus: 8
+      id: consequatur
+      newStatus: consequatur
     queryParameters:
       isApi:
         name: isApi
@@ -63,27 +63,27 @@ endpoints:
     bodyParameters:
       id:
         name: id
-        description: ''
+        description: 'The ID of the task to update.'
         required: true
-        example: consequatur
-        type: string
+        example: 33
+        type: integer
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
       statusId:
         name: statusId
-        description: ''
+        description: 'The new status ID to set on the task.'
         required: true
-        example: consequatur
-        type: string
+        example: 4
+        type: integer
         enumValues: []
-        exampleWasSpecified: false
+        exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      id: consequatur
-      statusId: consequatur
+      id: 33
+      statusId: 4
     fileParameters: []
     responses:
       -
@@ -92,15 +92,15 @@ endpoints:
           {
             "error": false,
             "message": "Status updated successfully.",
-            "id": "25",
+            "id": "33",
             "type": "task",
             "activity_message": "herry porter updated task status from Approved to Completed",
             "data": {
-              "id": 25,
+              "id": 33,
               "workspace_id": 2,
               "title": "Test Task Title",
-              "status": "Approved",
-              "status_id": 8,
+              "status": "Completed",
+              "status_id": 4,
               "priority": "low",
               "priority_id": 2,
               "users": [
@@ -116,8 +116,7 @@ endpoints:
               "due_date": "2025-06-10",
               "project": "favorite project",
               "project_id": 2,
-              "description": "This is a test task description.",
-              ...
+              "description": "This is a test task description."
             }
           }
         headers: []

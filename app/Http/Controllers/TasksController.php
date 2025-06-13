@@ -379,119 +379,81 @@ class TasksController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    /**
+ /**
+ * Update an existing task.
+ * @group Task Management
+ * This API endpoint updates a task with given details including reminders and recurring configurations.
+ * It handles:
+ * - Status change tracking with status timelines.
+ * - Optional reminder creation or update.
+ * - Optional recurring task creation or update.
+ * - User reassignment with notification dispatching.
+ *
+ * @bodyParam id integer required The ID of the task to update. Example: 25
+ * @bodyParam title string required The title of the task. Example: Test Task Title
+ * @bodyParam description string Optional description for the task. Example: This is a test task description.
+ * @bodyParam status_id integer required The status ID associated with the task. Example: 15
+ * @bodyParam priority_id integer nullable The priority ID associated with the task. Example: 4
+ * @bodyParam start_date date required Start date of the task (must be before or equal to due_date). Example: 2025-06-01
+ * @bodyParam due_date date required Due date of the task. Example: 2025-06-10
+ * @bodyParam note string nullable Optional notes related to the task.
+ * @bodyParam billing_type string nullable Must be one of: none, billable, non-billable. Example: billable
+ * @bodyParam completion_percentage integer required Completion in steps of 10. Must be between 0 and 100. Example: 0
+ * @bodyParam user_id array Optional. Array of user IDs to assign to the task. Example: [2, 3]
+ *
+ * @bodyParam enable_reminder string Optional. Pass "on" to enable reminders. Example: on
+ * @bodyParam frequency_type string Optional. Reminder frequency. One of: daily, weekly, monthly. Example: weekly
+ * @bodyParam day_of_week integer Nullable. Day of the week if frequency is weekly (1=Monday ... 7=Sunday). Example: 3
+ * @bodyParam day_of_month integer Nullable. Day of the month if frequency is monthly. Example: 15
+ * @bodyParam time_of_day string Nullable. Time for the reminder (HH:MM format). Example: 09:00
+ *
+ * @bodyParam enable_recurring_task string Optional. Pass "on" to enable recurring tasks. Example: on
+ * @bodyParam recurrence_frequency string Optional. One of: daily, weekly, monthly, yearly. Example: monthly
+ * @bodyParam recurrence_day_of_week integer Nullable. Used if recurrence_frequency is weekly. Example: 5
+ * @bodyParam recurrence_day_of_month integer Nullable. Used if recurrence_frequency is monthly. Example: 10
+ * @bodyParam recurrence_month_of_year integer Nullable. Used if recurrence_frequency is yearly. Example: 6
+ * @bodyParam recurrence_starts_from date Nullable. Start date for recurring tasks. Must be today or future. Example: 2025-06-13
+ * @bodyParam recurrence_occurrences integer Nullable. Number of occurrences for recurrence. Example: 12
+ *
+ * @header workspace_id required Workspace ID in which task exists. Example: 2
+ * @authenticated
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Task updated successfully.",
+ *   "data": {
+ *     "id": 25,
+ *     "parent_id": 2,
+ *     "parent_type": "project",
+ *     "data": {
+ *       "id": 25,
+ *       "title": "Test Task Title",
+ *       "status_id": 15,
+ *       "priority_id": 4,
+ *       "completion_percentage": 0,
+ *       ...
+ *     }
+ *   }
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": {
+ *     "title": [
+ *       "The title field is required."
+ *     ],
+ *     "start_date": [
+ *       "The start date must be before or equal to due date."
+ *     ]
+ *   }
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "An error occurred while updating the task. [Error Details]"
+ * }
+ */
 
-     * Update an existing task.
-     *@group Task Management
-     * Validates and updates the specified task. Handles status changes,
-     * reminders, recurring tasks, user assignments, and sends notifications.
-     *
-     * @bodyParam id int required The ID of the task to update. Must exist in tasks table.
-     * @bodyParam title string required The title of the task.
-     * @bodyParam status_id int required The status ID for the task.
-     * @bodyParam priority_id int|null The priority ID for the task.
-     * @bodyParam start_date date required The start date (YYYY-MM-DD). Must be before or equal to due_date.
-     * @bodyParam due_date date required The due date (YYYY-MM-DD).
-     * @bodyParam description string|null Task description.
-     * @bodyParam note string|null Additional notes.
-     * @bodyParam billing_type string|null Billing type. Allowed values: none, billable, non-billable.
-     * @bodyParam completion_percentage int required Completion percentage. Allowed values: 0,10,20,...,100.
-     * @bodyParam enable_reminder string|null "on" to enable reminder.
-     * @bodyParam frequency_type string|null Reminder frequency. Allowed values: daily, weekly, monthly.
-     * @bodyParam day_of_week int|null Day of week for weekly reminder (1-7).
-     * @bodyParam day_of_month int|null Day of month for monthly reminder (1-31).
-     * @bodyParam time_of_day string|null Reminder time in HH:mm format.
-     * @bodyParam enable_recurring_task string|null "on" to enable recurring task.
-     * @bodyParam recurrence_frequency string|null Recurrence frequency. Allowed: daily, weekly, monthly, yearly.
-     * @bodyParam recurrence_day_of_week int|null Recurrence day of week (1-7).
-     * @bodyParam recurrence_day_of_month int|null Recurrence day of month (1-31).
-     * @bodyParam recurrence_month_of_year int|null Recurrence month of year (1-12).
-     * @bodyParam recurrence_starts_from date|null Recurrence start date (YYYY-MM-DD), must be today or later.
-     * @bodyParam recurrence_occurrences int|null Number of recurrence occurrences.
-     * @bodyParam user_id int[] Array of user IDs to assign to the task.
-     * @bodyParam isApi bool|null Internal flag indicating API request.
-     *
-     * @response 200 {
-     *   "error": false,
-     *   "message": "Task updated successfully.",
-     *   "id": 23,
-     *   "parent_id": 2,
-     *   "parent_type": "project",
-     *   "data": {
-     *     "id": 23,
-     *     "workspace_id": 2,
-     *     "title": "Update client onboarding flow",
-     *     "status": "Open",
-     *     "status_id": 1,
-     *     "priority": "high",
-     *     "priority_id": 1,
-     *     "users": [
-     *       {
-     *         "id": 3,
-     *         "first_name": "John",
-     *         "last_name": "Doe",
-     *         "email": "admin2@gmail.com",
-     *         "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-     *       },
-     *       ...
-     *     ],
-     *     "user_id": [3,5,6],
-     *     "clients": [],
-     *     "start_date": "2025-05-01",
-     *     "due_date": "2025-05-31",
-     *     "project": "favorite project",
-     *     "project_id": 2,
-     *     "description": "New UI design changes for onboarding.",
-     *     "note": "Prioritize before end of Q2.",
-     *     "favorite": 0,
-     *     "client_can_discuss": null,
-     *     "created_at": "2025-05-28",
-     *     "updated_at": "2025-06-03",
-     *     "enable_reminder": 1,
-     *     "last_reminder_sent": null,
-     *     "frequency_type": "weekly",
-     *     "day_of_week": 2,
-     *     "day_of_month": null,
-     *     "time_of_day": "10:00:00",
-     *     "enable_recurring_task": 1,
-     *     "recurrence_frequency": "monthly",
-     *     "recurrence_day_of_week": 2,
-     *     "recurrence_day_of_month": 5,
-     *     "recurrence_month_of_year": 12,
-     *     "recurrence_starts_from": "2025-06-06",
-     *     "recurrence_occurrences": 10,
-     *     "completed_occurrences": null,
-     *     "billing_type": "billable",
-     *     "completion_percentage": 40,
-     *     "task_list_id": null
-     *   }
-     * }
-     *
-     * @response 422 {
-     *   "error": true,
-     *   "message": "The given data was invalid.",
-     *   "errors": {
-     *     "title": ["The title field is required."],
-     *     "status_id": ["The status id must exist in tasks table."]
-     *   }
-     * }
-     *
-     * @response 403 {
-     *   "error": true,
-     *   "message": "You are not authorized to set this status."
-     * }
-     *
-     * @response 422 {
-     *   "error": true,
-     *   "message": "Invalid date format. Please use yyyy-mm-dd.",
-     *   "exception": "DateTimeException message"
-     * }
-     *
-     * @response 500 {
-     *   "error": true,
-     *   "message": "An error occurred while updating the task. <Exception message>"
-     * }
-     */
 
 
    public function update(Request $request)
@@ -1051,62 +1013,63 @@ class TasksController extends Controller
     }
 
     /**
-     * Update the status of a task.
-     * @group Task status and performance
-     *
-     * This endpoint allows you to update the status of a task by providing the task ID and the new status ID.
-     * It logs the status change in the task's status timeline and notifies assigned users and clients.
-     *
-     * @urlParam id integer required The ID of the task. Example: 25
-     * @urlParam newStatus integer required The ID of the new status. Example: 8
-     * @queryParam isApi boolean Optional. Set to true if calling from API to get a structured API response. Example: true
-     *
-     * @response 200 {
-     *   "error": false,
-     *   "message": "Status updated successfully.",
-     *   "id": "25",
-     *   "type": "task",
-     *   "activity_message": "herry porter updated task status from Approved to Completed",
-     *   "data": {
-     *     "id": 25,
-     *     "workspace_id": 2,
-     *     "title": "Test Task Title",
-     *     "status": "Approved",
-     *     "status_id": 8,
-     *     "priority": "low",
-     *     "priority_id": 2,
-     *     "users": [
-     *       {
-     *         "id": 2,
-     *         "first_name": "herry",
-     *         "last_name": "porter",
-     *         "email": "admin@gmail.com",
-     *         "photo": "http://localhost:8000/storage/photos/no-image.jpg"
-     *       }
-     *     ],
-     *     "start_date": "2025-06-01",
-     *     "due_date": "2025-06-10",
-     *     "project": "favorite project",
-     *     "project_id": 2,
-     *     "description": "This is a test task description.",
-     *     ...
-     *   }
-     * }
-     *
-     * @response 403 {
-     *   "error": true,
-     *   "message": "You are not authorized to set this status."
-     * }
-     *
-     * @response 404 {
-     *   "message": "No query results for model [App\\Models\\Task] 999"
-     * }
-     *
-     * @response 500 {
-     *   "error": true,
-     *   "message": "Task status couldn't updated."
-     * }
-     */
+ * Update the status of a task.
+ * @group Task status and performance
+ *
+ * This endpoint allows you to update the status of a task by providing the task ID and the new status ID.
+ * It logs the status change in the task's status timeline and notifies assigned users and clients.
+ *
+ * @bodyParam id integer required The ID of the task to update. Example: 33
+ * @bodyParam statusId integer required The new status ID to set on the task. Example: 4
+ *
+ * @queryParam isApi boolean Optional. Set to true if calling from API to get a structured API response. Example: true
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Status updated successfully.",
+ *   "id": "33",
+ *   "type": "task",
+ *   "activity_message": "herry porter updated task status from Approved to Completed",
+ *   "data": {
+ *     "id": 33,
+ *     "workspace_id": 2,
+ *     "title": "Test Task Title",
+ *     "status": "Completed",
+ *     "status_id": 4,
+ *     "priority": "low",
+ *     "priority_id": 2,
+ *     "users": [
+ *       {
+ *         "id": 2,
+ *         "first_name": "herry",
+ *         "last_name": "porter",
+ *         "email": "admin@gmail.com",
+ *         "photo": "http://localhost:8000/storage/photos/no-image.jpg"
+ *       }
+ *     ],
+ *     "start_date": "2025-06-01",
+ *     "due_date": "2025-06-10",
+ *     "project": "favorite project",
+ *     "project_id": 2,
+ *     "description": "This is a test task description."
+ *   }
+ * }
+ *
+ * @response 403 {
+ *   "error": true,
+ *   "message": "You are not authorized to set this status."
+ * }
+ *
+ * @response 404 {
+ *   "message": "No query results for model [App\\Models\\Task] 999"
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Task status couldn't updated."
+ * }
+ */
+
 
   public function update_status(Request $request)
     {
@@ -1760,7 +1723,7 @@ class TasksController extends Controller
 }
 /**
  * Add a comment to a model (e.g., task, project).
- * @group Task Celender
+ * @group Task Comments
  * This endpoint allows an authenticated user to add a comment to a specific model
  * such as a Task, Project, or any commentable entity. It also supports mentions
  * (e.g., @username) and file attachments (e.g., PNG, PDF).

@@ -30,78 +30,131 @@ class IssueController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Project $project)
-    {
-        // Start try-catch block for error handling
-        try {
-            // Validate the incoming request data
-            $formFields = $request->validate([
-                'title' => 'required|max:256',
-                'description' => 'required|max:512',
-                'status' => 'required|in:open,in_progress,resolved,closed',
-                'assignee_id' => 'nullable|array',  // Make sure assignee_id is an array if provided
-                'assignee_id.*' => 'exists:users,id' // Ensure each assignee_id is a valid user ID
-            ]);
 
-            // Add the user who created the issue
-            $formFields['created_by'] = getAuthenticatedUser()->id;
 
-            // Create the new issue associated with the project
-            $issue = $project->issues()->create($formFields);
+     /**
+ * Create a new issue under a project.
+ *
+ * This endpoint allows you to create a new issue related to a specific project. You must provide issue details such as title, description, status, and optional assignees. The issue will be created under the given project and notifications will be dispatched to the assignees.
+ *
+ * @authenticated
+ *
+ * @header workspace_id integer required The ID of the workspace context (e.g., `2`)
+ *
+ * @urlParam project integer required The ID of the project in which the issue is being created. Example: 5
+ *
+ * @bodyParam title string required The title of the issue. Example: Database connectivity issue
+ * @bodyParam description string required A description of the issue. Example: There is an intermittent issue connecting to the database from the API server.
+ * @bodyParam status string required The current status of the issue. Must be one of: `open`, `in_progress`, `resolved`, `closed`. Example: open
+ * @bodyParam assignee_id array optional An array of user IDs to assign the issue to. Example: [1, 3]
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Issue created successfully.",
+ *   "data": {
+ *     "id": 17,
+ *     "project_id": 5,
+ *     "title": "Database connectivity issue",
+ *     "description": "There is an intermittent issue connecting to the database from the API server.",
+ *     "status": "open",
+ *     "created_by": 2,
+ *     "assignees": [
+ *       {
+ *         "id": 1,
+ *         "name": "John Doe",
+ *         "email": "john@example.com"
+ *       },
+ *       {
+ *         "id": 3,
+ *         "name": "Jane Smith",
+ *         "email": "jane@example.com"
+ *       }
+ *     ]
+ *   }
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "Validation failed.",
+ *   "data": {
+ *     "title": ["The title field is required."]
+ *   }
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Database error occurred while creating the issue.",
+ *   "data": {
+ *     "details": "SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'project_id' cannot be null..."
+ *   }
+ * }
+ */
 
-            // If assignee_ids are provided, attach them to the issue
-            $assignee_ids = $request->assignee_id;
-            if ($assignee_ids) {
-                // Attach the assignees to the issue
-                $issue->users()->attach($assignee_ids);
-            }
-            $notification_data = [
-                'type' => 'project_issue',
-                'type_id' => $issue->id,
-                'type_title' => $issue->title,
-                'status' => ucwords(str_replace('_', ' ', $issue->status)),
-                'creator_first_name' => ucwords($issue->creator->first_name),
-                'creator_last_name' => ucwords($issue->creator->last_name),
-                'access_url' => 'projects/information/' . $project->id,
-                'action' => 'assigned'
-            ];
-            $recipients = array_merge(
-                array_map(function ($assignee_ids) {
-                    return 'u_' . $assignee_ids;
-                }, $assignee_ids)
-            );
+   public function store(Request $request, Project $project)
+{
+    $isApi = $request->get('isApi', $request->expectsJson());
 
-            processNotifications($notification_data, $recipients);
+    try {
+        // Validate form data
+        $formFields = $request->validate([
+            'title' => 'required|max:256',
+            'description' => 'required|max:512',
+            'status' => 'required|in:open,in_progress,resolved,closed',
+            'assignee_id' => 'nullable|array',
+            'assignee_id.*' => 'exists:users,id',
+        ]);
 
-            // Return success response with the issue data
-            return response()->json([
-                'error' => false,
-                'message' => 'Issue created successfully.',
-                'issue' => $issue
-            ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation errors (incorrect input, missing fields, etc.)
-            return response()->json([
-                'error' => true,
-                'message' => 'Validation failed.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Illuminate\Database\QueryException $e) {
-            // Handle database-related errors, like issues creating or attaching assignees
-            return response()->json([
-                'error' => true,
-                'message' => 'Database error occurred while creating the issue.',
-                'details' => $e->getMessage(),  // Optionally include details for debugging
-            ], 500);
-        } catch (\Exception $e) {
-            // Catch any other unexpected errors
-            return response()->json([
-                'error' => true,
-                'message' => 'An unexpected error occurred. Please try again later.',
-                'details' => $e->getMessage(),  // Optionally include details for debugging
-            ], 500);
+        $user = getAuthenticatedUser(); // Should support both web and API
+        $formFields['created_by'] = $user->id;
+
+        // Create issue
+        $issue = $project->issues()->create($formFields);
+
+        // Attach assignees
+        $assignee_ids = $request->assignee_id;
+        if (!empty($assignee_ids)) {
+            $issue->users()->attach($assignee_ids);
         }
+
+        // Send notifications
+        $notification_data = [
+            'type' => 'project_issue',
+            'type_id' => $issue->id,
+            'type_title' => $issue->title,
+            'status' => ucwords(str_replace('_', ' ', $issue->status)),
+            'creator_first_name' => ucwords($user->first_name),
+            'creator_last_name' => ucwords($user->last_name),
+            'access_url' => 'projects/information/' . $project->id,
+            'action' => 'assigned'
+        ];
+
+        $recipients = array_map(fn($id) => 'u_' . $id, $assignee_ids ?? []);
+        processNotifications($notification_data, $recipients);
+
+        // Response
+        if ($isApi) {
+            return formatApiResponse(false, 'Issue created successfully.', [
+                'issue' => formatIssue($issue)
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Issue created successfully.');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return $isApi
+            ? formatApiResponse(true, 'Validation failed.', ['errors' => $e->errors()], 422)
+            : redirect()->back()->withErrors($e->errors())->withInput();
+    } catch (\Illuminate\Database\QueryException $e) {
+        return $isApi
+            ? formatApiResponse(true, 'Database error occurred while creating the issue.', ['details' => $e->getMessage()], 500)
+            : redirect()->back()->with('error', 'Database error occurred while creating the issue.');
+    } catch (\Exception $e) {
+        return $isApi
+            ? formatApiResponse(true, 'An unexpected error occurred.', ['details' => $e->getMessage()], 500)
+            : redirect()->back()->with('error', 'An unexpected error occurred.');
     }
+}
+
 
 
     /**
@@ -136,74 +189,150 @@ class IssueController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Project $project, Request $request)
-    {
-        // Start a try-catch block for error handling
-        // Validate the incoming request data
+
+
+
+     /**
+ * Update an existing issue within a project.
+ *
+ * This endpoint allows you to update the title, description, status, and assignees of an existing issue
+ * associated with a project. You must pass the issue `id` as part of the payload. Assignee user IDs
+ * must be valid user IDs that exist in the system.
+ *
+ * The request works for both API and web usage. Use `Accept: application/json` and `isApi=true` for API responses.
+ *
+ * @bodyParam id integer required The ID of the issue to update. Example: 8
+ * @bodyParam title string required The updated title of the issue. Max 256 characters. Example: Database connectivity issue
+ * @bodyParam description string required The updated description of the issue. Max 512 characters. Example: There is an intermittent issue connecting to the database from the API server.
+ * @bodyParam status string required The current status of the issue. Must be one of: open, in_progress, resolved, closed. Example: in_progress
+ * @bodyParam assignee_id array[] The list of user IDs to assign this issue to. Optional. Example: [1, 3]
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Issue updated successfully.",
+ *   "issue": {
+ *     "id": 8,
+ *     "title": "Database connectivity issue",
+ *     "description": "There is an intermittent issue connecting to the database from the API server.",
+ *     "status": "in_progress",
+ *     "assignees": [...]
+ *   }
+ * }
+ *
+ * @response 404 {
+ *   "error": true,
+ *   "message": "Issue not found."
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "Validation failed.",
+ *   "errors": {
+ *     "title": ["The title field is required."]
+ *   }
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "An unexpected error occurred.",
+ *   "details": "Exception message here"
+ * }
+ *
+ * @header Accept application/json
+ * @header workspace_id 2
+ */
+
+   public function update(Project $project, Request $request)
+{
+    $isApi = $request->get('isApi', $request->expectsJson());
+
+    try {
+        // Validate request data
         $formFields = $request->validate([
             'id' => 'required|exists:issues,id',
             'title' => 'required|max:256',
             'description' => 'required|max:512',
             'status' => 'required|in:open,in_progress,resolved,closed',
-            'assignee_id' => 'nullable|array',  // Make sure assignee_id is an array if provided
-            'assignee_id.*' => 'exists:users,id' // Ensure each assignee_id is a valid user ID
+            'assignee_id' => 'nullable|array',
+            'assignee_id.*' => 'exists:users,id'
         ]);
-        try {
 
-            // Find the issue or throw an exception if not found
-            $issue = Issue::findOrFail($formFields['id']);
+        // Retrieve the issue
+        $issue = Issue::findOrFail($formFields['id']);
 
-            // Update the issue's attributes
-            $issue->title = $formFields['title'];
-            $issue->description = $formFields['description'];
-            $issue->status = $formFields['status'];
+        // Update issue fields
+        $issue->title = $formFields['title'];
+        $issue->description = $formFields['description'];
+        $issue->status = $formFields['status'];
+        $issue->save();
 
-            // Save the updated issue
-            $issue->save();
-
-            // If assignee_ids are provided, sync the users
-            $assignee_ids = $formFields['assignee_id'] ?? null;
-            if ($assignee_ids) {
-                // Ensure the assignees are valid and sync them with the issue
-                $issue->users()->sync($assignee_ids);
-            }
-
-            // Return success response
-            return response()->json([
-                'error' => false,
-                'message' => 'Issue updated successfully.',
-                'issue' => $issue
-            ]);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            // Handle model not found (issue not found)
-            return response()->json([
-                'error' => true,
-                'message' => 'Issue not found.',
-            ], 404);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            // Handle validation errors
-            return response()->json([
-                'error' => true,
-                'message' => 'Validation failed.',
-                'errors' => $e->errors(),
-            ], 422);
-        } catch (\Exception $e) {
-            // Handle any other exceptions
-            return response()->json([
-                'error' => true,
-                'message' => 'An unexpected error occurred. Please try again later.',
-                'details' => $e->getMessage(),
-            ], 500);
+        // Sync assignees if provided
+        if (!empty($formFields['assignee_id'])) {
+            $issue->users()->sync($formFields['assignee_id']);
         }
-    }
 
+        if ($isApi) {
+            return formatApiResponse(false, 'Issue updated successfully.', [
+                'issue' => formatIssue($issue)
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Issue updated successfully.');
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return $isApi
+            ? formatApiResponse(true, 'Issue not found.', [], 404)
+            : redirect()->back()->with('error', 'Issue not found.');
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return $isApi
+            ? formatApiResponse(true, 'Validation failed.', ['errors' => $e->errors()], 422)
+            : redirect()->back()->withErrors($e->errors())->withInput();
+    } catch (\Exception $e) {
+        return $isApi
+            ? formatApiResponse(true, 'An unexpected error occurred.', ['details' => $e->getMessage()], 500)
+            : redirect()->back()->with('error', 'An unexpected error occurred.');
+    }
+}
 
     /**
      * Remove the specified resource from storage.
      */
+
+
+     /**
+ * Delete an issue from a project.
+ *
+ * This endpoint deletes a specific issue associated with a project. It uses the `DeletionService` to handle
+ * soft or hard deletion logic based on the application's internal rules.
+ *
+ * Requires authentication and a valid issue ID. Works for both API and web responses if handled inside `DeletionService`.
+ *
+ * @urlParam project int required The ID of the project to which the issue belongs. Example: 5
+ * @urlParam id int required The ID of the issue to delete. Example: 8
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Issue deleted successfully."
+ * }
+ *
+ * @response 404 {
+ *   "error": true,
+ *   "message": "Issue not found."
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "An unexpected error occurred.",
+ *   "details": "Exception message here"
+ * }
+ *
+ * @header Accept application/json
+ * @header workspace_id 2
+ */
+
     public function destroy(Project $project, Issue $id)
     {
-        $response = DeletionService::delete(Issue::class, $id->id, 'Issue');
+        $response = DeletionService::delete(Issue::class, $id->id, 'Issue' , );
         return $response;
     }
     public function destroy_multiple(Request $request, Project $id)
@@ -315,6 +444,98 @@ class IssueController extends Controller
             'total' => $totalIssues,
         ]);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ public function Apilist(Request $request, $id = '', $type = '')
+{
+    try {
+        $search = $request->input('search', '');
+        $sort = $request->input('sort', 'created_at');
+        $order = $request->input('order', 'DESC');
+        $status = $request->input('status', '');
+        $assigned_to = $request->input('assigned_to', '');
+        $created_by = $request->input('created_by', '');
+        $start_date = $request->input('start_date', '');
+        $end_date = $request->input('end_date', '');
+        $limit = $request->input('limit', 10);
+
+        // Initialize query
+        $issuesQuery = Issue::query();
+        dd($id);
+
+        if ($id) {
+            $issuesQuery->where('project_id', $id);
+        }
+
+        if ($status) {
+            $issuesQuery->where('status', $status);
+        }
+
+        if ($assigned_to) {
+            $issuesQuery->whereHas('users', function ($q) use ($assigned_to) {
+                $q->where('users.id', $assigned_to);
+            });
+        }
+
+        if ($created_by) {
+            $issuesQuery->where('created_by', $created_by);
+        }
+
+        if ($start_date && $end_date) {
+            $issuesQuery->whereBetween('created_at', [$start_date, $end_date]);
+        }
+
+        if ($search) {
+            $issuesQuery->where(function ($query) use ($search) {
+                $query->where('title', 'LIKE', "%{$search}%")
+                      ->orWhere('description', 'LIKE', "%{$search}%")
+                      ->orWhere('status', 'LIKE', "%{$search}%")
+                      ->orWhereHas('users', function ($query) use ($search) {
+                          $query->where('first_name', 'LIKE', "%{$search}%")
+                                ->orWhere('last_name', 'LIKE', "%{$search}%");
+                      })
+                      ->orWhereHas('creator', function ($query) use ($search) {
+                          $query->where('first_name', 'LIKE', "%{$search}%")
+                                ->orWhere('last_name', 'LIKE', "%{$search}%");
+                      });
+            });
+        }
+
+        $totalIssues = $issuesQuery->count();
+
+        $issues = $issuesQuery
+            ->orderBy($sort, $order)
+            ->paginate($limit);
+
+        // Format each issue using formatIssue
+        $formattedIssues = $issues->map(function ($issue) {
+            return formatIssue($issue);
+        });
+
+        return formatApiResponse(false, 'Issue list fetched successfully.', [
+            'rows' => $formattedIssues,
+            'total' => $totalIssues,
+        ]);
+    } catch (\Exception $e) {
+        return formatApiResponse(true, 'Failed to fetch issues.', [
+            'details' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
     /**
      * Generate action buttons for an issue.

@@ -37,18 +37,22 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectsController extends Controller
 {
-      protected $workspace;
-    protected $user;
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            // fetch session and use it in entire class with constructor
-            $this->workspace = Workspace::find(session()->get('workspace_id'));
+  protected $workspace;
+protected $user;
 
-            $this->user = getAuthenticatedUser();
-            return $next($request);
-        });
-    }
+public function __construct()
+{
+    $this->middleware(function ($request, $next) {
+        // Use helper function to get workspace ID
+        $workspaceId = getWorkspaceId();
+        $this->workspace = Workspace::find($workspaceId);
+        // dd($this->workspace);
+
+        $this->user = getAuthenticatedUser();
+
+        return $next($request);
+    });
+}
     /**
      * Display a listing of the resource.
      *
@@ -196,7 +200,7 @@ class ProjectsController extends Controller
  * @bodyParam isApi boolean Optional flag to determine API-specific behavior. Example: true
  * @bodyParam workspace_id int Workspace Id . Must exist in wprkspaces table . example:2
  *
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
+
  * @header Accept application/json
  * @header workspace_id 2
  * @response 200 scenario="Success" {
@@ -1685,7 +1689,7 @@ public function apiList(Request $request, $id = null)
  *
  * @group Project Milestones
  *
- * @header workspace_id integer required The ID of the workspace. Example: 2
+ * @header workspace_id  Example: 2
  *
  * @bodyParam project_id int required The ID of the project the milestone belongs to. Example: 5
  * @bodyParam title string required The title of the milestone. Example: Final Design Review
@@ -1733,16 +1737,18 @@ public function store_milestone(Request $request)
         'cost' => ['required', 'regex:/^\d+(\.\d+)?$/'],
         'description' => ['nullable', 'string'],
     ]);
-
+    // dd($formFields);
     try {
         // Format dates for DB
           $start_date = $request->input('start_date');
+        //   dd($start_date);
         $end_date = $request->input('end_date');
   $formFields['start_date'] = format_date($start_date, false, app('php_date_format'), 'Y-m-d');
         $formFields['end_date'] = format_date($end_date, false, app('php_date_format'), 'Y-m-d');
+        // dd($formFields['start_date'], $formFields['end_date']);
 
         $formFields['workspace_id'] = $this->workspace->id;
-        dd($formFields['workspace_id']);
+        // dd($formFields['workspace_id']);
         $formFields['created_by'] = isClient() ? 'c_' . $this->user->id : 'u_' . $this->user->id;
 // dd($formFields['created_by']);
         // Create milestone
@@ -1777,97 +1783,62 @@ public function store_milestone(Request $request)
     }
 }
 
-
-    /**
- * Get the milestones for a specific project with optional filters and pagination.
- *@grpoup Project Milestones
- * This method returns a paginated list of milestones associated with a project.
- * The milestones can be filtered by search term, date range, and status.
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
- * @param  int  $id The ID of the project for which to retrieve milestones.
+/**
+ * Get milestone(s) (single or list)
+ * @group Project Milestones
+ * This API returns either a single milestone (if an `id` is provided) or a paginated list of milestones.
+ * It supports filtering by title, description, status, and date ranges. Sorting and pagination are also supported.
  *
- * @return \Illuminate\Http\JsonResponse JSON response containing the list of milestones and total count.
+ * @urlParam id integer optional The ID of the milestone to retrieve. If provided, returns a single milestone. Example: 3
  *
- * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If no project is found with the provided ID.
+ * @queryParam search string optional A keyword to search by milestone title, description, or ID. Example: Review
+ * @queryParam status string optional Filter by milestone status. Example: complete
+ * @queryParam start_date_from date optional Filter milestones starting from this date (Y-m-d). Example: 2025-06-01
+ * @queryParam start_date_to date optional Filter milestones starting up to this date (Y-m-d). Example: 2025-06-30
+ * @queryParam end_date_from date optional Filter milestones ending from this date (Y-m-d). Example: 2025-07-01
+ * @queryParam end_date_to date optional Filter milestones ending up to this date (Y-m-d). Example: 2025-07-31
+ * @queryParam sort string optional Field to sort by. Defaults to `id`. Example: title
+ * @queryParam order string optional Sort direction (`asc` or `desc`). Defaults to `desc`. Example: asc
+ * @queryParam limit integer optional Number of records per page. Defaults to 10. Example: 20
  *
- * Success Response:
- * - Code: 200
- * - Content:
- * ```json
- * {
- *   "rows": [
+ * @header workspace_id integer required The ID of the workspace context. Example: 2
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Milestones retrieved successfully.",
+ *   "data": [
  *     {
- *       "id": 1,
- *       "title": "Milestone 1",
- *       "status": "<span class=\"badge bg-danger\">Incomplete</span>",
- *       "progress": "<div class=\"demo-vertical-spacing\"><div class=\"progress\"><div class=\"progress-bar\" role=\"progressbar\" style=\"width: 40%\" aria-valuenow=\"40\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div></div></div> <h6 class=\"mt-2\">40%</h6>",
- *       "cost": "$10,000.00",
- *       "start_date": "2025-01-01",
- *       "end_date": "2025-03-01",
- *       "created_by": "John Doe",
- *       "description": "Description of Milestone 1",
- *       "created_at": "2025-01-01 10:00:00",
- *       "updated_at": "2025-01-15 12:30:00"
- *     },
- *     {
-    *       "id": 2,
-    *       "title": "Milestone 2",
-    *       "status": "<span class=\"badge bg-success\">Complete</span>",
-    *       "progress": "<div class=\"demo-vertical-spacing\"><div class=\"progress\"><div class=\"progress-bar\" role=\"progressbar\" style=\"width: 100%\" aria-valuenow=\"100\" aria-valuemin=\"0\" aria-valuemax=\"100\"></div></div></div> <h6 class=\"mt-2\">100%</h6>",
-    *       "cost": "$5,000.00",
-    *       "start_date": "2025-02-01",
-    *       "end_date": "2025-02-28",
-    *       "created_by": "Jane Smith",
-    *       "description": "Description of Milestone 2",
-    *       "created_at": "2025-02-01 09:30:00",
-    *       "updated_at": "2025-02-15 11:00:00"
+ *       "id": 3,
+ *       "title": "Final Review",
+ *       "status": "complete",
+ *       "start_date": "2025-06-01",
+ *       "end_date": "2025-06-15",
+ *       "cost": "1500.00",
+ *       "progress": 100,
+ *       "description": "Final phase of project delivery."
  *     }
  *   ],
- *   "total": 2
+ *   "total": 1,
+ *   "page": 1,
+ *   "limit": 10
  * }
- * ```
  *
- * Error Responses:
- * - Code: 404
- * - Content:
- * ```json
- * {
- *   "error": "Project not found",
- *   "message": "The project with the given ID does not exist."
+ * @response 404 {
+ *   "error": true,
+ *   "message": "Milestone not found.",
+ *   "data": []
  * }
- * ```
  *
- * Possible Errors:
- * 1. **ModelNotFoundException**:
- *    - If the project with the provided ID does not exist, the method will throw a `ModelNotFoundException`.
- *    - **Example**: A request for `GET /projects/{id}/milestones` with an invalid `id` will return a 404 error.
- *    - **Response**:
- *    ```json
- *    {
- *      "error": "Project not found",
- *      "message": "The project with the given ID does not exist."
- *    }
- *    ```
- *
- * 2. **Invalid Date Format**:
- *    - If `start_date_from`, `start_date_to`, `end_date_from`, or `end_date_to` are passed with an invalid date format,
- *      it may lead to unexpected behavior. Ensure that the dates follow the correct format (e.g., `YYYY-MM-DD`).
- *
- * 3. **Invalid Status**:
- *    - If an invalid `status` is passed, no milestones will be returned. Ensure that `status` values like `incomplete` or `complete`
- *      are valid in the system.
- *
- * 4. **Search Term**:
- *    - The `search` query is used to filter milestones by title, description, cost, or ID. If the search term is not provided or invalid,
- *      it may return an empty set of results.
- *
- * Notes:
- * - The **status** can be one of the following: `incomplete`, `complete`.
- * - The **start_date** and **end_date** are expected in the format `YYYY-MM-DD`.
- * - Ensure that the **pagination** (`limit`) is provided in the request. If not, the default behavior will apply.
+ * @response 500 {
+ *   "error": true,
+ *   "message": "Error: Unexpected exception message",
+ *   "data": {
+ *     "line": 123,
+ *     "file": "path/to/file.php"
+ *   }
+ * }
  */
+
 
     public function api_milestones($id = null)
 {
@@ -1936,67 +1907,132 @@ public function store_milestone(Request $request)
 
     public function get_milestones($id)
     {
-        $ms = Milestone::findOrFail($id);
-        dd($ms);
+        $project = Project::findOrFail($id);
+        $search = request('search');
+        $sort = (request('sort')) ? request('sort') : "id";
+        $order = (request('order')) ? request('order') : "DESC";
+        $status = isset($_REQUEST['status']) && $_REQUEST['status'] !== '' ? $_REQUEST['status'] : "";
+        $start_date_from = (request('start_date_from')) ? request('start_date_from') : "";
+        $start_date_to = (request('start_date_to')) ? request('start_date_to') : "";
+        $end_date_from = (request('end_date_from')) ? request('end_date_from') : "";
+        $end_date_to = (request('end_date_to')) ? request('end_date_to') : "";
+        $milestones =  $project->milestones();
+        if ($search) {
+            $milestones = $milestones->where(function ($query) use ($search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('id', 'like', '%' . $search . '%')
+                    ->orWhere('cost', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+        if ($start_date_from && $start_date_to) {
+            $milestones = $milestones->whereBetween('start_date', [$start_date_from, $start_date_to]);
+        }
+        if ($end_date_from && $end_date_to) {
+            $milestones  = $milestones->whereBetween('end_date', [$end_date_from, $end_date_to]);
+        }
+        if ($status) {
+            $milestones  = $milestones->where('status', $status);
+        }
+        $total = $milestones->count();
+        $milestones = $milestones->orderBy($sort, $order)
+            ->paginate(request("limit"))
+            ->through(function ($milestone) {
+                if (strpos($milestone->created_by, 'u_') === 0) {
+                    // The ID corresponds to a user
+                    $creator = User::find(substr($milestone->created_by, 2)); // Remove the 'u_' prefix
+                } elseif (strpos($milestone->created_by, 'c_') === 0) {
+                    // The ID corresponds to a client
+                    $creator = Client::find(substr($milestone->created_by, 2)); // Remove the 'c_' prefix
+                }
+                if ($creator !== null) {
+                    $creator = $creator->first_name . ' ' . $creator->last_name;
+                } else {
+                    $creator = '-';
+                }
+                $statusBadge = '';
+                if ($milestone->status == 'incomplete') {
+                    $statusBadge = '<span class="badge bg-danger">' . get_label('incomplete', 'Incomplete') . '</span>';
+                } elseif ($milestone->status == 'complete') {
+                    $statusBadge = '<span class="badge bg-success">' . get_label('complete', 'Complete') . '</span>';
+                }
+                $progress = '<div class="demo-vertical-spacing">
+                <div class="progress">
+                  <div class="progress-bar" role="progressbar" style="width: ' . $milestone->progress . '%" aria-valuenow="' . $milestone->progress .
+                    '" aria-valuemin="0" aria-valuemax="100">
+                  </div>
+                </div>
+              </div> <h6 class="mt-2">' . $milestone->progress . '%</h6>';
+                return [
+                    'id' => $milestone->id,
+                    'title' => $milestone->title,
+                    'status' => $statusBadge,
+                    'progress' => $progress,
+                    'cost' => format_currency($milestone->cost),
+                    'start_date' => format_date($milestone->start_date),
+                    'end_date' => format_date($milestone->end_date),
+                    'created_by' => $creator,
+                    'description' => $milestone->description,
+                    'created_at' => format_date($milestone->created_at),
+                    'updated_at' => format_date($milestone->updated_at),
+                ];
+            });
+        return response()->json([
+            "rows" => $milestones->items(),
+            "total" => $total,
+        ]);
+    }
 
+
+        public function get_milestone($id)
+    {
+        $ms = Milestone::findOrFail($id);
         return response()->json(['ms' => $ms]);
     }
 
 
-
-    /**
- * Update a milestone.
+/**
+ * Update an existing milestone.
+ *@group Project Milestones
+ * This endpoint updates the details of a specific milestone including title, status, dates,
+ * cost, progress, and an optional description. The milestone is identified by its `id` which must be
+ * passed as a request parameter.
  *
- * This endpoint updates a milestone record with the given details. The request must include valid dates in `d-m-Y` format (e.g., "21-05-2025").
- * @group Project Milestones
- * @bodyParam id int required The ID of the milestone to update. Example: 5
- * @bodyParam title string required The title of the milestone. Example: "Design Phase"
- * @bodyParam status string required The status of the milestone (e.g., "incomplete", "complete"). Example: "incomplete"
- * @bodyParam start_date string required Must be a valid date in d-m-Y format and before or equal to end_date. Example: "21-05-2025"
- * @bodyParam end_date string required Must be a valid date in d-m-Y format. Example: "25-05-2025"
- * @bodyParam cost decimal required Must be a number (integer or decimal). Example: "2500.00"
- * @bodyParam progress string required Progress information. Can be a percentage string or descriptive. Example: "75"
- * @bodyParam description string Optional description of the milestone. Example: "Initial development phase."
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
+ * @bodyParam id integer required The ID of the milestone to update. Example: 5
+ * @bodyParam title string required The title of the milestone. Example: Final Review
+ * @bodyParam status string required The current status of the milestone. Example: complete
+ * @bodyParam start_date date required The start date in `d-m-Y` format. Must be before or equal to end_date. Example: 01-06-2025
+ * @bodyParam end_date date required The end date in `d-m-Y` format. Example: 15-06-2025
+ * @bodyParam cost float required The estimated cost (numbers or decimal). Example: 2000.50
+ * @bodyParam progress integer required Progress of the milestone in percentage (0–100). Example: 80
+ * @bodyParam description string nullable Optional description of the milestone. Example: Final review and delivery milestone.
+ *
+ * @header workspace_id integer required The ID of the workspace context. Example: 2
+ *
  * @response 200 {
  *   "error": false,
  *   "message": "Milestone updated successfully.",
  *   "id": 5,
  *   "type": "milestone",
  *   "parent_type": "project",
- *   "parent_id": 3
+ *   "parent_id": 12
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "title": ["The title field is required."]
+ *   }
  * }
  *
  * @response 400 {
  *   "error": true,
  *   "message": "Invalid date format.",
- *   "exception": "The separation symbol could not be found"
- * }
- *
- * @response 422 {
- *   "error": true,
- *   "message": "Start date cannot be after end date."
- * }
- *
- * @response 422 {
- *   "message": "The given data was invalid.",
- *   "errors": {
- *     "title": ["The title field is required."],
- *     "start_date": ["The start date must be a valid date."]
- *   }
- * }
- *
- * @response 404 {
- *   "message": "No query results for model [App\\Models\\Milestone] 99"
- * }
- *
- * @response 500 {
- *   "error": true,
- *   "message": "Milestone couldn't be updated."
+ *   "exception": "InvalidArgumentException"
  * }
  */
+
 
     public function update_milestone(Request $request)
     {
@@ -2026,7 +2062,15 @@ public function store_milestone(Request $request)
         // dd($ms);
         // dd($ms->update($formFields));
         if ($ms->update($formFields)) {
-            return response()->json(['error' => false, 'message' => 'Milestone updated successfully.', 'id' => $ms->id, 'type' => 'milestone', 'parent_type' => 'project', 'parent_id' => $ms->project_id]);
+            return response()->json(['error' => false, 'message' => 'Milestone updated successfully.',
+             'id' => $ms->id,
+             'type' => 'milestone',
+             'title' => $ms->title,
+              'status' => $ms->status,
+
+
+              'parent_type' => 'project',
+              'parent_id' => $ms->project_id]);
         } else {
             return response()->json(['error' => true, 'message' => 'Milestone couldn\'t updated.']);
         }

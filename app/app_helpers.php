@@ -3568,6 +3568,44 @@ if (!function_exists('formatTodo')) {
         ];
     }
 }
+if (!function_exists('formatIssue')) {
+    /**
+     * Format an Issue model for API responses.
+     *
+     * @param \App\Models\Issue $issue
+     * @return array
+     */
+    function formatIssue($issue)
+    {
+
+
+        return [
+            'id' => $issue->id,
+            'project_id' => $issue->project_id,
+            'title' => $issue->title,
+            'description' => $issue->description,
+            'status' => $issue->status,
+            'created_by' => [
+                'id' => $issue->creator->id ?? null,
+                'first_name' => $issue->creator->first_name ?? '',
+                'last_name' => $issue->creator->last_name ?? '',
+                'email' => $issue->creator->email ?? '',
+            ],
+            'assignees' => $issue->users->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'photo' => $user->photo_url ?? null,
+                ];
+            })->toArray(),
+            'created_at' => $issue->created_at?->toDateTimeString(),
+            'updated_at' => $issue->updated_at?->toDateTimeString(),
+        ];
+    }
+}
+
 
 
 if (!function_exists('getFavoriteStatus')) {

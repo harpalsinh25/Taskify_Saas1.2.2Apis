@@ -26,6 +26,25 @@ use Illuminate\Validation\ValidationException;
 
 class ClientController extends Controller
 {
+
+
+
+    protected $workspace;
+protected $user;
+
+public function __construct()
+{
+    $this->middleware(function ($request, $next) {
+        // Use helper function to get workspace ID
+        $workspaceId = getWorkspaceId();
+        $this->workspace = Workspace::find($workspaceId);
+        // dd($this->workspace);
+
+        $this->user = getAuthenticatedUser();
+
+        return $next($request);
+    });
+}
     /**
      * Display a listing of the resource.
      *

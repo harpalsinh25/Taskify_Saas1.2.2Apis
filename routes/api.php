@@ -12,12 +12,14 @@ use App\Http\Controllers\RolesController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\IssueController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\MeetingsController;
 use App\Http\Controllers\NotesController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\TodosController;
 use App\Http\Controllers\WorkspacesController;
+
 use App\Models\Priority;
 
 /*
@@ -89,6 +91,13 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
     Route::delete('/comments/{id}', [ProjectsController::class, 'destroy_comment']);
     // Route::delete('/comment-attachment/{id}', [ProjectsController::class, 'destroy_comment_attachment']);//pending
     Route::post('/update-module-dates', [ProjectsController::class, 'update_module_dates']);
+    //issues
+   Route::post('projects/{project}/issues', [IssueController::class, 'store']);
+   Route::put('projects/issues/{id}', [IssueController::class, 'update']);
+   Route::delete('projects/issues/{id}', [IssueController::class, 'destroy']);
+    Route::get('projects/issues/{id?}', [IssueController::class, 'Apilist']);
+
+
 
 
      //Tasks managemant
