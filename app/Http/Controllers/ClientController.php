@@ -223,8 +223,8 @@ public function __construct()
 
             $role_id = Role::where('name', 'client')->first()->id;
 
-            // Validate and fetch workspace
-            $workspaceId = $request->header('workspace_id'); // or any custom header name you choose
+            // Use helper to get workspace ID
+            $workspaceId = getWorkspaceId();
             $workspace = Workspace::find($workspaceId);
 
             if (!$workspace) {
@@ -334,58 +334,57 @@ public function __construct()
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+/**
+ * Update a client
+ *
+ * This endpoint updates the details of an existing client, including profile information,
+ * status, internal usage flag, password, and triggers account creation or email verification emails if needed.
+ *
+ * @group Client Management
+ *
+ * @urlParam id integer required The ID of the client to update. Example: 5
+ *
+ * @header workspace_id integer required Your current workspace ID. Example: 2
+ *
+ * @bodyParam first_name string required The client's first name. Example: John
+ * @bodyParam last_name string required The client's last name. Example: Doe
+ * @bodyParam company string The client's company name. Example: Acme Corp
+ * @bodyParam email string required Must be a valid and unique email address. Example: john.doe@example.com
+ * @bodyParam phone string The client's phone number. Example: +1234567890
+ * @bodyParam country_code string The country code for the phone number. Example: +91
+ * @bodyParam address string The client's address. Example: 123 Main St
+ * @bodyParam city string The client's city. Example: Mumbai
+ * @bodyParam state string The client's state. Example: Maharashtra
+ * @bodyParam country string The client's country. Example: India
+ * @bodyParam zip string The client's postal code. Example: 400001
+ * @bodyParam dob date The client's date of birth (YYYY-MM-DD). Example: 1990-05-01
+ * @bodyParam doj date The client's date of joining (YYYY-MM-DD). Example: 2023-04-15
+ * @bodyParam country_iso_code string The ISO code of the client's country. Example: IN
+ * @bodyParam password string The password (required if not internal_purpose). Example: secret123
+ * @bodyParam password_confirmation string Must match the password. Example: secret123
+ * @bodyParam internal_purpose boolean Whether the client is for internal use. Example: true
+ * @bodyParam status integer The client's status (1 = active, 0 = inactive). Example: 1
+ * @bodyParam require_ev integer Set to 1 to send email verification, 0 to skip. Example: 1
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Client details updated successfully.",
+ *   "data": {
+ *     "id": 5,
+ *     "first_name": "John",
+ *     "last_name": "Doe",
+ *     ...
+ *   }
+ * }
+ *
+ * @response 422 {
+ *   "message": "The given data was invalid.",
+ *   "errors": {
+ *     "email": ["The email has already been taken."]
+ *   }
+ * }
+ */
 
-    /**
-     * Update client details.
-     *
-     * Updates the specified client's information. Handles password updates,
-     * profile photo upload, email verification logic, and account creation emails.
-     *
-     * @group Client Management
-     *
-     * @urlParam id integer required The ID of the client to update.
-     *
-     * @bodyParam first_name string required Client's first name.
-     * @bodyParam last_name string required Client's last name.
-     * @bodyParam company string nullable Client's company name.
-     * @bodyParam email string required Unique client email.
-     * @bodyParam phone string nullable Client phone number.
-     * @bodyParam country_code string nullable Country code.
-     * @bodyParam password string nullable Password (required if client has no password and internal_purpose is off).
-     * @bodyParam password_confirmation string required_with:password Must match password.
-     * @bodyParam address string nullable Client address.
-     * @bodyParam city string nullable Client city.
-     * @bodyParam state string nullable Client state.
-     * @bodyParam country string nullable Client country.
-     * @bodyParam zip string nullable Postal/zip code.
-     * @bodyParam dob date nullable Date of birth.
-     * @bodyParam doj date nullable Date of joining.
-     * @bodyParam country_iso_code string nullable ISO code for country.
-     * @bodyParam internal_purpose string nullable Set to 'on' for internal clients (password can be nullable).
-     * @bodyParam status integer nullable Client status.
-     * @bodyParam require_ev integer nullable Email verification required flag (0 or 1).
-     * @bodyParam upload file nullable Profile photo file upload.
-     *
-     * @response 200 {
-     *   "error": false,
-     *   "message":Client updated successfully,
-     *  "data[
-     * data of the client ]
-     * }
-     *
-     * @response 422 {
-     *   "errors": {
-     *     "email": [
-     *       "The email has already been taken in users or clients."
-     *     ]
-     *   }
-     * }
-     *
-     * @response 500 {
-     *   "error": true,
-     *   "message": "An unexpected error occurred while updating client details."
-     * }
-     */
     public function update(Request $request, $id)
 {
     $isApi = true;
@@ -484,6 +483,7 @@ public function __construct()
             'error' => $e->getMessage()
         ]);
     } catch (Throwable $e) {
+        dd($e);
         return formatApiResponse(true, 'Client could not be updated.', [
             'error' => $e->getMessage(),
             'line' => $e->getLine(),
@@ -601,7 +601,7 @@ public function __construct()
         }
         return response()->json(['error' => false, 'message' => 'Clients(s) deleted successfully.', 'id' => $deletedClients, 'titles' => $deletedClientNames]);
     }
-    public function list()
+      public function list()
     {
         $workspace = Workspace::find(session()->get('workspace_id'));
         $search = request('search');
@@ -649,25 +649,25 @@ public function __construct()
             ->through(function ($client) use ($workspace, $canEdit, $canDelete) {
                 $actions = '';
                 if ($canEdit) {
-                    $actions .= '<a href="' . route('clients.edit', ['id' => $client->id]) . '" title="' . get_label('update', 'Update') . '">' .
+                $actions .= '<a href="' . route('clients.edit', ['id' => $client->id]) . '" title="' . get_label('update', 'Update') . '">' .
                         '<i class="bx bx-edit mx-1"></i>' .
                         '</a>';
-                }
+            }
                 if ($canDelete) {
                     $actions .= '<button title="' . get_label('delete', 'Delete') . '" type="button" class="btn delete" data-id="' . $client->id . '" data-type="clients">' .
                         '<i class="bx bx-trash text-danger mx-1"></i>' .
                         '</button>';
-                }
-                if (isAdminOrHasAllDataAccess()) {
-                    $actions .= '<a href="' . route('clients.permissions', ['client' => $client->id]) . '" title="' . get_label('permissions', 'Permissions') . '">' .
-                        '<i class="bx bxs-key mx-1"></i>' .
-                        '</a>';
-                }
-                $actions = $actions ?: '-';
-                $badge = '';
-                $badge = $client->status === 1 ? '<span class="badge bg-success">' . get_label('active', 'Active') . '</span>' : '<span class="badge bg-danger">' . get_label('deactive', 'Deactive') . '</span>';
-                $profileHtml = "<div class='avatar avatar-md pull-up' title='{$client->first_name} {$client->last_name}'><a href='" . route('clients.profile', ['id' => $client->id]) . "'><img src='" . ($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')) .
-                    "' alt='Avatar' class='rounded-circle'></a></div>";
+            }
+            if (isAdminOrHasAllDataAccess()) {
+                $actions .= '<a href="' . route('clients.permissions', ['client' => $client->id]) . '" title="' . get_label('permissions', 'Permissions') . '">' .
+                '<i class="bx bxs-key mx-1"></i>' .
+                '</a>';
+            }
+            $actions = $actions ?: '-';
+            $badge = '';
+            $badge = $client->status === 1 ? '<span class="badge bg-success">' . get_label('active', 'Active') . '</span>' : '<span class="badge bg-danger">' . get_label('deactive', 'Deactive') . '</span>';
+            $profileHtml = "<div class='avatar avatar-md pull-up' title='{$client->first_name} {$client->last_name}'><a href='" . route('clients.profile', ['id' => $client->id]) . "'><img src='" . ($client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')) .
+            "' alt='Avatar' class='rounded-circle'></a></div>";
                 $formattedHtml = '<div class="d-flex mt-2">' .
                     $profileHtml .
                     '<div class="mx-2">' .
@@ -675,40 +675,40 @@ public function __construct()
                     $client->first_name . ' ' . $client->last_name . ' ' .
                     $badge .
                     '</h6>' .
-                    '<span class="text-muted">' . $client->email . '</span>';
+            '<span class="text-muted">' . $client->email . '</span>';
                 if ($client->internal_purpose == 1) {
                     $formattedHtml .= '<span class="badge bg-info ms-2">' . get_label('internal_purpose', 'Internal Purpose') . '</span>';
-                }
+            }
                 $formattedHtml .= '</div>' .
-                    '</div>';
-                $phone = !empty($client->country_code) ? $client->country_code . ' ' . $client->phone : $client->phone;
-                return [
+            '</div>';
+            $phone = !empty($client->country_code) ? $client->country_code . ' ' . $client->phone : $client->phone;
+            return [
                     'id' => $client->id,
                     'first_name' => $client->first_name,
                     'last_name' => $client->last_name,
                     'company' => $client->company,
                     'email' => $client->email,
-                    'phone' => $phone,
-                    'profile' => $formattedHtml,
-                    'status' => $client->status,
-                    'internal_purpose' => $client->internal_purpose,
-                    'created_at' => format_date($client->created_at, true),
-                    'updated_at' => format_date($client->updated_at, true),
-                    'assigned' => '<div class="d-flex justify-content-start align-items-center">' .
-                        '<div class="text-center mx-4">' .
-                        '<a href="javascript:void(0);" class="viewAssigned" data-type="projects" data-id="' . 'client_' . $client->id . '" data-client="' . $client->first_name . ' ' . $client->last_name . '">' .
-                        '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('client', $client->id) ? count($workspace->projects) : count($client->projects)) . '</span>' .
-                        '</a>' .
-                        '<div>' . get_label('projects', 'Projects') . '</div>' .
-                        '</div>' .
-                        '<div class="text-center">' .
-                        '<a href="javascript:void(0);" class="viewAssigned" data-type="tasks" data-id="' . 'client_' . $client->id . '" data-client="' . $client->first_name . ' ' . $client->last_name . '">' .
-                        '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('client', $client->id) ? count($workspace->tasks) : $client->tasks()->count()) . '</span>' .
-                        '</a>' .
-                        '<div>' . get_label('tasks', 'Tasks') . '</div>' .
-                        '</div>' .
-                        '</div>',
-                    'actions' => $actions
+                'phone' => $phone,
+                'profile' => $formattedHtml,
+                'status' => $client->status,
+                'internal_purpose' => $client->internal_purpose,
+                'created_at' => format_date($client->created_at, true),
+                'updated_at' => format_date($client->updated_at, true),
+                'assigned' => '<div class="d-flex justify-content-start align-items-center">' .
+                '<div class="text-center mx-4">' .
+                '<a href="javascript:void(0);" class="viewAssigned" data-type="projects" data-id="' . 'client_' . $client->id . '" data-client="' . $client->first_name . ' ' . $client->last_name . '">' .
+                '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('client', $client->id) ? count($workspace->projects) : count($client->projects)) . '</span>' .
+                '</a>' .
+                '<div>' . get_label('projects', 'Projects') . '</div>' .
+                '</div>' .
+                '<div class="text-center">' .
+                '<a href="javascript:void(0);" class="viewAssigned" data-type="tasks" data-id="' . 'client_' . $client->id . '" data-client="' . $client->first_name . ' ' . $client->last_name . '">' .
+                '<span class="badge rounded-pill bg-primary">' . (isAdminOrHasAllDataAccess('client', $client->id) ? count($workspace->tasks) : $client->tasks()->count()) . '</span>' .
+                '</a>' .
+                '<div>' . get_label('tasks', 'Tasks') . '</div>' .
+                '</div>' .
+                '</div>',
+                'actions' => $actions
                 ];
             });
         return response()->json([

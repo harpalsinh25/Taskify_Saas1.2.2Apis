@@ -2582,7 +2582,7 @@ if (!function_exists('getWorkspaceId')) {
             }
         }
         return $workspaceId;
-        // dd($workspaceId);
+        dd($workspaceId);
     }
 }
 if (!function_exists('getGuardName')) {
@@ -3568,42 +3568,38 @@ if (!function_exists('formatTodo')) {
         ];
     }
 }
-if (!function_exists('formatIssue')) {
-    /**
-     * Format an Issue model for API responses.
-     *
-     * @param \App\Models\Issue $issue
-     * @return array
-     */
-    function formatIssue($issue)
-    {
+function formatIssue($issue)
+{
+    return [
+        'id' => $issue->id,
+        'project_id' => $issue->project_id,
+        'title' => $issue->title,
+        'description' => $issue->description,
+        'status' => $issue->status,
 
+        // Creator info
+        'created_by' => [
+            'id' => optional($issue->creator)->id,
+            'first_name' => optional($issue->creator)->first_name,
+            'last_name' => optional($issue->creator)->last_name,
+            'email' => optional($issue->creator)->email,
+        ],
 
-        return [
-            'id' => $issue->id,
-            'project_id' => $issue->project_id,
-            'title' => $issue->title,
-            'description' => $issue->description,
-            'status' => $issue->status,
-            'created_by' => [
-                'id' => $issue->creator->id ?? null,
-                'first_name' => $issue->creator->first_name ?? '',
-                'last_name' => $issue->creator->last_name ?? '',
-                'email' => $issue->creator->email ?? '',
-            ],
-            'assignees' => $issue->users->map(function ($user) {
-                return [
-                    'id' => $user->id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'email' => $user->email,
-                    'photo' => $user->photo_url ?? null,
-                ];
-            })->toArray(),
-            'created_at' => $issue->created_at?->toDateTimeString(),
-            'updated_at' => $issue->updated_at?->toDateTimeString(),
-        ];
-    }
+        // Assigned users
+        'assignees' => $issue->users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'email' => $user->email,
+                'photo' => $user->photo ? asset('storage/' . $user->photo) : null,
+            ];
+        })->values(),
+
+        // Timestamps
+        'created_at' => $issue->created_at ? $issue->created_at->toDateTimeString() : null,
+        'updated_at' => $issue->updated_at ? $issue->updated_at->toDateTimeString() : null,
+    ];
 }
 
 
@@ -3669,7 +3665,7 @@ if (!function_exists('formatNote')) {
             'note_type' => $note->note_type,
             'color' => $note->color,
             'description' => $note->description,
-            'drawing_data' => $note->note_type === 'drawing' ? base64_encode($note->drawing_data) : null,
+            'drawing_data' => $note->note_type === 'drawing' ? $note->drawing_data : null,
             'creator_id' => $note->creator_id,
             'admin_id' => $note->admin_id,
             'workspace_id' => $note->workspace_id,
@@ -3678,6 +3674,18 @@ if (!function_exists('formatNote')) {
         ];
     }
 }
+
+function sanitizeUTF8($value)
+{
+    if (is_string($value)) {
+        return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+    }
+    if (is_array($value)) {
+        return array_map('sanitizeUTF8', $value);
+    }
+    return $value;
+}
+
 if (!function_exists('formatLeaveRequest')) {
     function formatLeaveRequest($leaveRequest)
     {

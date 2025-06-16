@@ -224,6 +224,27 @@
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-project-issues" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="project-issues">
+                    <a href="#project-issues">project issues</a>
+                </li>
+                                    <ul id="tocify-subheader-project-issues" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="project-issues-POSTapi-master-panel-projects--project_id--issues">
+                                <a href="#project-issues-POSTapi-master-panel-projects--project_id--issues">Create a new issue under a project.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-issues-PUTapi-master-panel-projects-issues--id-">
+                                <a href="#project-issues-PUTapi-master-panel-projects-issues--id-">Update an existing issue within a project.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-issues-DELETEapi-master-panel-projects-issues--id_id-">
+                                <a href="#project-issues-DELETEapi-master-panel-projects-issues--id_id-">Delete an issue from a project.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-issues-GETapi-master-panel-projects-issues--id--">
+                                <a href="#project-issues-GETapi-master-panel-projects-issues--id--">List or fetch issues (API)
+
+This endpoint returns a paginated list of issues for a given project, or a single issue by its ID if `type=issue` is provided.</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
                     <ul id="tocify-header-task-management" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="task-management">
                     <a href="#task-management">Task Management</a>
@@ -357,7 +378,7 @@ Requires a `workspace_id` header to identify the current workspace context.</a>
                                 <a href="#client-management-POSTapi-master-panel-clients">Create a new client.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="client-management-PUTapi-master-panel-clients--client-">
-                                <a href="#client-management-PUTapi-master-panel-clients--client-">Update client details.</a>
+                                <a href="#client-management-PUTapi-master-panel-clients--client-">Update a client</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="client-management-DELETEapi-master-panel-clients--id-">
                                 <a href="#client-management-DELETEapi-master-panel-clients--id-">Delete a client.</a>
@@ -522,7 +543,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 13, 2025</li>
+        <li>Last updated: June 16, 2025</li>
     </ul>
 </div>
 
@@ -5603,7 +5624,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpAC2F.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php95A.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5818,7 +5839,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpAC2F.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php95A.tmp</code></p>
         </div>
         </form>
 
@@ -8312,7 +8333,7 @@ and also handles user mentions (e.g., @username), sending notifications to menti
     --form "model_id=14"\
     --form "content=This is a comment with a mention to @jane."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpAE45.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpBFC.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -8533,6 +8554,1022 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Optional. Files to attach with the comment (jpg, jpeg, png, pdf, xlsx, txt, docx). Max size: 2MB per file.</p>
         </div>
         </form>
+
+                <h1 id="project-issues">project issues</h1>
+
+    <p>This endpoint allows you to create a new issue related to a specific project. You must provide issue details such as title, description, status, and optional assignees. The issue will be created under the given project and notifications will be dispatched to the assignees.</p>
+
+                                <h2 id="project-issues-POSTapi-master-panel-projects--project_id--issues">Create a new issue under a project.</h2>
+
+<p>
+<small class="badge badge-darkred">requires authentication</small>
+</p>
+
+
+
+<span id="example-requests-POSTapi-master-panel-projects--project_id--issues">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/master-panel/projects/2/issues" \
+    --header "workspace_id: integer required The ID of the workspace context (e.g., `2`)" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"title\": \"Database connectivity issue\",
+    \"description\": \"There is an intermittent issue connecting to the database from the API server.\",
+    \"status\": \"open\",
+    \"assignee_id\": [
+        1,
+        3
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/projects/2/issues"
+);
+
+const headers = {
+    "workspace_id": "integer required The ID of the workspace context (e.g., `2`)",
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "title": "Database connectivity issue",
+    "description": "There is an intermittent issue connecting to the database from the API server.",
+    "status": "open",
+    "assignee_id": [
+        1,
+        3
+    ]
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-master-panel-projects--project_id--issues">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Issue created successfully.&quot;,
+    &quot;data&quot;: {
+        &quot;id&quot;: 17,
+        &quot;project_id&quot;: 5,
+        &quot;title&quot;: &quot;Database connectivity issue&quot;,
+        &quot;description&quot;: &quot;There is an intermittent issue connecting to the database from the API server.&quot;,
+        &quot;status&quot;: &quot;open&quot;,
+        &quot;created_by&quot;: 2,
+        &quot;assignees&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;John Doe&quot;,
+                &quot;email&quot;: &quot;john@example.com&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;name&quot;: &quot;Jane Smith&quot;,
+                &quot;email&quot;: &quot;jane@example.com&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Validation failed.&quot;,
+    &quot;data&quot;: {
+        &quot;title&quot;: [
+            &quot;The title field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Database error occurred while creating the issue.&quot;,
+    &quot;data&quot;: {
+        &quot;details&quot;: &quot;SQLSTATE[23000]: Integrity constraint violation: 1048 Column &#039;project_id&#039; cannot be null...&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-master-panel-projects--project_id--issues" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-master-panel-projects--project_id--issues"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-projects--project_id--issues"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-master-panel-projects--project_id--issues" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-master-panel-projects--project_id--issues">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-master-panel-projects--project_id--issues" data-method="POST"
+      data-path="api/master-panel/projects/{project_id}/issues"
+      data-authed="1"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-projects--project_id--issues', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-master-panel-projects--project_id--issues"
+                    onclick="tryItOut('POSTapi-master-panel-projects--project_id--issues');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-master-panel-projects--project_id--issues"
+                    onclick="cancelTryOut('POSTapi-master-panel-projects--project_id--issues');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-master-panel-projects--project_id--issues"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/master-panel/projects/{project_id}/issues</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="integer required The ID of the workspace context (e.g., `2`)"
+               data-component="header">
+    <br>
+<p>Example: <code>integer required The ID of the workspace context (e.g.,</code>2<code>)</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>project_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="project_id"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="2"
+               data-component="url">
+    <br>
+<p>The ID of the project. Example: <code>2</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>project</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="project"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="5"
+               data-component="url">
+    <br>
+<p>The ID of the project in which the issue is being created. Example: <code>5</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="Database connectivity issue"
+               data-component="body">
+    <br>
+<p>The title of the issue. Example: <code>Database connectivity issue</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="There is an intermittent issue connecting to the database from the API server."
+               data-component="body">
+    <br>
+<p>A description of the issue. Example: <code>There is an intermittent issue connecting to the database from the API server.</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               value="open"
+               data-component="body">
+    <br>
+<p>The current status of the issue. Must be one of: <code>open</code>, <code>in_progress</code>, <code>resolved</code>, <code>closed</code>. Example: <code>open</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>assignee_id</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="assignee_id[0]"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="assignee_id[1]"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
+               data-component="body">
+    <br>
+<p>optional An array of user IDs to assign the issue to.</p>
+        </div>
+        </form>
+
+                    <h2 id="project-issues-PUTapi-master-panel-projects-issues--id-">Update an existing issue within a project.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTapi-master-panel-projects-issues--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8000/api/master-panel/projects/issues/2" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json" \
+    --data "{
+    \"id\": 8,
+    \"title\": \"Database connectivity issue\",
+    \"description\": \"There is an intermittent issue connecting to the database from the API server.\",
+    \"status\": \"in_progress\",
+    \"assignee_id\": [
+        1,
+        3
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/projects/issues/2"
+);
+
+const headers = {
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+let body = {
+    "id": 8,
+    "title": "Database connectivity issue",
+    "description": "There is an intermittent issue connecting to the database from the API server.",
+    "status": "in_progress",
+    "assignee_id": [
+        1,
+        3
+    ]
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-master-panel-projects-issues--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+  &quot;error&quot;: false,
+  &quot;message&quot;: &quot;Issue updated successfully.&quot;,
+  &quot;issue&quot;: {
+    &quot;id&quot;: 8,
+    &quot;title&quot;: &quot;Database connectivity issue&quot;,
+    &quot;description&quot;: &quot;There is an intermittent issue connecting to the database from the API server.&quot;,
+    &quot;status&quot;: &quot;in_progress&quot;,
+    &quot;assignees&quot;: [...]
+  }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Issue not found.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Validation failed.&quot;,
+    &quot;errors&quot;: {
+        &quot;title&quot;: [
+            &quot;The title field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An unexpected error occurred.&quot;,
+    &quot;details&quot;: &quot;Exception message here&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-PUTapi-master-panel-projects-issues--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-master-panel-projects-issues--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-projects-issues--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-master-panel-projects-issues--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-master-panel-projects-issues--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-master-panel-projects-issues--id-" data-method="PUT"
+      data-path="api/master-panel/projects/issues/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-projects-issues--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-master-panel-projects-issues--id-"
+                    onclick="tryItOut('PUTapi-master-panel-projects-issues--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-master-panel-projects-issues--id-"
+                    onclick="cancelTryOut('PUTapi-master-panel-projects-issues--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-master-panel-projects-issues--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/master-panel/projects/issues/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="2"
+               data-component="url">
+    <br>
+<p>The ID of the issue. Example: <code>2</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="8"
+               data-component="body">
+    <br>
+<p>The ID of the issue to update. Example: <code>8</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>title</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="title"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="Database connectivity issue"
+               data-component="body">
+    <br>
+<p>The updated title of the issue. Max 256 characters. Example: <code>Database connectivity issue</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>description</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="description"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="There is an intermittent issue connecting to the database from the API server."
+               data-component="body">
+    <br>
+<p>The updated description of the issue. Max 512 characters. Example: <code>There is an intermittent issue connecting to the database from the API server.</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               value="in_progress"
+               data-component="body">
+    <br>
+<p>The current status of the issue. Must be one of: open, in_progress, resolved, closed. Example: <code>in_progress</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>assignee_id</code></b>&nbsp;&nbsp;
+<small>string[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="assignee_id[0]"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               data-component="body">
+        <input type="text" style="display: none"
+               name="assignee_id[1]"                data-endpoint="PUTapi-master-panel-projects-issues--id-"
+               data-component="body">
+    <br>
+<p>The list of user IDs to assign this issue to. Optional.</p>
+        </div>
+        </form>
+
+                    <h2 id="project-issues-DELETEapi-master-panel-projects-issues--id_id-">Delete an issue from a project.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-master-panel-projects-issues--id_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8000/api/master-panel/projects/issues/1" \
+    --header "Accept: application/json" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/projects/issues/1"
+);
+
+const headers = {
+    "Accept": "application/json",
+    "workspace_id": "2",
+    "Content-Type": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-master-panel-projects-issues--id_id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Issue deleted successfully.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Issue not found.&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An unexpected error occurred.&quot;,
+    &quot;details&quot;: &quot;Exception message here&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-master-panel-projects-issues--id_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-master-panel-projects-issues--id_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-projects-issues--id_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-master-panel-projects-issues--id_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-master-panel-projects-issues--id_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-master-panel-projects-issues--id_id-" data-method="DELETE"
+      data-path="api/master-panel/projects/issues/{id_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-projects-issues--id_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-master-panel-projects-issues--id_id-"
+                    onclick="tryItOut('DELETEapi-master-panel-projects-issues--id_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-master-panel-projects-issues--id_id-"
+                    onclick="cancelTryOut('DELETEapi-master-panel-projects-issues--id_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-master-panel-projects-issues--id_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/master-panel/projects/issues/{id_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id_id"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the id. Example: <code>1</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>project</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="project"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="5"
+               data-component="url">
+    <br>
+<p>The ID of the project to which the issue belongs. Example: <code>5</code></p>
+            </div>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
+               value="8"
+               data-component="url">
+    <br>
+<p>The ID of the issue to delete. Example: <code>8</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="project-issues-GETapi-master-panel-projects-issues--id--">List or fetch issues (API)
+
+This endpoint returns a paginated list of issues for a given project, or a single issue by its ID if `type=issue` is provided.</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-master-panel-projects-issues--id--">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/projects/issues/117?type=issue&amp;search=bug&amp;sort=updated_at&amp;order=ASC&amp;status=open&amp;assigned_to=5&amp;created_by=2&amp;start_date=2025-06-01&amp;end_date=2025-06-30&amp;limit=20" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/projects/issues/117"
+);
+
+const params = {
+    "type": "issue",
+    "search": "bug",
+    "sort": "updated_at",
+    "order": "ASC",
+    "status": "open",
+    "assigned_to": "5",
+    "created_by": "2",
+    "start_date": "2025-06-01",
+    "end_date": "2025-06-30",
+    "limit": "20",
+};
+Object.keys(params)
+    .forEach(key =&gt; url.searchParams.append(key, params[key]));
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-projects-issues--id--">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Issue list fetched successfully.&quot;,
+    &quot;rows&quot;: [
+        {
+            &quot;id&quot;: 1,
+            &quot;project_id&quot;: 117,
+            &quot;title&quot;: &quot;data not retrive&quot;,
+            &quot;description&quot;: &quot;when Api was call data nor retrived&quot;,
+            &quot;status&quot;: &quot;in_progress&quot;,
+            &quot;created_by&quot;: {
+                &quot;id&quot;: 2,
+                &quot;first_name&quot;: &quot;herry&quot;,
+                &quot;last_name&quot;: &quot;porter&quot;,
+                &quot;email&quot;: &quot;admin@gmail.com&quot;
+            },
+            &quot;assignees&quot;: [
+                {
+                    &quot;id&quot;: 2,
+                    &quot;first_name&quot;: &quot;herry&quot;,
+                    &quot;last_name&quot;: &quot;porter&quot;,
+                    &quot;email&quot;: &quot;admin@gmail.com&quot;,
+                    &quot;photo&quot;: null
+                }
+            ],
+            &quot;created_at&quot;: &quot;2025-06-12 03:59:42&quot;,
+            &quot;updated_at&quot;: &quot;2025-06-12 03:59:42&quot;
+        }
+    ],
+    &quot;total&quot;: 1,
+    &quot;current_page&quot;: 1,
+    &quot;last_page&quot;: 1,
+    &quot;per_page&quot;: 10
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-projects-issues--id--" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-projects-issues--id--"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-projects-issues--id--"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-projects-issues--id--" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-projects-issues--id--">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-projects-issues--id--" data-method="GET"
+      data-path="api/master-panel/projects/issues/{id?}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-projects-issues--id--', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-projects-issues--id--"
+                    onclick="tryItOut('GETapi-master-panel-projects-issues--id--');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-projects-issues--id--"
+                    onclick="cancelTryOut('GETapi-master-panel-projects-issues--id--');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-projects-issues--id--"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/projects/issues/{id?}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="117"
+               data-component="url">
+    <br>
+<p>optional The project ID to filter issues by, or the issue ID if <code>type=issue</code> is set. Example: <code>117</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="type"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="issue"
+               data-component="query">
+    <br>
+<p>optional If set to 'issue', fetches a single issue by its ID. Example: <code>issue</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>search</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="search"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="bug"
+               data-component="query">
+    <br>
+<p>optional Search term for title, description, status, assignee, or creator. Example: <code>bug</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>sort</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="sort"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="updated_at"
+               data-component="query">
+    <br>
+<p>optional Field to sort by. Default: created_at. Example: <code>updated_at</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>order</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="order"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="ASC"
+               data-component="query">
+    <br>
+<p>optional Sort direction (ASC or DESC). Default: DESC. Example: <code>ASC</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="status"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="open"
+               data-component="query">
+    <br>
+<p>optional Filter by issue status. Example: <code>open</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>assigned_to</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="assigned_to"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="5"
+               data-component="query">
+    <br>
+<p>optional Filter by assigned user ID. Example: <code>5</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>created_by</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="created_by"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="2"
+               data-component="query">
+    <br>
+<p>optional Filter by creator user ID. Example: <code>2</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>start_date</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="start_date"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="2025-06-01"
+               data-component="query">
+    <br>
+<p>date optional Filter issues created after this date. Example: <code>2025-06-01</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="end_date"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="2025-06-30"
+               data-component="query">
+    <br>
+<p>date optional Filter issues created before this date. Example: <code>2025-06-30</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>limit</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="limit"                data-endpoint="GETapi-master-panel-projects-issues--id--"
+               value="20"
+               data-component="query">
+    <br>
+<p>optional Number of results per page. Default: 10. Example: <code>20</code></p>
+            </div>
+                </form>
 
                 <h1 id="task-management">Task Management</h1>
 
@@ -11214,7 +12251,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpB192.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF88.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -11957,7 +12994,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpAF40.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpD16.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12536,7 +13573,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpB24F.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php1035.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14540,13 +15577,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
-                    <h2 id="client-management-PUTapi-master-panel-clients--client-">Update client details.</h2>
+                    <h2 id="client-management-PUTapi-master-panel-clients--client-">Update a client</h2>
 
 <p>
 </p>
 
-<p>Updates the specified client's information. Handles password updates,
-profile photo upload, email verification logic, and account creation emails.</p>
+<p>This endpoint updates the details of an existing client, including profile information,
+status, internal usage flag, password, and triggers account creation or email verification emails if needed.</p>
 
 <span id="example-requests-PUTapi-master-panel-clients--client-">
 <blockquote>Example request:</blockquote>
@@ -14555,28 +15592,31 @@ profile photo upload, email verification logic, and account creation emails.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/clients/consequatur" \
-    --header "Content-Type: multipart/form-data" \
+    --header "workspace_id: integer required Your current workspace ID. Example: 2" \
+    --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --form "first_name=consequatur"\
-    --form "last_name=consequatur"\
-    --form "company=consequatur"\
-    --form "email=qkunze@example.com"\
-    --form "phone=consequatur"\
-    --form "country_code=consequatur"\
-    --form "password=O[2UZ5ij-e/dl4m{o,"\
-    --form "password_confirmation=consequatur"\
-    --form "address=consequatur"\
-    --form "city=consequatur"\
-    --form "state=consequatur"\
-    --form "country=consequatur"\
-    --form "zip=consequatur"\
-    --form "dob=consequatur"\
-    --form "doj=consequatur"\
-    --form "country_iso_code=consequatur"\
-    --form "internal_purpose=consequatur"\
-    --form "status=17"\
-    --form "require_ev=17"\
-    --form "upload=@C:\Users\Dikshita\AppData\Local\Temp\phpB3D6.tmp" </code></pre></div>
+    --data "{
+    \"first_name\": \"John\",
+    \"last_name\": \"Doe\",
+    \"company\": \"Acme Corp\",
+    \"email\": \"john.doe@example.com\",
+    \"phone\": \"+1234567890\",
+    \"country_code\": \"+91\",
+    \"address\": \"123 Main St\",
+    \"city\": \"Mumbai\",
+    \"state\": \"Maharashtra\",
+    \"country\": \"India\",
+    \"zip\": \"400001\",
+    \"dob\": \"1990-05-01\",
+    \"doj\": \"2023-04-15\",
+    \"country_iso_code\": \"IN\",
+    \"password\": \"secret123\",
+    \"password_confirmation\": \"secret123\",
+    \"internal_purpose\": true,
+    \"status\": 1,
+    \"require_ev\": 1
+}"
+</code></pre></div>
 
 
 <div class="javascript-example">
@@ -14585,36 +15625,37 @@ profile photo upload, email verification logic, and account creation emails.</p>
 );
 
 const headers = {
-    "Content-Type": "multipart/form-data",
+    "workspace_id": "integer required Your current workspace ID. Example: 2",
+    "Content-Type": "application/json",
     "Accept": "application/json",
 };
 
-const body = new FormData();
-body.append('first_name', 'consequatur');
-body.append('last_name', 'consequatur');
-body.append('company', 'consequatur');
-body.append('email', 'qkunze@example.com');
-body.append('phone', 'consequatur');
-body.append('country_code', 'consequatur');
-body.append('password', 'O[2UZ5ij-e/dl4m{o,');
-body.append('password_confirmation', 'consequatur');
-body.append('address', 'consequatur');
-body.append('city', 'consequatur');
-body.append('state', 'consequatur');
-body.append('country', 'consequatur');
-body.append('zip', 'consequatur');
-body.append('dob', 'consequatur');
-body.append('doj', 'consequatur');
-body.append('country_iso_code', 'consequatur');
-body.append('internal_purpose', 'consequatur');
-body.append('status', '17');
-body.append('require_ev', '17');
-body.append('upload', document.querySelector('input[name="upload"]').files[0]);
+let body = {
+    "first_name": "John",
+    "last_name": "Doe",
+    "company": "Acme Corp",
+    "email": "john.doe@example.com",
+    "phone": "+1234567890",
+    "country_code": "+91",
+    "address": "123 Main St",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "country": "India",
+    "zip": "400001",
+    "dob": "1990-05-01",
+    "doj": "2023-04-15",
+    "country_iso_code": "IN",
+    "password": "secret123",
+    "password_confirmation": "secret123",
+    "internal_purpose": true,
+    "status": 1,
+    "require_ev": 1
+};
 
 fetch(url, {
     method: "PUT",
     headers,
-    body,
+    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
@@ -14627,9 +15668,13 @@ fetch(url, {
 
 <code class="language-json" style="max-height: 300px;">{
   &quot;error&quot;: false,
-  &quot;message&quot;:Client updated successfully,
- &quot;data[
-data of the client ]
+  &quot;message&quot;: &quot;Client details updated successfully.&quot;,
+  &quot;data&quot;: {
+    &quot;id&quot;: 5,
+    &quot;first_name&quot;: &quot;John&quot;,
+    &quot;last_name&quot;: &quot;Doe&quot;,
+    ...
+  }
 }</code>
  </pre>
             <blockquote>
@@ -14638,21 +15683,12 @@ data of the client ]
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
     &quot;errors&quot;: {
         &quot;email&quot;: [
-            &quot;The email has already been taken in users or clients.&quot;
+            &quot;The email has already been taken.&quot;
         ]
     }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (500):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;An unexpected error occurred while updating client details.&quot;
 }</code>
  </pre>
     </span>
@@ -14674,7 +15710,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <form id="form-PUTapi-master-panel-clients--client-" data-method="PUT"
       data-path="api/master-panel/clients/{client}"
       data-authed="0"
-      data-hasfiles="1"
+      data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
       onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-clients--client-', this);">
@@ -14704,15 +15740,26 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-clients--client-"
+               value="integer required Your current workspace ID. Example: 2"
+               data-component="header">
+    <br>
+<p>Example: <code>integer required Your current workspace ID. Example: 2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="Content-Type"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="multipart/form-data"
+               value="application/json"
                data-component="header">
     <br>
-<p>Example: <code>multipart/form-data</code></p>
+<p>Example: <code>application/json</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
@@ -14743,10 +15790,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="id"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="17"
+               value="5"
                data-component="url">
     <br>
-<p>The ID of the client to update. Example: <code>17</code></p>
+<p>The ID of the client to update. Example: <code>5</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -14755,10 +15802,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="first_name"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="John"
                data-component="body">
     <br>
-<p>Client's first name. Example: <code>consequatur</code></p>
+<p>The client's first name. Example: <code>John</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>last_name</code></b>&nbsp;&nbsp;
@@ -14766,10 +15813,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="last_name"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="Doe"
                data-component="body">
     <br>
-<p>Client's last name. Example: <code>consequatur</code></p>
+<p>The client's last name. Example: <code>Doe</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>company</code></b>&nbsp;&nbsp;
@@ -14777,10 +15824,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="company"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="Acme Corp"
                data-component="body">
     <br>
-<p>nullable Client's company name. Example: <code>consequatur</code></p>
+<p>The client's company name. Example: <code>Acme Corp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14788,10 +15835,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="email"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="qkunze@example.com"
+               value="john.doe@example.com"
                data-component="body">
     <br>
-<p>Unique client email. Example: <code>qkunze@example.com</code></p>
+<p>Must be a valid and unique email address. Example: <code>john.doe@example.com</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
@@ -14799,10 +15846,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="phone"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="+1234567890"
                data-component="body">
     <br>
-<p>nullable Client phone number. Example: <code>consequatur</code></p>
+<p>The client's phone number. Example: <code>+1234567890</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_code</code></b>&nbsp;&nbsp;
@@ -14810,32 +15857,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="country_code"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="+91"
                data-component="body">
     <br>
-<p>nullable Country code. Example: <code>consequatur</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="password"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="O[2UZ5ij-e/dl4m{o,"
-               data-component="body">
-    <br>
-<p>nullable Password (required if client has no password and internal_purpose is off). Example: <code>O[2UZ5ij-e/dl4m{o,</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="password_confirmation"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
-               data-component="body">
-    <br>
-<p>required_with:password Must match password. Example: <code>consequatur</code></p>
+<p>The country code for the phone number. Example: <code>+91</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>address</code></b>&nbsp;&nbsp;
@@ -14843,10 +15868,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="address"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="123 Main St"
                data-component="body">
     <br>
-<p>nullable Client address. Example: <code>consequatur</code></p>
+<p>The client's address. Example: <code>123 Main St</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>city</code></b>&nbsp;&nbsp;
@@ -14854,10 +15879,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="city"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="Mumbai"
                data-component="body">
     <br>
-<p>nullable Client city. Example: <code>consequatur</code></p>
+<p>The client's city. Example: <code>Mumbai</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>state</code></b>&nbsp;&nbsp;
@@ -14865,10 +15890,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="state"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="Maharashtra"
                data-component="body">
     <br>
-<p>nullable Client state. Example: <code>consequatur</code></p>
+<p>The client's state. Example: <code>Maharashtra</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country</code></b>&nbsp;&nbsp;
@@ -14876,10 +15901,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="country"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="India"
                data-component="body">
     <br>
-<p>nullable Client country. Example: <code>consequatur</code></p>
+<p>The client's country. Example: <code>India</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>zip</code></b>&nbsp;&nbsp;
@@ -14887,10 +15912,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="zip"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="400001"
                data-component="body">
     <br>
-<p>nullable Postal/zip code. Example: <code>consequatur</code></p>
+<p>The client's postal code. Example: <code>400001</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>dob</code></b>&nbsp;&nbsp;
@@ -14898,10 +15923,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="dob"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="1990-05-01"
                data-component="body">
     <br>
-<p>nullable Date of birth. Example: <code>consequatur</code></p>
+<p>The client's date of birth (YYYY-MM-DD). Example: <code>1990-05-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>doj</code></b>&nbsp;&nbsp;
@@ -14909,10 +15934,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="doj"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="2023-04-15"
                data-component="body">
     <br>
-<p>nullable Date of joining. Example: <code>consequatur</code></p>
+<p>The client's date of joining (YYYY-MM-DD). Example: <code>2023-04-15</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>country_iso_code</code></b>&nbsp;&nbsp;
@@ -14920,21 +15945,53 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="country_iso_code"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+               value="IN"
                data-component="body">
     <br>
-<p>nullable ISO code for country. Example: <code>consequatur</code></p>
+<p>The ISO code of the client's country. Example: <code>IN</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>internal_purpose</code></b>&nbsp;&nbsp;
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
-                              name="internal_purpose"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="consequatur"
+                              name="password"                data-endpoint="PUTapi-master-panel-clients--client-"
+               value="secret123"
                data-component="body">
     <br>
-<p>nullable Set to 'on' for internal clients (password can be nullable). Example: <code>consequatur</code></p>
+<p>The password (required if not internal_purpose). Example: <code>secret123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="text" style="display: none"
+                              name="password_confirmation"                data-endpoint="PUTapi-master-panel-clients--client-"
+               value="secret123"
+               data-component="body">
+    <br>
+<p>Must match the password. Example: <code>secret123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>internal_purpose</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="PUTapi-master-panel-clients--client-" style="display: none">
+            <input type="radio" name="internal_purpose"
+                   value="true"
+                   data-endpoint="PUTapi-master-panel-clients--client-"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PUTapi-master-panel-clients--client-" style="display: none">
+            <input type="radio" name="internal_purpose"
+                   value="false"
+                   data-endpoint="PUTapi-master-panel-clients--client-"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Whether the client is for internal use. Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -14942,10 +15999,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="status"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="17"
+               value="1"
                data-component="body">
     <br>
-<p>nullable Client status. Example: <code>17</code></p>
+<p>The client's status (1 = active, 0 = inactive). Example: <code>1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>require_ev</code></b>&nbsp;&nbsp;
@@ -14953,21 +16010,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="require_ev"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="17"
+               value="1"
                data-component="body">
     <br>
-<p>nullable Email verification required flag (0 or 1). Example: <code>17</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>upload</code></b>&nbsp;&nbsp;
-<small>file</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="file" style="display: none"
-                              name="upload"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value=""
-               data-component="body">
-    <br>
-<p>nullable Profile photo file upload. Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpB3D6.tmp</code></p>
+<p>Set to 1 to send email verification, 0 to skip. Example: <code>1</code></p>
         </div>
         </form>
 

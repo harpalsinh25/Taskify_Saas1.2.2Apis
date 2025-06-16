@@ -975,7 +975,7 @@ class LeaveRequestController extends Controller
                 }
             }
 
-            return formatApiResponse(true, 'Leave request updated successfully.', [
+            return formatApiResponse(false, 'Leave request updated successfully.', [
                 'id' => $leaveRequest->id,
                 'data' => formatLeaveRequest($leaveRequest)
 
@@ -1049,7 +1049,7 @@ public function destroy($id)
 
         $leaveRequest = LeaveRequest::findOrFail($id);
         DeletionService::delete(LeaveRequest::class, $id, 'Leave request');
-          return formatApiResponse(true, 'Leave request deleted successfully.', [
+          return formatApiResponse(false, 'Leave request deleted successfully.', [
                 'id' => $leaveRequest->id,
                  'type' => 'leave_request',
                 'data' =>[]

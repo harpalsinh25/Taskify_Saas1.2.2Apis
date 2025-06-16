@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers;
 
 use App\Models\Issue;
@@ -34,7 +35,7 @@ class IssueController extends Controller
 
      /**
  * Create a new issue under a project.
- *
+ * @group project issues
  * This endpoint allows you to create a new issue related to a specific project. You must provide issue details such as title, description, status, and optional assignees. The issue will be created under the given project and notifications will be dispatched to the assignees.
  *
  * @authenticated
@@ -157,6 +158,7 @@ class IssueController extends Controller
 
 
 
+
     /**
      * Display the specified resource.
      */
@@ -186,15 +188,13 @@ class IssueController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     */
+
 
 
 
      /**
  * Update an existing issue within a project.
- *
+ * @group project issues
  * This endpoint allows you to update the title, description, status, and assignees of an existing issue
  * associated with a project. You must pass the issue `id` as part of the payload. Assignee user IDs
  * must be valid user IDs that exist in the system.
@@ -294,14 +294,12 @@ class IssueController extends Controller
     }
 }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
 
 
      /**
  * Delete an issue from a project.
- *
+ * @group project issues
  * This endpoint deletes a specific issue associated with a project. It uses the `DeletionService` to handle
  * soft or hard deletion logic based on the application's internal rules.
  *
@@ -406,6 +404,7 @@ class IssueController extends Controller
 
         // Get total issues count before applying pagination
         $totalIssues = $issuesQuery->count();
+        dd($totalIssues);
 
         // Apply sorting and pagination
         $issues = $issuesQuery
@@ -445,23 +444,84 @@ class IssueController extends Controller
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- public function Apilist(Request $request, $id = '', $type = '')
+    /**
+     * @group project issues
+     *
+     * List or fetch issues (API)
+     *
+     * This endpoint returns a paginated list of issues for a given project, or a single issue by its ID if `type=issue` is provided.
+     *
+     * @urlParam id int optional The project ID to filter issues by, or the issue ID if `type=issue` is set. Example: 117
+     * @queryParam type string optional If set to 'issue', fetches a single issue by its ID. Example: issue
+     * @queryParam search string optional Search term for title, description, status, assignee, or creator. Example: bug
+     * @queryParam sort string optional Field to sort by. Default: created_at. Example: updated_at
+     * @queryParam order string optional Sort direction (ASC or DESC). Default: DESC. Example: ASC
+     * @queryParam status string optional Filter by issue status. Example: open
+     * @queryParam assigned_to int optional Filter by assigned user ID. Example: 5
+     * @queryParam created_by int optional Filter by creator user ID. Example: 2
+     * @queryParam start_date date optional Filter issues created after this date. Example: 2025-06-01
+     * @queryParam end_date date optional Filter issues created before this date. Example: 2025-06-30
+     * @queryParam limit int optional Number of results per page. Default: 10. Example: 20
+     *
+     * @response 200 {
+     *   "error": false,
+     *   "message": "Issue list fetched successfully.",
+     *   "rows": [
+     *     {
+     *       "id": 1,
+     *       "project_id": 117,
+     *       "title": "data not retrive",
+     *       "description": "when Api was call data nor retrived",
+     *       "status": "in_progress",
+     *       "created_by": {
+     *         "id": 2,
+     *         "first_name": "herry",
+     *         "last_name": "porter",
+     *         "email": "admin@gmail.com"
+     *       },
+     *       "assignees": [
+     *         {
+     *           "id": 2,
+     *           "first_name": "herry",
+     *           "last_name": "porter",
+     *           "email": "admin@gmail.com",
+     *           "photo": null
+     *         }
+     *       ],
+     *       "created_at": "2025-06-12 03:59:42",
+     *       "updated_at": "2025-06-12 03:59:42"
+     *     }
+     *   ],
+     *   "total": 1,
+     *   "current_page": 1,
+     *   "last_page": 1,
+     *   "per_page": 10
+     * }
+     */
+    public function apiList(Request $request, $id = null, $type = null)
 {
+    $isApi = $request->get('isApi', true);
+
     try {
+        // Fetch a single issue if $id is set and $type is 'issue'
+        if ($id && $type === 'issue') {
+            $issue = \App\Models\Issue::with(['creator', 'users'])->find($id);
+
+            if ($issue) {
+                return formatApiResponse(false, 'Issue fetched successfully.', [
+                    'rows' => [formatIssue($issue)],
+
+                    'total' => 1,
+                ]);
+            } else {
+                return formatApiResponse(true, 'Issue not found.', [
+                    'rows' => [],
+                    'total' => 0,
+                ], 404);
+            }
+        }
+
+        // List of issues (all or project-specific)
         $search = $request->input('search', '');
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'DESC');
@@ -472,70 +532,66 @@ class IssueController extends Controller
         $end_date = $request->input('end_date', '');
         $limit = $request->input('limit', 10);
 
-        // Initialize query
-        $issuesQuery = Issue::query();
-        dd($id);
+        $issuesQuery = \App\Models\Issue::with(['creator', 'users']);
+        // dd($issuesQuery);
 
-        if ($id) {
+        // Filter by project ID if $id is numeric and $type is not 'issue'
+        if ($id && $type !== 'issue') {
             $issuesQuery->where('project_id', $id);
         }
 
+        // Apply filters
         if ($status) {
             $issuesQuery->where('status', $status);
         }
-
         if ($assigned_to) {
             $issuesQuery->whereHas('users', function ($q) use ($assigned_to) {
                 $q->where('users.id', $assigned_to);
             });
         }
-
         if ($created_by) {
             $issuesQuery->where('created_by', $created_by);
         }
-
         if ($start_date && $end_date) {
             $issuesQuery->whereBetween('created_at', [$start_date, $end_date]);
         }
-
         if ($search) {
             $issuesQuery->where(function ($query) use ($search) {
                 $query->where('title', 'LIKE', "%{$search}%")
-                      ->orWhere('description', 'LIKE', "%{$search}%")
-                      ->orWhere('status', 'LIKE', "%{$search}%")
-                      ->orWhereHas('users', function ($query) use ($search) {
-                          $query->where('first_name', 'LIKE', "%{$search}%")
-                                ->orWhere('last_name', 'LIKE', "%{$search}%");
-                      })
-                      ->orWhereHas('creator', function ($query) use ($search) {
-                          $query->where('first_name', 'LIKE', "%{$search}%")
-                                ->orWhere('last_name', 'LIKE', "%{$search}%");
-                      });
+                    ->orWhere('description', 'LIKE', "%{$search}%")
+                    ->orWhere('status', 'LIKE', "%{$search}%")
+                    ->orWhereHas('users', function ($q) use ($search) {
+                        $q->where('first_name', 'LIKE', "%{$search}%")
+                          ->orWhere('last_name', 'LIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('creator', function ($q) use ($search) {
+                        $q->where('first_name', 'LIKE', "%{$search}%")
+                          ->orWhere('last_name', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
         $totalIssues = $issuesQuery->count();
+        // dd($totalIssues);
 
         $issues = $issuesQuery
             ->orderBy($sort, $order)
-            ->paginate($limit);
-
-        // Format each issue using formatIssue
-        $formattedIssues = $issues->map(function ($issue) {
-            return formatIssue($issue);
-        });
+            ->paginate($limit)
+            ->through(function ($issue) {
+                return formatIssue($issue);
+            });
 
         return formatApiResponse(false, 'Issue list fetched successfully.', [
-            'rows' => $formattedIssues,
+            'rows' => $issues->items(),
             'total' => $totalIssues,
+            'current_page' => $issues->currentPage(),
+            'last_page' => $issues->lastPage(),
+            'per_page' => $issues->perPage(),
         ]);
     } catch (\Exception $e) {
-        return formatApiResponse(true, 'Failed to fetch issues.', [
-            'details' => $e->getMessage()
-        ], 500);
+        return formatApiResponse(true, 'Failed to fetch issues: ' . $e->getMessage(), [], 500);
     }
 }
-
 
     /**
      * Generate action buttons for an issue.

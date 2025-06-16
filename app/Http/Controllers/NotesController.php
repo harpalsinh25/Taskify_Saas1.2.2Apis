@@ -185,17 +185,17 @@ public function __construct()
             'title' => ['required'],
             'color' => ['required'],
             'description' => ['nullable'],
-            'drawing_data' => ['nullable', 'string', 'required_if:note_type,drawing']
+            'drawing_data' => ['nullable', 'string', 'required_if:note_type,drawing'],
         ]);
 
-        $drawingData = $request->input('drawing_data');
-        $decodedSvg = $drawingData ? base64_decode($drawingData) : null;
-        $formFields['drawing_data'] = $decodedSvg;
+        // Store base64 string directly (do not decode!)
+        $formFields['drawing_data'] = $request->input('drawing_data');
 
         $note = Note::findOrFail($formFields['id']);
 
         if ($note->update($formFields)) {
             Session::flash('message', 'Note updated successfully.');
+
             return formatApiResponse(
                 false,
                 'Note updated successfully.',
@@ -213,12 +213,6 @@ public function __construct()
         return formatApiResponse(true, 'An error occurred while updating the note.', ['error' => $e->getMessage()], 500);
     }
 }
-
-    public function get($id)
-    {
-        $note = Note::findOrFail($id);
-        return response()->json(['note' => $note]);
-    }
 
 
 /**
@@ -256,7 +250,7 @@ public function __construct()
  *   "data": []
  * }
  */
-  public function destroy($id)
+  public function api_destroy($id)
 {
     $isApi = request()->get('isApi', true); // default to API mode
 
@@ -282,6 +276,14 @@ public function __construct()
         return back()->with('error', $e->getMessage());
     }
 }
+
+
+ public function destroy($id)
+    {
+        $response = DeletionService::delete(Note::class, $id, 'Note');
+        return $response;
+    }
+
 
     public function destroy_multiple(Request $request)
     {

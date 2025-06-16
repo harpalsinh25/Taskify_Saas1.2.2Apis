@@ -36,7 +36,7 @@ return [
 
     'priority_labels' => [
         'low' => "success",
-        "high" => "danger",
+        "High" => "danger",
         "medium" => "warning"
     ],
 

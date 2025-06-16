@@ -217,6 +217,13 @@ return [
                 'DELETE /comments/{id}'
 
             ],
+            'project issues' => [
+                'GET /projects/issues/{id?}',
+                'POST /projects/{project}/issues',
+                'PUT /projects/issues/{id}',
+                'DELETE /projects/issues/{id}',
+
+            ],
             'Task Management' => [
                'GET /tasks/list-api/{id?}',
                'POST /create-tasks',
@@ -240,7 +247,7 @@ return [
                 'GET /comments/{id}',
                 'PUT /comments/{id}',
                 'DELETE /comments/{id}',
-                'POST /comments-create'
+                'POST /comments-create  '
 
             ],
             'Status Management' => [

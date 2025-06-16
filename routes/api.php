@@ -95,10 +95,8 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
    Route::post('projects/{project}/issues', [IssueController::class, 'store']);
    Route::put('projects/issues/{id}', [IssueController::class, 'update']);
    Route::delete('projects/issues/{id}', [IssueController::class, 'destroy']);
-    Route::get('projects/issues/{id?}', [IssueController::class, 'Apilist']);
 
-
-
+   Route::get('/projects/issues/{id?}', [IssueController::class, 'apiList']);
 
      //Tasks managemant
     Route::middleware(['has_workspace', 'customcan:manage_tasks'])->group(function () {
@@ -143,8 +141,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
         Route::put('/clients/{client}', [ClientController::class, 'update'])->middleware(['customcan:edit_clients', 'demo_restriction', 'log.activity']);
         Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->middleware(['customcan:delete_clients', 'demo_restriction', 'log.activity']);
         Route::delete('/destroy-multiple-clients', [ClientController::class, 'destroy_multiple']);
-
-        //priority
+    //priority
     });
     Route::middleware(['customcan:manage_priorities'])->group(function () {
     Route::post('/priorities', [PriorityController::class, 'store'])->middleware(['customcan:create_priorities', 'demo_restriction', 'log.activity']);
@@ -189,7 +186,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
     //note
        Route::post('/note',[NotesController::class,'store'])->middleware('log.activity');
        Route::put('/note/{id}',[NotesController::class,'update'])->middleware('log.activity');
-       Route::delete('/note/{id}',[NotesController::class,'destroy']);
+       Route::delete('/note/{id}',[NotesController::class,'api_destroy']);
        Route::get('/note/{id?}',[NotesController::class,'apilist']);
     //leave request
     Route::middleware(['admin_or_user'])->group(function () {

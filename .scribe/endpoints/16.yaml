@@ -1,265 +1,68 @@
-name: 'User Managemant'
-description: |-
-  This endpoint allows admins to create a new user within a workspace.
-  Email uniqueness is checked across both users and clients.
-  Optionally, a verification email and account creation email are sent based on system configuration.
+name: Priority
+description: ''
 endpoints:
   -
     httpMethods:
       - POST
-    uri: api/master-panel/user
+    uri: api/master-panel/priorities
     metadata:
-      groupName: 'User Managemant'
-      groupDescription: |-
-        This endpoint allows admins to create a new user within a workspace.
-        Email uniqueness is checked across both users and clients.
-        Optionally, a verification email and account creation email are sent based on system configuration.
+      groupName: Priority
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create a new user'
-      description: ''
+      title: 'Create a new priority'
+      description: 'This endpoint allows you to create a new priority with a title and color. It automatically generates a unique slug and assigns the current admin as the creator.'
       authenticated: false
       custom: []
     headers:
-      Accept: application/json
-      workspace_id: '2'
       Content-Type: application/json
+      Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      first_name:
-        name: first_name
-        description: "The user's first name."
+      title:
+        name: title
+        description: 'The title of the priority.'
         required: true
-        example: John
+        example: 'High Priority'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      last_name:
-        name: last_name
-        description: "The user's last name."
+      color:
+        name: color
+        description: 'The color associated with the priority (hex code or color name).'
         required: true
-        example: Doe
+        example: '#FF0000'
         type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      email:
-        name: email
-        description: "The user's unique email address. Must not exist in users or clients."
-        required: true
-        example: john.smith@example.com
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      password:
-        name: password
-        description: 'The password (minimum 6 characters).'
-        required: true
-        example: secret123
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'Must match the password.'
-        required: true
-        example: secret123
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      address:
-        name: address
-        description: "The user's address."
-        required: false
-        example: '123 Main St'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      phone:
-        name: phone
-        description: "The user's phone number."
-        required: false
-        example: '+1234567890'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country_code:
-        name: country_code
-        description: 'Country dialing code.'
-        required: false
-        example: '+91'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      city:
-        name: city
-        description: 'The city.'
-        required: false
-        example: Mumbai
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      state:
-        name: state
-        description: 'The state.'
-        required: false
-        example: Maharashtra
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country:
-        name: country
-        description: 'The country.'
-        required: false
-        example: India
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      zip:
-        name: zip
-        description: 'The zip/postal code.'
-        required: false
-        example: '400001'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      dob:
-        name: dob
-        description: "The user's date of birth (in 'Y-m-d' format)."
-        required: false
-        example: '1990-01-01'
-        type: date
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      doj:
-        name: doj
-        description: "The user's date of joining (in 'Y-m-d' format)."
-        required: false
-        example: '2022-01-01'
-        type: date
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      role:
-        name: role
-        description: 'The role to assign to the user.'
-        required: true
-        example: admin
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country_iso_code:
-        name: country_iso_code
-        description: 'Optional country ISO code.'
-        required: false
-        example: IN
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      require_ev:
-        name: require_ev
-        description: 'Whether email verification is required. 1 = yes, 0 = no.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      status:
-        name: status
-        description: 'Whether the user account should be active immediately.'
-        required: false
-        example: true
-        type: boolean
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      first_name: John
-      last_name: Doe
-      email: john.smith@example.com
-      password: secret123
-      password_confirmation: secret123
-      address: '123 Main St'
-      phone: '+1234567890'
-      country_code: '+91'
-      city: Mumbai
-      state: Maharashtra
-      country: India
-      zip: '400001'
-      dob: '1990-01-01'
-      doj: '2022-01-01'
-      role: admin
-      country_iso_code: IN
-      require_ev: true
-      status: true
+      title: 'High Priority'
+      color: '#FF0000'
     fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-           "error": false,
-           "message": "User created successfully.",
-           "id": 54,
-           "data": {
-               "id": 54,
-               "first_name": "John",
-               "last_name": "Doe",
-               "full_name": "John Doe",
-               "email": "john.smith@example.com",
-               "phone": "+1234567890",
-               "address": "123 Main St",
-               "country_code": "+91",
-               "city": "Mumbai",
-               "state": "Maharashtra",
-               "country": "India",
-               "zip": "400001",
-               "dob": null,
-               "doj": null,
-               "role": "admin",
-               "status": 1,
-               "email_verified": false,
-               "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
-               "created_at": "2025-06-11 06:48:45",
-               "updated_at": "2025-06-11 06:48:45",
-               "require_ev": 1
-           }
+            "error": false,
+            "message": "Priority created successfully.",
+            "data": {
+              "id": 7,
+              "title": "High Priority",
+              "slug": "high-priority",
+              "color": "#FF0000",
+              "admin_id": 1,
+              "created_at": "2025-06-04T14:25:30.000000Z",
+              "updated_at": "2025-06-04T14:25:30.000000Z"
+            },
+            "id": 7
           }
         headers: []
         description: ''
@@ -268,9 +71,12 @@ endpoints:
         status: 422
         content: |-
           {
-           "errors": {
-               "email": ["The email has already been taken in users or clients."]
-           }
+            "error": true,
+            "message": "The given data was invalid.",
+            "errors": {
+              "title": ["The title field is required."],
+              "color": ["The color field is required."]
+            }
           }
         headers: []
         description: ''
@@ -279,8 +85,11 @@ endpoints:
         status: 500
         content: |-
           {
-           "error": true,
-           "message": "User couldn't be created, please make sure email settings are operational."
+            "error": true,
+            "message": "Priority could not be created.",
+            "error": "Exception message here",
+            "line": 45,
+            "file": "PriorityController.php"
           }
         headers: []
         description: ''
@@ -294,219 +103,71 @@ endpoints:
   -
     httpMethods:
       - PUT
-    uri: 'api/master-panel/user/{id}'
+    uri: 'api/master-panel/priorities/{priority}'
     metadata:
-      groupName: 'User Managemant'
+      groupName: Priority
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update user details.'
+      title: 'Update an existing priority.'
       description: |-
-        This endpoint allows updating user profile information. The request must be sent in **raw JSON format**.
-
-        📎 Required Headers:
-        - `Authorization: Bearer {YOUR_API_TOKEN}`
-        - `workspace_id: {WORKSPACE_ID}`
-        - `Content-Type: application/json`
-      authenticated: true
+        This endpoint updates the title, color, and slug of an existing priority record.
+        The priority is identified by its ID.
+      authenticated: false
       custom: []
     headers:
-      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
+      priority:
+        name: priority
+        description: 'The priority.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      priority: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
       id:
         name: id
-        description: 'The ID of the user to update.'
+        description: 'The ID of the priority to update.'
         required: true
-        example: 18
+        example: 10
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-    cleanUrlParameters:
-      id: 18
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      first_name:
-        name: first_name
-        description: "The user's first name."
+      title:
+        name: title
+        description: 'The new title of the priority.'
         required: true
-        example: John
+        example: High
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      last_name:
-        name: last_name
-        description: "The user's last name."
+      color:
+        name: color
+        description: 'The new color code for the priority.'
         required: true
-        example: Doe
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      phone:
-        name: phone
-        description: "nullable The user's phone number."
-        required: false
-        example: '+1234567890'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country_code:
-        name: country_code
-        description: 'nullable Country calling code.'
-        required: false
-        example: US
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      address:
-        name: address
-        description: 'nullable Street address.'
-        required: false
-        example: '123 Main St'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      city:
-        name: city
-        description: 'nullable City name.'
-        required: false
-        example: 'New York'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      state:
-        name: state
-        description: 'nullable State name.'
-        required: false
-        example: NY
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country:
-        name: country
-        description: 'nullable Country name.'
-        required: false
-        example: USA
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      zip:
-        name: zip
-        description: 'nullable Zip or postal code.'
-        required: false
-        example: '10001'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      dob:
-        name: dob
-        description: 'nullable Date of birth (Y-m-d).'
-        required: false
-        example: '1990-01-01'
-        type: date
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      doj:
-        name: doj
-        description: 'nullable Date of joining (Y-m-d).'
-        required: false
-        example: '2020-01-01'
-        type: date
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      password:
-        name: password
-        description: 'nullable Minimum 6 characters to change password.'
-        required: false
-        example: newsecret
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'required_with:password Must match the password.'
-        required: false
-        example: newsecret
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      country_iso_code:
-        name: country_iso_code
-        description: 'nullable ISO country code.'
-        required: false
-        example: US
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      status:
-        name: status
-        description: 'nullable Whether the user is active.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      role:
-        name: role
-        description: 'nullable Role to assign (not for admins).'
-        required: false
-        example: admin
+        example: '#FF0000'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      first_name: John
-      last_name: Doe
-      phone: '+1234567890'
-      country_code: US
-      address: '123 Main St'
-      city: 'New York'
-      state: NY
-      country: USA
-      zip: '10001'
-      dob: '1990-01-01'
-      doj: '2020-01-01'
-      password: newsecret
-      password_confirmation: newsecret
-      country_iso_code: US
-      status: true
-      role: admin
+      id: 10
+      title: High
+      color: '#FF0000'
     fileParameters: []
     responses:
       -
@@ -514,30 +175,24 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "User updated successfully.",
-            "id": 18,
+            "message": "Priority updated successfully.",
             "data": {
-              "id": 18,
-              "first_name": "John",
-              "last_name": "Doe",
-              "full_name": "John Doe",
-              "email": "john.doe27@example.com",
-              "phone": "+1234567890",
-              "address": "123 Main St",
-              "country_code": "US",
-              "city": "New York",
-              "state": "NY",
-              "country": "USA",
-              "zip": "10001",
-              "dob": null,
-              "doj": null,
-              "role": "admin",
-              "status": true,
-              "email_verified": true,
-              "photo_url": "http://localhost:8000/storage/photos/no-image.jpg",
-              "created_at": "2025-06-10 10:00:16",
-              "updated_at": "2025-06-11 06:41:43"
-            }
+              "id": 10,
+              "title": "High",
+              "color": "#FF0000",
+              "slug": "high"
+            },
+            "id": 10
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "error": true,
+            "message": "Priority not found."
           }
         headers: []
         description: ''
@@ -547,11 +202,21 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "The given data was invalid.",
+            "message": "Validation error.",
             "errors": {
-              "first_name": ["The first name field is required."],
-              "password": ["The password must be at least 6 characters."]
+              "title": ["The title field is required."],
+              "color": ["The color field is required."]
             }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Priority could not be updated due to server error."
           }
         headers: []
         description: ''
@@ -565,33 +230,45 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/master-panel/user/{id}'
+    uri: 'api/master-panel/priorities/{priority}'
     metadata:
-      groupName: 'User Managemant'
-      groupDescription: 'This endpoint deletes a user by their ID. It also removes all associated todos for the user. If the user does not exist, a 404 error is returned.'
+      groupName: Priority
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Delete a user'
-      description: ''
+      title: 'Delete a priority.'
+      description: |-
+        This endpoint deletes a specific priority by its ID.
+        Before deletion, it detaches the priority from all related projects and tasks.
       authenticated: false
       custom: []
     headers:
-      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
+      priority:
+        name: priority
+        description: 'The priority.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
       id:
         name: id
-        description: 'The ID of the user to delete.'
+        description: 'The ID of the priority to delete.'
         required: true
-        example: 6
+        example: 5
         type: integer
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 6
+      priority: consequatur
+      id: 5
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -603,10 +280,9 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "User deleted successfully.",
-            "id": "6",
-            "title": "John Doe",
-            "data": []
+            "message": "Priority deleted successfully.",
+            "id": 5,
+            "title": "High Priority"
           }
         headers: []
         description: ''
@@ -615,7 +291,9 @@ endpoints:
         status: 404
         content: |-
           {
-            "message": "No query results for model [App\\Models\\User] 999"
+            "error": true,
+            "message": "Priority not found.",
+            "error": "No query results for model [App\\Models\\Priority] 999"
           }
         headers: []
         description: ''
@@ -625,7 +303,10 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "Failed to delete User due to internal server error."
+            "message": "Priority could not be deleted.",
+            "error": "Exception message here",
+            "line": 42,
+            "file": "PriorityController.php"
           }
         headers: []
         description: ''
@@ -639,101 +320,25 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/master-panel/user/{id?}'
+    uri: 'api/master-panel/priorities/{id?}'
     metadata:
-      groupName: 'User Managemant'
-      groupDescription: |-
-        This API endpoint retrieves a list of users within the current workspace or a specific user by ID.
-        Supports filtering by search term, status, roles, type (project/task), sorting, and pagination.
+      groupName: Priority
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Get users list or specific user'
-      description: ''
+      title: 'Get priorities list or a specific priority.'
+      description: |-
+        This endpoint allows fetching either a paginated list of priorities or a single priority by providing its ID.
+        It supports optional searching, sorting, and pagination when listing all priorities.
       authenticated: false
       custom: []
     headers:
-      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
       id:
         name: id
-        description: 'optional The ID of the user to retrieve. Leave blank to get all users.'
-        required: false
-        example: 5
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      id: 5
-    queryParameters:
-      search:
-        name: search
-        description: 'optional Filter users by name, email, or phone.'
-        required: false
-        example: John
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      sort:
-        name: sort
-        description: 'optional Field to sort by. Default is `id`.'
-        required: false
-        example: first_name
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      order:
-        name: order
-        description: 'optional Sort order: `ASC` or `DESC`. Default is `DESC`.'
-        required: false
-        example: ASC
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      status:
-        name: status
-        description: 'optional Filter users by status (1 for active, 0 for inactive).'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      role_ids:
-        name: role_ids
-        description: 'optional Filter users by one or more role IDs.'
-        required: false
-        example:
-          - 1
-          - 2
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      type:
-        name: type
-        description: 'optional Source of user relation (`project` or `task`).'
-        required: false
-        example: project
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      typeId:
-        name: typeId
-        description: 'optional ID of the related project or task. Required if `type` is provided.'
+        description: 'optional The ID of the priority to retrieve.'
         required: false
         example: 3
         type: integer
@@ -741,9 +346,42 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
+    cleanUrlParameters:
+      id: 3
+    queryParameters:
+      search:
+        name: search
+        description: 'optional Search term for filtering by title or ID.'
+        required: false
+        example: Urgent
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      sort:
+        name: sort
+        description: 'optional Field to sort by. Defaults to id.'
+        required: false
+        example: title
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      order:
+        name: order
+        description: 'optional Sort order. Either ASC or DESC. Defaults to DESC.'
+        required: false
+        example: ASC
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
       limit:
         name: limit
-        description: 'optional Number of results per page.'
+        description: 'optional Number of records per page. Defaults to 15.'
         required: false
         example: 10
         type: integer
@@ -751,28 +389,11 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      isApi:
-        name: isApi
-        description: 'optional Indicates API context (used internally). Default: true.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
     cleanQueryParameters:
-      search: John
-      sort: first_name
+      search: Urgent
+      sort: title
       order: ASC
-      status: 1
-      role_ids:
-        - 1
-        - 2
-      type: project
-      typeId: 3
       limit: 10
-      isApi: true
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -782,24 +403,21 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "Users retrieved successfully",
-            "total": 2,
-            "data": [
-              {
-                "id": 1,
-                "first_name": "John",
-                "last_name": "Doe",
-                "email": "john@example.com",
-                "phone": "+91 9876543210",
-                "status": 1,
-                "created_at": "2024-01-01 10:00:00",
-                "updated_at": "2024-06-01 09:00:00",
-                "role": "Admin",
-                "profile": "...",
-                "assigned": "...",
-                "actions": "..."
-              }
-            ]
+            "message": "Priorities fetched successfully.",
+            "data": {
+              "rows": [
+                {
+                  "id": 1,
+                  "title": "High",
+                  "color": "red",
+                  "created_at": "2024-06-01",
+                  "updated_at": "2024-06-01"
+                }
+              ],
+              "total": 1,
+              "current_page": 1,
+              "last_page": 1
+            }
           }
         headers: []
         description: ''
@@ -809,15 +427,13 @@ endpoints:
         content: |-
           {
             "error": false,
-            "message": "User retrieved successfully",
+            "message": "Priority fetched successfully.",
             "data": {
-              "id": 5,
-              "first_name": "Jane",
-              "last_name": "Smith",
-              "email": "jane@example.com",
-              "phone": "+91 1234567890",
-              "status": 1,
-              ...
+              "id": 1,
+              "title": "High",
+              "color": "red",
+              "created_at": "2024-06-01",
+              "updated_at": "2024-06-01"
             }
           }
         headers: []
@@ -828,8 +444,8 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "User not found",
-            "data": []
+            "message": "Priority not found.",
+            "error": "No query results for model [App\\Models\\Priority] 3"
           }
         headers: []
         description: ''
@@ -839,8 +455,110 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "Failed to retrieve users",
-            "error": "Exception message"
+            "message": "Failed to fetch priorities.",
+            "error": "Exception message here",
+            "line": 101,
+            "file": "PriorityController.php"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: api/master-panel/multiple-delete
+    metadata:
+      groupName: Priority
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete multiple priorities.'
+      description: |-
+        This endpoint deletes one or more priorities based on the provided array of IDs.
+        It also detaches the priorities from any associated projects and tasks before deletion.
+        Each priority must exist in the database.
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      ids:
+        name: ids
+        description: 'The list of priority IDs to delete.'
+        required: true
+        example:
+          - 1
+          - 2
+          - 3
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      'ids.*':
+        name: 'ids.*'
+        description: 'Each ID must correspond to an existing priority.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      ids:
+        - 1
+        - 2
+        - 3
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Priority/Priorities deleted successfully.",
+            "ids": [1, 2, 3],
+            "titles": ["High", "Medium", "Low"]
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": "The given data was invalid.",
+            "errors": {
+              "ids.0": [
+                "The selected ids.0 is invalid."
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Priorities could not be deleted.",
+            "error": "Exception message",
+            "line": 123,
+            "file": "PriorityController.php"
           }
         headers: []
         description: ''
