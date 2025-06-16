@@ -21,6 +21,7 @@ class HomeController extends Controller
 {
     protected $workspace;
     protected $user;
+    protected $statuses;
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -38,6 +39,7 @@ class HomeController extends Controller
 
             return $next($request);
         });
+         $this->statuses = Status::all();
     }
 
     public function index(Request $request)
@@ -61,53 +63,6 @@ class HomeController extends Controller
     }
 
 
-  /**
- * Get users with upcoming birthdays within a specified number of days.
- *
- * This endpoint fetches users in the current workspace who have birthdays
- * coming up within the next `upcoming_days` days (default is 30).
- *
- * @group Dashboard
- *
- * @queryParam isApi boolean Optional. Specify if the request is from API (true) or web (false). Default false.
- * @queryParam upcoming_days integer Optional. Number of days ahead to check for upcoming birthdays. Default 30.
- * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
- * @header Accept application/json
- * @header workspace_id 2
- * @response 200 {
- *   "error": false,
- *   "message": "Upcoming birthdays fetched successfully.",
- *   "data": [
- *     {
- *       "id": 2,
- *       "name": "herry porter",
- *       "dob": "1995-06-15",
- *       "days_left": 12,
- *       "age": 29,
- *       "photo": "http://localhost:8000/storage/photos/no-image.jpg",
- *       "profile_url": "http://localhost:8000/master-panel/users/profile/2"
- *     },
- *     {
- *       "id": 5,
- *       "name": "test test",
- *       "dob": "2025-07-03",
- *       "days_left": 30,
- *       "age": 0,
- *       "photo": "http://localhost:8000/storage/photos/no-image.jpg",
- *       "profile_url": "http://localhost:8000/master-panel/users/profile/5"
- *     }
- *   ],
- *   "total": 2
- * }
- *
- * @response 500 {
- *   "error": true,
- *   "message": "Internal Server Error: {error_message}",
- *   "data": []
- * }
- *
- * @return \Illuminate\Http\JsonResponse|\Illuminate\View\View
- */
    public function upcoming_birthdays()
     {
         $search = request('search');
@@ -145,6 +100,7 @@ class HomeController extends Controller
         }
 
         $total = $users->count();
+        // dd($total);
 
         $users = $users->orderBy($sort, $order)
             ->paginate(request("limit"))
@@ -238,64 +194,75 @@ class HomeController extends Controller
  */
 
 
-    public function api_upcoming_birthdays(Request $request)
-    {
-        $isApi = $request->get('isApi', false);
+public function api_upcoming_birthdays(Request $request)
+{
+    $isApi = $request->get('isApi', false);
 
-        try {
-            $upcoming_days = (int) $request->input('upcoming_days', 30);
+    try {
+        $upcoming_days = (int) $request->input('upcoming_days', 30);
+        $workspace = $this->workspace;
 
-            $workspace = $this->workspace;
-            // dd($workspace);
-            $now = today();
-             $users = $workspace->users;
-            $usersWithDob = $users->filter(fn($u) => $u->dob !== null);
-            $filtered = $usersWithDob->filter(function ($user) use ($now) {
+        if (!$workspace) {
+            $message = 'Workspace not found.';
+            return $isApi
+                ? formatApiResponse(true, $message, [], 404)
+                : response()->json(['error' => true, 'message' => $message], 404);
+        }
+
+        $now = today();
+        $users = $workspace->users()->whereNotNull('dob')->get();
+
+        $filtered = $users->filter(function ($user) use ($now, $upcoming_days) {
+            try {
                 $dob = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
-                $birthday = $dob->copy()->year($now->year);
-                if ($birthday->lt($now)) $birthday->addYear();
-                return $now->diffInDays($birthday) <= 30;
-            });
-
-            $result = $filtered->map(function ($user) use ($now) {
-                $dob = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
-                $birthday = $dob->copy()->year($now->year);
-                if ($birthday->lt($now)) {
-                    $birthday->addYear();
-                }
-                $daysLeft = $now->diffInDays($birthday);
-
-                return [
-                    'id' => $user->id,
-                    'member' => $user->first_name . ' ' . $user->last_name,
-                    'dob' => $user->dob,
-                    'days_left' => $daysLeft,
-                    'age' => $now->diffInYears($dob),
-                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
-                    'profile_url' => route('users.show', ['id' => $user->id]),
-                ];
-            })->values();
-
-            if ($isApi) {
-
-                return formatApiResponse(false, 'Upcoming birthdays fetched successfully.', ['data' => $result, 'total' => $result->count()]);
-            } else {
-                // dd($result);
-                   return response()->json([
-            "rows" => $result,
-            "total" => $result->count()
-        ]);
+            } catch (\Exception $e) {
+                return false;
             }
-        } catch (\Exception $e) {
-            dd($e);
-            if ($isApi) {
-                return formatApiResponse(true, 'Internal Server Error: ' . $e->getMessage(), [], 500);
-            } else {
-                return redirect()->back()->withErrors(['error' => 'Internal Server Error: ' . $e->getMessage()]);
+            $birthday = $dob->copy()->year($now->year);
+            if ($birthday->lt($now)) {
+                $birthday->addYear();
             }
+            return $now->diffInDays($birthday) <= $upcoming_days;
+        });
+
+        $result = $filtered->map(function ($user) use ($now) {
+            $dob = \Carbon\Carbon::createFromFormat('Y-m-d', $user->dob);
+            $birthday = $dob->copy()->year($now->year);
+            if ($birthday->lt($now)) {
+                $birthday->addYear();
+            }
+            $daysLeft = $now->diffInDays($birthday);
+
+            return [
+                'id' => $user->id,
+                'member' => $user->first_name . ' ' . $user->last_name,
+                'dob' => $user->dob,
+                'days_left' => $daysLeft,
+                'age' => $now->diffInYears($dob),
+                'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
+                'profile_url' => route('users.show', ['id' => $user->id]),
+            ];
+        })->values();
+
+        if ($isApi) {
+            return formatApiResponse(false, 'Upcoming birthdays fetched successfully.', [
+                'data' => $result,
+                'total' => $result->count()
+            ]);
+        } else {
+            return response()->json([
+                "rows" => $result,
+                "total" => $result->count()
+            ]);
+        }
+    } catch (\Exception $e) {
+        if ($isApi) {
+            return formatApiResponse(true, 'Internal Server Error: ' . $e->getMessage(), [], 500);
+        } else {
+            return response()->json(['error' => true, 'message' => 'Internal Server Error: ' . $e->getMessage()], 500);
         }
     }
-
+}
     /**
      * Get Upcoming Work Anniversaries
      *@group Dashboard
@@ -602,132 +569,138 @@ public function api_upcoming_work_anniversaries(Request $request)
      * @return \Illuminate\Http\JsonResponse
      */
 
-
-    public function members_on_leave()
+public function members_on_leave(Request $request)
 {
-    $search = request('search');
-    $sort = request('sort') ?: "from_date";
-    $order = request('order') ?: "ASC";
-    $upcoming_days = request('upcoming_days') ?: 30;
-    $user_id = request('user_id') ?: "";
-    $limit = min(max((int) request('limit', 10), 1), 100); // Default: 10, Min: 1, Max: 100
+    try {
+        $search = $request->get('search');
+        $sort = $request->get('sort', 'from_date');
+        $order = $request->get('order', 'ASC');
+        $upcoming_days = (int) $request->get('upcoming_days', 30);
+        $user_id = $request->get('user_id', '');
+        $limit = min(max((int) $request->get('limit', 10), 1), 100);
 
-    $currentDate = today();
-    $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
-    $timezone = config('app.timezone');
+        $currentDate = today();
+        $upcomingDate = $currentDate->copy()->addDays($upcoming_days);
+        $timezone = config('app.timezone');
 
-    $leaveUsers = DB::table('leave_requests')
-        ->selectRaw('*, leave_requests.user_id as UserId')
-        ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
-        ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
-        ->where(function ($query) use ($currentDate, $upcomingDate) {
-            $query->where('from_date', '<=', $upcomingDate)
-                ->where('to_date', '>=', $currentDate);
-        })
-        ->where('leave_requests.status', 'approved')
-        ->where('workspace_id', $this->workspace->id);
+        $leaveUsers = DB::table('leave_requests')
+            ->selectRaw('*, leave_requests.user_id as UserId')
+            ->leftJoin('users', 'leave_requests.user_id', '=', 'users.id')
+            ->leftJoin('leave_request_visibility', 'leave_requests.id', '=', 'leave_request_visibility.leave_request_id')
+            ->where(function ($query) use ($currentDate, $upcomingDate) {
+                $query->where('from_date', '<=', $upcomingDate)
+                    ->where('to_date', '>=', $currentDate);
+            })
+            ->where('leave_requests.status', 'approved')
+            ->where('workspace_id', $this->workspace->id);
 
-    if (!is_admin_or_leave_editor()) {
-        $leaveUsers->where(function ($query) {
-            $query->where('leave_requests.user_id', $this->user->id)
-                ->orWhere('leave_request_visibility.user_id', $this->user->id)
-                ->orWhere('leave_requests.visible_to_all', 1);
-        });
-    }
+        if (!is_admin_or_leave_editor()) {
+            $leaveUsers->where(function ($query) {
+                $query->where('leave_requests.user_id', $this->user->id)
+                    ->orWhere('leave_request_visibility.user_id', $this->user->id)
+                    ->orWhere('leave_requests.visible_to_all', 1);
+            });
+        }
 
-    if (!empty($search)) {
-        $leaveUsers->where(function ($query) use ($search) {
-            $query->where('first_name', 'LIKE', "%$search%")
-                ->orWhere('last_name', 'LIKE', "%$search%")
-                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
-        });
-    }
+        if (!empty($search)) {
+            $leaveUsers->where(function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%$search%")
+                    ->orWhere('last_name', 'LIKE', "%$search%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%$search%"]);
+            });
+        }
 
-    if (!empty($user_id)) {
-        $leaveUsers->where('leave_requests.user_id', $user_id);
-    }
+        if (!empty($user_id)) {
+            $leaveUsers->where('leave_requests.user_id', $user_id);
+        }
 
-    $total = $leaveUsers->count();
+        $total = $leaveUsers->count();
 
-    $leaveUsers = $leaveUsers->orderBy($sort, $order)
-        ->paginate($limit)
-        ->through(function ($user) use ($currentDate, $timezone) {
-            $fromDateForDuration = \Carbon\Carbon::createFromFormat('Y-m-d', $user->from_date);
-            $toDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->to_date);
-            $fromDateForDiff = $fromDateForDuration->copy()->year($currentDate->year);
+        $leaveUsers = $leaveUsers->orderBy($sort, $order)
+            ->paginate($limit)
+            ->through(function ($user) use ($currentDate, $timezone) {
+                $fromDateForDuration = \Carbon\Carbon::createFromFormat('Y-m-d', $user->from_date);
+                $toDate = \Carbon\Carbon::createFromFormat('Y-m-d', $user->to_date);
+                $fromDateForDiff = $fromDateForDuration->copy()->year($currentDate->year);
 
-            $daysLeft = $currentDate->diffInDays($fromDateForDiff, false);
-            if ($daysLeft < 0) {
-                $daysLeft = 0;
-            }
-
-            $currentTime = \Carbon\Carbon::now()->tz($timezone)->format('H:i:s');
-            $label = '';
-
-            if ($daysLeft === 0 && $user->from_time && $user->to_time && $user->from_time <= $currentTime && $user->to_time >= $currentTime) {
-                $label = ' <span class="badge bg-info">' . get_label('on_partial_leave', 'On Partial Leave') . '</span>';
-            } elseif (($daysLeft === 0 && (!$user->from_time && !$user->to_time)) ||
-                ($daysLeft === 0 && $user->from_time <= $currentTime && $user->to_time >= $currentTime)) {
-                $label = ' <span class="badge bg-success">' . get_label('on_leave', 'On leave') . '</span>';
-            } elseif ($daysLeft === 1) {
-                $langLabel = $user->from_time && $user->to_time
-                    ? get_label('on_partial_leave_tomorrow', 'On partial leave from tomorrow')
-                    : get_label('on_leave_tomorrow', 'On leave from tomorrow');
-                $label = ' <span class="badge bg-primary">' . $langLabel . '</span>';
-            } elseif ($daysLeft === 2) {
-                $langLabel = $user->from_time && $user->to_time
-                    ? get_label('on_partial_leave_day_after_tomorow', 'On partial leave from day after tomorrow')
-                    : get_label('on_leave_day_after_tomorow', 'On leave from day after tomorrow');
-                $label = ' <span class="badge bg-warning">' . $langLabel . '</span>';
-            }
-
-            // Calculate duration
-            if ($user->from_time && $user->to_time) {
-                $duration = 0;
-                $tempFromDate = $fromDateForDuration->copy();
-
-                while ($tempFromDate->lte($toDate)) {
-                    $fromDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->from_time);
-                    $toDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->to_time);
-                    $diffMinutes = $fromDateTime->diffInMinutes($toDateTime);
-                    if ($diffMinutes > 0) {
-                        $duration += $diffMinutes / 60;
-                    }
-                    $tempFromDate->addDay();
+                $daysLeft = $currentDate->diffInDays($fromDateForDiff, false);
+                if ($daysLeft < 0) {
+                    $daysLeft = 0;
                 }
-            } else {
-                $duration = $fromDateForDuration->diffInDays($toDate) + 1;
-            }
 
-            $fromDateDayOfWeek = $fromDateForDuration->format('D');
-            $toDateDayOfWeek = $toDate->format('D');
+                $currentTime = \Carbon\Carbon::now()->tz($timezone)->format('H:i:s');
+                $label = '';
 
-            return [
-                'id' => $user->UserId,
-                'member' => $user->first_name . ' ' . $user->last_name . ' ' . $label .
-                    "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'>
-                        <a href='/users/profile/" . $user->UserId . "' target='_blank'>
-                            <li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
-                                <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
-                            </li>
-                        </a>
-                    </ul>",
-                'from_date' => $fromDateDayOfWeek . ', ' . ($user->from_time ? format_date($user->from_date . ' ' . $user->from_time, true, null, null, false) : format_date($user->from_date)),
-                'to_date' => $toDateDayOfWeek . ', ' . ($user->to_time ? format_date($user->to_date . ' ' . $user->to_time, true, null, null, false) : format_date($user->to_date)),
-                'type' => $user->from_time && $user->to_time
-                    ? '<span class="badge bg-info">' . get_label('partial', 'Partial') . '</span>'
-                    : '<span class="badge bg-primary">' . get_label('full', 'Full') . '</span>',
-                'duration' => $user->from_time && $user->to_time
-                    ? $duration . ' hour' . ($duration > 1 ? 's' : '')
-                    : $duration . ' day' . ($duration > 1 ? 's' : ''),
-                'days_left' => $daysLeft,
-            ];
-        });
+                if ($daysLeft === 0 && $user->from_time && $user->to_time && $user->from_time <= $currentTime && $user->to_time >= $currentTime) {
+                    $label = ' <span class="badge bg-info">' . get_label('on_partial_leave', 'On Partial Leave') . '</span>';
+                } elseif (($daysLeft === 0 && (!$user->from_time && !$user->to_time)) ||
+                    ($daysLeft === 0 && $user->from_time <= $currentTime && $user->to_time >= $currentTime)) {
+                    $label = ' <span class="badge bg-success">' . get_label('on_leave', 'On leave') . '</span>';
+                } elseif ($daysLeft === 1) {
+                    $langLabel = $user->from_time && $user->to_time
+                        ? get_label('on_partial_leave_tomorrow', 'On partial leave from tomorrow')
+                        : get_label('on_leave_tomorrow', 'On leave from tomorrow');
+                    $label = ' <span class="badge bg-primary">' . $langLabel . '</span>';
+                } elseif ($daysLeft === 2) {
+                    $langLabel = $user->from_time && $user->to_time
+                        ? get_label('on_partial_leave_day_after_tomorow', 'On partial leave from day after tomorrow')
+                        : get_label('on_leave_day_after_tomorow', 'On leave from day after tomorrow');
+                    $label = ' <span class="badge bg-warning">' . $langLabel . '</span>';
+                }
 
-    return response()->json([
-        "rows" => $leaveUsers->items(),
-        "total" => $total,
-    ]);
+                // Calculate duration
+                if ($user->from_time && $user->to_time) {
+                    $duration = 0;
+                    $tempFromDate = $fromDateForDuration->copy();
+
+                    while ($tempFromDate->lte($toDate)) {
+                        $fromDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->from_time);
+                        $toDateTime = \Carbon\Carbon::parse($tempFromDate->toDateString() . ' ' . $user->to_time);
+                        $diffMinutes = $fromDateTime->diffInMinutes($toDateTime);
+                        if ($diffMinutes > 0) {
+                            $duration += $diffMinutes / 60;
+                        }
+                        $tempFromDate->addDay();
+                    }
+                } else {
+                    $duration = $fromDateForDuration->diffInDays($toDate) + 1;
+                }
+
+                $fromDateDayOfWeek = $fromDateForDuration->format('D');
+                $toDateDayOfWeek = $toDate->format('D');
+
+                return [
+                    'id' => $user->UserId,
+                    'member' => $user->first_name . ' ' . $user->last_name . ' ' . $label .
+                        "<ul class='list-unstyled users-list m-0 avatar-group d-flex align-items-center'>
+                            <a href='/users/profile/" . $user->UserId . "' target='_blank'>
+                                <li class='avatar avatar-sm pull-up' title='" . $user->first_name . " " . $user->last_name . "'>
+                                    <img src='" . ($user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')) . "' alt='Avatar' class='rounded-circle'>
+                                </li>
+                            </a>
+                        </ul>",
+                    'from_date' => $fromDateDayOfWeek . ', ' . ($user->from_time ? format_date($user->from_date . ' ' . $user->from_time, true, null, null, false) : format_date($user->from_date)),
+                    'to_date' => $toDateDayOfWeek . ', ' . ($user->to_time ? format_date($user->to_date . ' ' . $user->to_time, true, null, null, false) : format_date($user->to_date)),
+                    'type' => $user->from_time && $user->to_time
+                        ? '<span class="badge bg-info">' . get_label('partial', 'Partial') . '</span>'
+                        : '<span class="badge bg-primary">' . get_label('full', 'Full') . '</span>',
+                    'duration' => $user->from_time && $user->to_time
+                        ? $duration . ' hour' . ($duration > 1 ? 's' : '')
+                        : $duration . ' day' . ($duration > 1 ? 's' : ''),
+                    'days_left' => $daysLeft,
+                ];
+            });
+
+        return response()->json([
+            "rows" => $leaveUsers->items(),
+            "total" => $total,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => true,
+            'message' => 'Internal Server Error: ' . $e->getMessage(),
+        ], 500);
+    }
 }
 
 
@@ -1314,6 +1287,213 @@ public function api_upcoming_work_anniversaries(Request $request)
             return $isApi
                 ? formatApiResponse(true, $message, $errorData, 500)
                 : response()->json(['error' => true, 'message' => $message] + $errorData, 500);
+        }
+    }
+
+     public function getStatistics()
+    {
+        try {
+            // Define an array of colors
+            $colors = [
+                '#63ed7a',
+                '#ffa426',
+                '#fc544b',
+                '#6777ef',
+                '#FF00FF',
+                '#53ff1a',
+                '#ff3300',
+                '#0000ff',
+                '#00ffff',
+                '#99ff33',
+                '#003366',
+                '#cc3300',
+                '#ffcc00',
+                '#ff9900',
+                '#3333cc',
+                '#ffff00',
+                '#FF5733',
+                '#33FF57',
+                '#5733FF',
+                '#FFFF33',
+                '#A6A6A6',
+                '#FF99FF',
+                '#6699FF',
+                '#666666',
+                '#FF6600',
+                '#9900CC',
+                '#FF99CC',
+                '#FFCC99',
+                '#99CCFF',
+                '#33CCCC',
+                '#CCFFCC',
+                '#99CC99',
+                '#669999',
+                '#CCCCFF',
+                '#6666FF',
+                '#FF6666',
+                '#99CCCC',
+                '#993366',
+                '#339966',
+                '#99CC00',
+                '#CC6666',
+                '#660033',
+                '#CC99CC',
+                '#CC3300',
+                '#FFCCCC',
+                '#6600CC',
+                '#FFCC33',
+                '#9933FF',
+                '#33FF33',
+                '#FFFF66',
+                '#9933CC',
+                '#3300FF',
+                '#9999CC',
+                '#0066FF',
+                '#339900',
+                '#666633',
+                '#330033',
+                '#FF9999',
+                '#66FF33',
+                '#6600FF',
+                '#FF0033',
+                '#009999',
+                '#CC0000',
+                '#999999',
+                '#CC0000',
+                '#CCCC00',
+                '#00FF33',
+                '#0066CC',
+                '#66FF66',
+                '#FF33FF',
+                '#CC33CC',
+                '#660099',
+                '#663366',
+                '#996666',
+                '#6699CC',
+                '#663399',
+                '#9966CC',
+                '#66CC66',
+                '#0099CC',
+                '#339999',
+                '#00CCCC',
+                '#CCCC99',
+                '#FF9966',
+                '#99FF00',
+                '#66FF99',
+                '#336666',
+                '#00FF66',
+                '#3366CC',
+                '#CC00CC',
+                '#00FF99',
+                '#FF0000',
+                '#00CCFF',
+                '#000000',
+                '#FFFFFF'
+            ];
+
+            // Initialize response data
+            $statusCountsProjects = [];
+            $statusCountsTasks = [];
+            $total_projects_count = 0;
+            $total_tasks_count = 0;
+            $total_users_count = 0;
+            $total_clients_count = 0;
+            $total_todos_count = 0;
+            $total_completed_todos_count = 0;
+            $total_pending_todos_count = 0;
+            $total_meetings_count = 0;
+
+            // Fetch total counts
+            if ($this->user->can('manage_projects')) {
+                $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects ?? [] : $this->user->projects ?? [];
+                $total_projects_count = $projects->count();
+            }
+
+            if ($this->user->can('manage_tasks')) {
+                $tasks = isAdminOrHasAllDataAccess() ? $this->workspace->tasks ?? [] : $this->user->tasks() ?? [];
+                $total_tasks_count = $tasks->count();
+            }
+
+            if ($this->user->can('manage_users')) {
+                $users = $this->workspace->users ?? [];
+                $total_users_count = count($users);
+            }
+
+            if ($this->user->can('manage_clients')) {
+                $clients = $this->workspace->clients ?? [];
+                $total_clients_count = count($clients);
+            }
+
+            $todos = $this->user->todos;
+            $total_todos_count = $todos->count();
+            $total_completed_todos_count = $todos->where('is_completed', true)->count();
+            $total_pending_todos_count = $todos->where('is_completed', false)->count();
+
+            if ($this->user->can('manage_meetings')) {
+                $meetings = isAdminOrHasAllDataAccess() ? $this->workspace->meetings ?? [] : $this->user->meetings ?? [];
+                $total_meetings_count = $meetings->count();
+            }
+
+          if ($this->user->can('manage_projects')) {
+    foreach ($this->statuses as $status) {
+        $projectCount = isAdminOrHasAllDataAccess()
+            ? \App\Models\Project::where('workspace_id', $this->workspace->id)->where('status_id', $status->id)->count()
+            : $this->user->projects()->where('status_id', $status->id)->count();
+
+        $statusCountsProjects[] = [
+            'id' => $status->id,
+            'title' => $status->title,
+            'color' => $status->color,
+            'chart_color' => '0Xff' . strtoupper(ltrim($colors[array_rand($colors)], '#')),
+            'total_projects' => $projectCount
+        ];
+    }
+    usort($statusCountsProjects, fn($a, $b) => $b['total_projects'] <=> $a['total_projects']);
+}
+
+// Assign colors to status-wise tasks
+if ($this->user->can('manage_tasks')) {
+    foreach ($this->statuses as $status) {
+        $taskCount = isAdminOrHasAllDataAccess()
+            ? \App\Models\Task::where('workspace_id', $this->workspace->id)->where('status_id', $status->id)->count()
+            : $this->user->tasks()->where('status_id', $status->id)->count();
+
+        $statusCountsTasks[] = [
+            'id' => $status->id,
+            'title' => $status->title,
+            'color' => $status->color,
+            'chart_color' => '0Xff' . strtoupper(ltrim($colors[array_rand($colors)], '#')),
+            'total_tasks' => $taskCount
+        ];
+    }
+    usort($statusCountsTasks, fn($a, $b) => $b['total_tasks'] <=> $a['total_tasks']);
+}
+
+            // Return response
+            return formatApiResponse(
+                false,
+                'Statistics retrieved successfully.',
+                [
+                    'data' => [
+                        'total_projects' => $total_projects_count,
+                        'total_tasks' => $total_tasks_count,
+                        'total_users' => $total_users_count,
+                        'total_clients' => $total_clients_count,
+                        'total_meetings' => $total_meetings_count,
+                        'total_todos' => $total_todos_count,
+                        'completed_todos' => $total_completed_todos_count,
+                        'pending_todos' => $total_pending_todos_count,
+                        'status_wise_projects' => $statusCountsProjects,
+                        'status_wise_tasks' => $statusCountsTasks
+                    ]
+                ]
+            );
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => 'An error occurred while retrieving statistics: ' . $e->getMessage(),
+            ], 500);
         }
     }
 }

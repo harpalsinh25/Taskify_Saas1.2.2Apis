@@ -177,6 +177,8 @@ return [
             'User Authentication' => [
                 'POST /register',
                 'POST /login',
+                'POST /forgot-password',
+                'POST /reset-password'
             ],
             'Dashboard' => [
                 'GET /dashboardList',

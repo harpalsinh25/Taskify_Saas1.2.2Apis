@@ -74,9 +74,6 @@
                                                     <li class="tocify-item level-2" data-unique="endpoints-GETapi-user">
                                 <a href="#endpoints-GETapi-user">GET api/user</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-reset-password">
-                                <a href="#endpoints-POSTapi-reset-password">POST api/reset-password</a>
-                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-roles--id--">
                                 <a href="#endpoints-GETapi-roles--id--">Get all roles.</a>
                             </li>
@@ -511,6 +508,16 @@ Notes are filtered by the current workspace and admin context.</a>
                             </li>
                                                                         </ul>
                             </ul>
+                    <ul id="tocify-header-authentication" class="tocify-header">
+                <li class="tocify-item level-1" data-unique="authentication">
+                    <a href="#authentication">Authentication</a>
+                </li>
+                                    <ul id="tocify-subheader-authentication" class="tocify-subheader">
+                                                    <li class="tocify-item level-2" data-unique="authentication-POSTapi-reset-password">
+                                <a href="#authentication-POSTapi-reset-password">Reset Password (API)</a>
+                            </li>
+                                                                        </ul>
+                            </ul>
                     <ul id="tocify-header-leaverequest-managemant" class="tocify-header">
                 <li class="tocify-item level-1" data-unique="leaverequest-managemant">
                     <a href="#leaverequest-managemant">leaverequest Managemant</a>
@@ -693,174 +700,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>application/json</code></p>
             </div>
                         </form>
-
-                    <h2 id="endpoints-POSTapi-reset-password">POST api/reset-password</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-reset-password">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/reset-password" \
-    --header "Content-Type: application/json" \
-    --header "Accept: application/json" \
-    --data "{
-    \"token\": \"consequatur\",
-    \"email\": \"carolyne.luettgen@example.org\",
-    \"password\": \"ij-e\\/dl4m\",
-    \"password_confirmation\": \"consequatur\"
-}"
-</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/reset-password"
-);
-
-const headers = {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-};
-
-let body = {
-    "token": "consequatur",
-    "email": "carolyne.luettgen@example.org",
-    "password": "ij-e\/dl4m",
-    "password_confirmation": "consequatur"
-};
-
-fetch(url, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(body),
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-reset-password">
-</span>
-<span id="execution-results-POSTapi-reset-password" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-reset-password"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-reset-password"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-reset-password" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-reset-password">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-reset-password" data-method="POST"
-      data-path="api/reset-password"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-reset-password', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-reset-password"
-                    onclick="tryItOut('POSTapi-reset-password');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-reset-password"
-                    onclick="cancelTryOut('POSTapi-reset-password');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-reset-password"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/reset-password</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-reset-password"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-reset-password"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="token"                data-endpoint="POSTapi-reset-password"
-               value="consequatur"
-               data-component="body">
-    <br>
-<p>Example: <code>consequatur</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="email"                data-endpoint="POSTapi-reset-password"
-               value="carolyne.luettgen@example.org"
-               data-component="body">
-    <br>
-<p>Must be a valid email address. Example: <code>carolyne.luettgen@example.org</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="password"                data-endpoint="POSTapi-reset-password"
-               value="ij-e/dl4m"
-               data-component="body">
-    <br>
-<p>Must be at least 6 characters. Example: <code>ij-e/dl4m</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="password_confirmation"                data-endpoint="POSTapi-reset-password"
-               value="consequatur"
-               data-component="body">
-    <br>
-<p>Example: <code>consequatur</code></p>
-        </div>
-        </form>
 
                     <h2 id="endpoints-GETapi-roles--id--">Get all roles.</h2>
 
@@ -5624,7 +5463,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php95A.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php3E69.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5839,7 +5678,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php95A.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php3E69.tmp</code></p>
         </div>
         </form>
 
@@ -8333,7 +8172,7 @@ and also handles user mentions (e.g., @username), sending notifications to menti
     --form "model_id=14"\
     --form "content=This is a comment with a mention to @jane."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpBFC.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php4291.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12251,7 +12090,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpF88.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php46AA.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12994,7 +12833,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpD16.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php439C.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13573,7 +13412,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php1035.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php47B5.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -22781,6 +22620,239 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>optional The ID of the note to retrieve. Example: <code>3</code></p>
             </div>
                     </form>
+
+                <h1 id="authentication">Authentication</h1>
+
+    
+
+                                <h2 id="authentication-POSTapi-reset-password">Reset Password (API)</h2>
+
+<p>
+</p>
+
+<p>Reset a user's or client's password using a valid token. This is used after the user clicks a reset link in their email.</p>
+
+<span id="example-requests-POSTapi-reset-password">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/reset-password" \
+    --header "workspace_id: integer required The ID of the workspace the user belongs to. Example: 1" \
+    --header "Accept: application/json" \
+    --header "Content-Type: application/json" \
+    --data "{
+    \"token\": \"abc123\",
+    \"email\": \"john.doe@example.com\",
+    \"password\": \"newPassword123\",
+    \"password_confirmation\": \"newPassword123\",
+    \"account_type\": \"user\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/reset-password"
+);
+
+const headers = {
+    "workspace_id": "integer required The ID of the workspace the user belongs to. Example: 1",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+};
+
+let body = {
+    "token": "abc123",
+    "email": "john.doe@example.com",
+    "password": "newPassword123",
+    "password_confirmation": "newPassword123",
+    "account_type": "user"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-reset-password">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Password reset successful.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;This password reset token is invalid.&quot;,
+    &quot;data&quot;: []
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;An unexpected error occurred.&quot;,
+    &quot;data&quot;: {
+        &quot;error&quot;: &quot;Exception message here&quot;
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-reset-password" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-reset-password"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-reset-password"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-reset-password" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-reset-password">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-reset-password" data-method="POST"
+      data-path="api/reset-password"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-reset-password', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-reset-password"
+                    onclick="tryItOut('POSTapi-reset-password');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-reset-password"
+                    onclick="cancelTryOut('POSTapi-reset-password');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-reset-password"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/reset-password</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-reset-password"
+               value="integer required The ID of the workspace the user belongs to. Example: 1"
+               data-component="header">
+    <br>
+<p>Example: <code>integer required The ID of the workspace the user belongs to. Example: 1</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-reset-password"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-reset-password"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="token"                data-endpoint="POSTapi-reset-password"
+               value="abc123"
+               data-component="body">
+    <br>
+<p>The password reset token from the reset email. Example: <code>abc123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="POSTapi-reset-password"
+               value="john.doe@example.com"
+               data-component="body">
+    <br>
+<p>The email of the user or client. Example: <code>john.doe@example.com</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="POSTapi-reset-password"
+               value="newPassword123"
+               data-component="body">
+    <br>
+<p>The new password (min 6 characters). Example: <code>newPassword123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password_confirmation"                data-endpoint="POSTapi-reset-password"
+               value="newPassword123"
+               data-component="body">
+    <br>
+<p>Must match the password field. Example: <code>newPassword123</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>account_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="account_type"                data-endpoint="POSTapi-reset-password"
+               value="user"
+               data-component="body">
+    <br>
+<p>Type of account: <code>user</code> or <code>client</code>. Example: <code>user</code></p>
+        </div>
+        </form>
 
                 <h1 id="leaverequest-managemant">leaverequest Managemant</h1>
 

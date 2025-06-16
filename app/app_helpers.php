@@ -277,8 +277,7 @@ if (!function_exists('getAuthenticatedUser')) {
         elseif (Auth::guard('client')->check()) {
             $user = Auth::guard('client')->user();
             $prefix = 'c_';
-        }
-        elseif(Auth::guard('sanctum')->check()){
+        } elseif (Auth::guard('sanctum')->check()) {
             $user = Auth::guard('sanctum')->user();
             $prefix = 's_';
         }
@@ -878,10 +877,9 @@ if (!function_exists('getUserPreferences')) {
                                 : ($result->default_view == 'grid' ? 'grid'
                                     : 'projects')))
                         : 'projects';
-                }elseif ($table == 'meetings') {
+                } elseif ($table == 'meetings') {
                     return $result->default_view ?? 'list';
-                }
-                elseif ($table == 'tasks') {
+                } elseif ($table == 'tasks') {
                     return $result && $result->default_view
                         ? ($result->default_view == 'draggable' ? 'tasks/draggable'
                             : ($result->default_view == 'calendar-view' ? 'tasks/calendar-view'
@@ -968,7 +966,7 @@ if (!function_exists('processNotifications')) {
 
             if (!$template || ($template->status !== 0)) {
                 $notification = Notification::create([
-                  'workspace_id' => $data['workspace_id'] ?? session()->get('workspace_id') ?? request()->header('workspace_id'),
+                    'workspace_id' => $data['workspace_id'] ?? session()->get('workspace_id') ?? request()->header('workspace_id'),
                     'from_id' => isClient() ? 'c_' . session()->get('user_id') : 'u_' . session()->get('user_id'),
                     'type' => $type,
                     'type_id' => $data['type_id'],
@@ -2849,7 +2847,7 @@ if (!function_exists('getMenus')) {
                 'icon' => 'bx bx-up-arrow-alt ',
                 'class' => 'menu-item' . (Request::is('master-panel/priority/manage') ? ' active' : ''),
                 'show' => $user->can('manage_priorities') ? 1 : 0,
-                'category'=>'projects and task management'
+                'category' => 'projects and task management'
             ],
             [
                 'id' => 'workspaces',
@@ -3203,7 +3201,7 @@ if (!function_exists('getMenus')) {
 
 
 
-    if (!function_exists('getWorkspaceId')) {
+if (!function_exists('getWorkspaceId')) {
     function getWorkspaceId()
     {
         $workspaceId = 0;
@@ -3265,8 +3263,8 @@ if (!function_exists('formatProject')) {
             'task_count' => isAdminOrHasAllDataAccess() ? count($project->tasks) : $auth_user->project_tasks($project->id)->count(),
             'status' => $project->status->title,
             'status_id' => $project->status->id,
-            'priority' => $project->priority ? $project->priority->title : null,
-            'priority_id' => $project->priority ? $project->priority->id : null,
+            'priority' => $project->priority ? $project->priority->title : '',
+            'priority_id' => $project->priority ? $project->priority->id : 0,
             'users' => $project->users->map(function ($user) {
                 // dd($user);
                 return [
@@ -3295,43 +3293,44 @@ if (!function_exists('formatProject')) {
                 ];
             }),
             'tag_ids' => $project->tags->pluck('id')->toArray(),
-            'start_date' => $project->start_date ? format_date($project->start_date, to_format: 'Y-m-d') : null,
-            'end_date' => $project->end_date ? format_date($project->end_date, to_format: 'Y-m-d') : null,
-            'budget' => $project->budget ?? null,
+            'start_date' => $project->start_date ? format_date($project->start_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
+            'end_date' => $project->end_date ? format_date($project->end_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
+            'budget' => $project->budget ?? 0,
             // dd($project->budget),
             'task_accessibility' => $project->task_accessibility,
             'description' => $project->description,
             'note' => $project->note,
             // dd($project->note),
             'favorite' => $project->is_favorite ? 1 : 0,
-            'client_can_discuss' => $project->client_can_discuss,
+            'client_can_discuss' => $project->client_can_discuss ?? false,
+
             'created_at' => format_date($project->created_at, to_format: 'Y-m-d'),
             'updated_at' => format_date($project->updated_at, to_format: 'Y-m-d'),
         ];
     }
 }
-if(!function_exists('formatComments')) {
+if (!function_exists('formatComments')) {
     function formatComments($comment)
     {
-         return [
-        'id' => $comment->id,
-        'content' => $comment->content,
-        'user' => [
-            'id' => $comment->user?->id,
-            'name' => $comment->user?->name,
-            'email' => $comment->user?->email,
-        ],
-        'attachments' => $comment->attachments->map(function ($attachment) {
-            return [
-                'file_name' => $attachment->file_name,
-                'file_url' => asset('storage/' . $attachment->file_path),
-                'file_type' => $attachment->file_type,
-            ];
-        }),
-        'parent_id' => $comment->parent_id,
-        'created_at' => $comment->created_at->toDateTimeString(),
-        'created_human' => $comment->created_at->diffForHumans(),
-    ];
+        return [
+            'id' => $comment->id,
+            'content' => $comment->content,
+            'user' => [
+                'id' => $comment->user?->id,
+                'name' => $comment->user?->name,
+                'email' => $comment->user?->email,
+            ],
+            'attachments' => $comment->attachments->map(function ($attachment) {
+                return [
+                    'file_name' => $attachment->file_name,
+                    'file_url' => asset('storage/' . $attachment->file_path),
+                    'file_type' => $attachment->file_type,
+                ];
+            }),
+            'parent_id' => $comment->parent_id,
+            'created_at' => $comment->created_at->toDateTimeString(),
+            'created_human' => $comment->created_at->diffForHumans(),
+        ];
     }
 }
 if (!function_exists('formatTask')) {
@@ -3340,8 +3339,8 @@ if (!function_exists('formatTask')) {
     {
 
         $task->load('reminders', 'recurringTask');
-        $reminder = $task->reminders[0] ?? null;
-        $recurringTask = $task->recurringTask ?? null;
+        $reminder = $task->reminders[0] ?? '';
+        $recurringTask = $task->recurringTask ?? [];
         $project = $task->project;
         return [
             'id' => $task->id,
@@ -3349,8 +3348,8 @@ if (!function_exists('formatTask')) {
             'title' => $task->title,
             'status' => $task->status->title,
             'status_id' => $task->status->id,
-            'priority' => $task->priority ? $task->priority->title : null,
-            'priority_id' => $task->priority ? $task->priority->id : null,
+            'priority' => $task->priority ? $task->priority->title : '',
+            'priority_id' => $task->priority ? $task->priority->id : 0,
             'users' => $task->users->map(function ($user) {
                 return [
                     'id' => $user->id,
@@ -3370,34 +3369,36 @@ if (!function_exists('formatTask')) {
                     'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')
                 ];
             }),
-            'start_date' => $task->start_date ? format_date($task->start_date, to_format: 'Y-m-d') : null,
-            'due_date' => $task->due_date ? format_date($task->due_date, to_format: 'Y-m-d') : null,
+            'start_date' => $task->start_date ? format_date($task->start_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
+            'due_date' => $task->due_date ? format_date($task->due_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
             'project' => $task->project->title,
             'project_id' => $task->project->id,
             'description' => $task->description,
             'note' => $task->note,
-           'favorite' => $project->is_favorited ? 1 : 0,
+            'favorite' => $project->is_favorited ? 1 : 0,
 
-            'client_can_discuss' => $task->client_can_discuss,
+            'client_can_discuss' => $task->client_can_discuss ?? false,
             'created_at' => format_date($task->created_at, to_format: 'Y-m-d'),
             'updated_at' => format_date($task->updated_at, to_format: 'Y-m-d'),
             'enable_reminder' => $reminder ? 1 : 0,
-            'last_reminder_sent' => $reminder && $reminder->last_sent_at ? \Carbon\Carbon::parse($reminder->last_sent_at)->diffForHumans() : null,
-            'frequency_type' => $reminder ? $reminder->frequency_type : null,
-            'day_of_week' => $reminder && $reminder->day_of_week ? (int)$reminder->day_of_week : null,
-            'day_of_month' => $reminder && $reminder->day_of_month ? (int)$reminder->day_of_month : null,
-            'time_of_day' => $reminder ? $reminder->time_of_day : null,
+            'last_reminder_sent' => $reminder && $reminder->last_sent_at ? \Carbon\Carbon::parse($reminder->last_sent_at)->diffForHumans() : '',
+            'frequency_type' => $reminder->frequency_type ?? '',
+            'day_of_week'     => isset($reminder->day_of_week) ? (int)$reminder->day_of_week : 0,
+            'day_of_month'    => isset($reminder->day_of_month) ? (int)$reminder->day_of_month : 0,
+            'time_of_day'     => $reminder->time_of_day ?? '',
+
             'enable_recurring_task' => $recurringTask ? 1 : 0,
-            'recurrence_frequency' => $recurringTask ? $recurringTask->frequency : null,
-            'recurrence_day_of_week' => $recurringTask && $recurringTask->day_of_week ? (int)$recurringTask->day_of_week : null,
-            'recurrence_day_of_month' => $recurringTask && $recurringTask->day_of_month ? (int)$recurringTask->day_of_month : null,
-            'recurrence_month_of_year' => $recurringTask && $recurringTask->month_of_year ? (int)$recurringTask->month_of_year : null,
-            'recurrence_starts_from' => $recurringTask ? format_date($recurringTask->starts_from, to_format: 'Y-m-d') : null,
-            'recurrence_occurrences' => $recurringTask && $recurringTask->number_of_occurrences ? (int)$recurringTask->number_of_occurrences : null,
-            'completed_occurrences' => $recurringTask && $recurringTask->completed_occurrences ? (int)$recurringTask->completed_occurrences : null,
+            'recurrence_frequency' => $recurringTask ? $recurringTask->frequency : '',
+            'recurrence_day_of_week' => $recurringTask && $recurringTask->day_of_week ? (int)$recurringTask->day_of_week : 0,
+            'recurrence_day_of_month' => $recurringTask && $recurringTask->day_of_month ? (int)$recurringTask->day_of_month : 0,
+            'recurrence_month_of_year' => $recurringTask && $recurringTask->month_of_year ? (int)$recurringTask->month_of_year : 0,
+            'recurrence_starts_from' => $recurringTask ? format_date($recurringTask->starts_from, to_format: 'Y-m-d') : 0000-00-00,
+            'recurrence_occurrences' => $recurringTask && $recurringTask->number_of_occurrences ? (int)$recurringTask->number_of_occurrences : 0,
+            'completed_occurrences' => $recurringTask && $recurringTask->completed_occurrences ? (int)$recurringTask->completed_occurrences : 0,
             'billing_type' => $task->billing_type,
+            'task_list_id' => $task->task_list_id ?? 0,
             'completion_percentage' => $task->completion_percentage,
-            'task_list_id' => $task->task_list_id,
+
 
         ];
     }
@@ -3416,469 +3417,469 @@ if (!function_exists('formateMedia')) {
         ];
     }
 
-if (!function_exists('formatClient')) {
-    function formatClient($client, $isSignup = false)
-    {
-        return [
-            'id' => $client->id,
-            'first_name' => $client->first_name,
-            'last_name' => $client->last_name,
-            'role' => $client->getRoleNames()->first(),
-            'company' => $client->company,
-            'email' => $client->email,
-            'phone' => $client->phone,
-            'country_code' => $client->country_code,
-            'country_iso_code' => $client->country_iso_code,
-            'password' => $client->password,
-            'password_confirmation' => $client->password,
-            'type' => 'client',
-            'dob' => $client->dob ? format_date($client->dob, to_format: 'Y-m-d') : null,
-            'doj' => $client->doj ? format_date($client->doj, to_format: 'Y-m-d') : null,
-            'address' => $client->address ? $client->address : null,
-            'city' => $client->city,
-            'state' => $client->state,
-            'country' => $client->country,
-            'zip' => $client->zip,
-            'profile' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
-            'status' => $client->status,
-            'fcm_token' => $client->fcm_token,
-            'internal_purpose' => $client->internal_purpose,
-            'email_verification_mail_sent' => $client->email_verification_mail_sent,
-            'email_verified_at' => $client->email_verified_at,
-            'created_at' => format_date($client->created_at, to_format: 'Y-m-d'),
-            'updated_at' => format_date($client->updated_at, to_format: 'Y-m-d'),
-            'assigned' => $isSignup ? [
-                'projects' => 0,
-                'tasks' => 0
-            ] : (
-                isAdminOrHasAllDataAccess('client', $client->id) ? [
-                    'projects' => Workspace::find(getWorkspaceId())->projects()->count(),
-                    'tasks' => Workspace::find(getWorkspaceId())->tasks()->count(),
-                ] : [
-                    'projects' => $client->projects()->count(),
-                    'tasks' => $client->tasks()->count()
-                ]
-            )
-        ];
-    }
-}
-if (!function_exists('formatPriority')) {
-    /**
-     * Format the Priority model for API response.
-     *
-     * @param \App\Models\Priority $priority
-     * @return array
-     */
-    function formatPriority($priority)
-    {
-        return [
-            'id' => $priority->id,
-            'title' => $priority->title,
-            'slug' => $priority->slug,
-            'color' => $priority->color,
-            'admin_id' => $priority->admin_id,
-            'created_at' => $priority->created_at ? $priority->created_at->toDateTimeString() : null,
-            'updated_at' => $priority->updated_at ? $priority->updated_at->toDateTimeString() : null,
-        ];
-    }
-}
-if (!function_exists('formatUser')) {
-    /**
-     * Format the given user for API responses.
-     *
-     * @param \App\Models\User $user
-     * @return array
-     */
-    function formatUser($user)
-    {
-        return [
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'full_name' => trim($user->first_name . ' ' . $user->last_name),
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'address' => $user->address,
-            'country_code' => $user->country_code,
-            'city' => $user->city,
-            'state' => $user->state,
-            'country' => $user->country,
-            'zip' => $user->zip,
-            'dob' => optional($user->dob)->format('Y-m-d'),
-            'doj' => optional($user->doj)->format('Y-m-d'),
-            'role' => $user->roles->pluck('name')->first(), // assuming one role per user
-            'status' => $user->status,
-            'email_verified' => !is_null($user->email_verified_at),
-            'photo_url' => $user->photo
-                ? asset('storage/' . $user->photo)
-                : asset('storage/photos/no-image.jpg'),
-            'created_at' => $user->created_at ? $user->created_at->toDateTimeString() : null,
-            'updated_at' => $user->updated_at ? $user->updated_at->toDateTimeString() : null,
-        ];
-    }
-}
-function formatWorkspace($workspace)
-{
-    $workspace->load(['users', 'clients']); // Eager load relations
-
-    return [
-        'id' => $workspace->id,
-        'title' => $workspace->title,
-        'is_primary' => (bool) $workspace->is_primary,
-        'users' => $workspace->users->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
-            ];
-        })->values(),
-        'clients' => $workspace->clients->map(function ($client) {
+    if (!function_exists('formatClient')) {
+        function formatClient($client, $isSignup = false)
+        {
             return [
                 'id' => $client->id,
                 'first_name' => $client->first_name,
                 'last_name' => $client->last_name,
-                'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
+                'role' => $client->getRoleNames()->first(),
+                'company' => $client->company,
+                'email' => $client->email,
+                'phone' => $client->phone,
+                'country_code' => $client->country_code,
+                'country_iso_code' => $client->country_iso_code,
+                'password' => $client->password,
+                'password_confirmation' => $client->password,
+                'type' => 'client',
+                'dob' => $client->dob ? format_date($client->dob, to_format: 'Y-m-d') : 0000-00-00,
+                'doj' => $client->doj ? format_date($client->doj, to_format: 'Y-m-d') : 0000-00-00,
+                'address' => $client->address ? $client->address : null,
+                'city' => $client->city,
+                'state' => $client->state,
+                'country' => $client->country,
+                'zip' => $client->zip,
+                'profile' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
+                'status' => $client->status,
+                'fcm_token' => $client->fcm_token,
+                'internal_purpose' => $client->internal_purpose,
+                'email_verification_mail_sent' => $client->email_verification_mail_sent,
+                'email_verified_at' => $client->email_verified_at,
+                'created_at' => format_date($client->created_at, to_format: 'Y-m-d'),
+                'updated_at' => format_date($client->updated_at, to_format: 'Y-m-d'),
+                'assigned' => $isSignup ? [
+                    'projects' => 0,
+                    'tasks' => 0
+                ] : (
+                    isAdminOrHasAllDataAccess('client', $client->id) ? [
+                        'projects' => Workspace::find(getWorkspaceId())->projects()->count(),
+                        'tasks' => Workspace::find(getWorkspaceId())->tasks()->count(),
+                    ] : [
+                        'projects' => $client->projects()->count(),
+                        'tasks' => $client->tasks()->count()
+                    ]
+                )
             ];
-        })->values(),
-        'created_at' => format_date($workspace->created_at, true),
-        'updated_at' => format_date($workspace->updated_at, true),
-    ];
-}
-if (!function_exists('formatTodo')) {
-    function formatTodo($todo)
-    {
-        return [
-            'id' => $todo->id,
-            'title' => $todo->title,
-            'priority' => $todo->priority,
-            'description' => $todo->description,
-            'workspace_id' => $todo->workspace_id,
-            'admin_id' => $todo->admin_id,
-            'creator' => [
-                'id' => $todo->creator->id ?? null,
-                'first_name' => $todo->creator->first_name ?? null,
-                'last_name' => $todo->creator->last_name ?? null,
-                'photo' => isset($todo->creator->photo)
-                    ? asset('storage/' . $todo->creator->photo)
-                    : asset('storage/photos/no-image.jpg'),
-            ],
-            'created_at' => $todo->created_at ? $todo->created_at->format('Y-m-d H:i:s') : null,
-            'updated_at' => $todo->updated_at ? $todo->updated_at->format('Y-m-d H:i:s') : null,
-        ];
+        }
     }
-}
-function formatIssue($issue)
-{
-    return [
-        'id' => $issue->id,
-        'project_id' => $issue->project_id,
-        'title' => $issue->title,
-        'description' => $issue->description,
-        'status' => $issue->status,
-
-        // Creator info
-        'created_by' => [
-            'id' => optional($issue->creator)->id,
-            'first_name' => optional($issue->creator)->first_name,
-            'last_name' => optional($issue->creator)->last_name,
-            'email' => optional($issue->creator)->email,
-        ],
-
-        // Assigned users
-        'assignees' => $issue->users->map(function ($user) {
+    if (!function_exists('formatPriority')) {
+        /**
+         * Format the Priority model for API response.
+         *
+         * @param \App\Models\Priority $priority
+         * @return array
+         */
+        function formatPriority($priority)
+        {
+            return [
+                'id' => $priority->id,
+                'title' => $priority->title,
+                'slug' => $priority->slug,
+                'color' => $priority->color,
+                'admin_id' => $priority->admin_id,
+                'created_at' => $priority->created_at ? $priority->created_at->toDateTimeString() : '',
+                'updated_at' => $priority->updated_at ? $priority->updated_at->toDateTimeString() : '',
+            ];
+        }
+    }
+    if (!function_exists('formatUser')) {
+        /**
+         * Format the given user for API responses.
+         *
+         * @param \App\Models\User $user
+         * @return array
+         */
+        function formatUser($user)
+        {
             return [
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
+                'full_name' => trim($user->first_name . ' ' . $user->last_name),
                 'email' => $user->email,
-                'photo' => $user->photo ? asset('storage/' . $user->photo) : null,
+                'phone' => $user->phone,
+                'address' => $user->address,
+                'country_code' => $user->country_code,
+                'city' => $user->city,
+                'state' => $user->state,
+                'country' => $user->country,
+                'zip' => $user->zip,
+                'dob' => optional($user->dob)->format('Y-m-d'),
+                'doj' => optional($user->doj)->format('Y-m-d'),
+                'role' => $user->roles->pluck('name')->first(), // assuming one role per user
+                'status' => $user->status,
+                'email_verified' => !is_null($user->email_verified_at),
+                'photo_url' => $user->photo
+                    ? asset('storage/' . $user->photo)
+                    : asset('storage/photos/no-image.jpg'),
+                'created_at' => $user->created_at ? $user->created_at->toDateTimeString() :'',
+                'updated_at' => $user->updated_at ? $user->updated_at->toDateTimeString() : '',
             ];
-        })->values(),
-
-        // Timestamps
-        'created_at' => $issue->created_at ? $issue->created_at->toDateTimeString() : null,
-        'updated_at' => $issue->updated_at ? $issue->updated_at->toDateTimeString() : null,
-    ];
-}
-
-
-
-if (!function_exists('getFavoriteStatus')) {
-    function getFavoriteStatus($id, $model = \App\Models\Favorite::class)
-    {
-        // Ensure the model is valid and exists
-        if (!class_exists($model) || !$model::find($id)) {
-            return false; // Return false if the model class doesn't exist or the specific entity doesn't exist
         }
-
-        // Get the authenticated user (either a User or a Client)
-        $authUser = getAuthenticatedUser();
-
-        // Get the favorite based on the provided model (e.g., Project, Task, etc.)
-        $isFavorited = $authUser->favorites()
-            ->where('favoritable_type', $model)
-            ->where('favoritable_id', $id)
-            ->exists();
-
-        return (int) $isFavorited;
     }
-}
-if (!function_exists('formatMeeting')) {
-    function formatMeeting($meeting)
+    function formatWorkspace($workspace)
     {
+        $workspace->load(['users', 'clients']); // Eager load relations
+
         return [
-            'id' => $meeting->id,
-            'title' => $meeting->title,
-            'start_date_time' => $meeting->start_date_time,
-            'end_date_time' => $meeting->end_date_time,
-            'workspace_id' => $meeting->workspace_id,
-            'admin_id' => $meeting->admin_id,
-            'user_id' => $meeting->user_id,
-            'users' => $meeting->users->map(function ($user) {
+            'id' => $workspace->id,
+            'title' => $workspace->title,
+            'is_primary' => (bool) $workspace->is_primary,
+            'users' => $workspace->users->map(function ($user) {
                 return [
                     'id' => $user->id,
                     'first_name' => $user->first_name,
-                    'last_name' => $user->last_name
-
+                    'last_name' => $user->last_name,
+                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
                 ];
-            }),
-            'clients' => $meeting->clients->map(function ($client) {
+            })->values(),
+            'clients' => $workspace->clients->map(function ($client) {
                 return [
                     'id' => $client->id,
                     'first_name' => $client->first_name,
-                    'last_name' => $client->last_name
-
+                    'last_name' => $client->last_name,
+                    'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
                 ];
-            }),
-            'created_at' => $meeting->created_at ? $meeting->created_at->toDateTimeString() : null,
-            'updated_at' => $meeting->updated_at ? $meeting->updated_at->toDateTimeString() : null,
+            })->values(),
+            'created_at' => format_date($workspace->created_at, true),
+            'updated_at' => format_date($workspace->updated_at, true),
         ];
     }
-}
-if (!function_exists('formatNote')) {
-    function formatNote($note)
-    {
-        return [
-            'id' => $note->id,
-            'title' => $note->title,
-            'note_type' => $note->note_type,
-            'color' => $note->color,
-            'description' => $note->description,
-            'drawing_data' => $note->note_type === 'drawing' ? $note->drawing_data : null,
-            'creator_id' => $note->creator_id,
-            'admin_id' => $note->admin_id,
-            'workspace_id' => $note->workspace_id,
-            'created_at' => format_date($note->created_at, true),
-            'updated_at' => format_date($note->updated_at, true),
-        ];
-    }
-}
-
-function sanitizeUTF8($value)
-{
-    if (is_string($value)) {
-        return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
-    }
-    if (is_array($value)) {
-        return array_map('sanitizeUTF8', $value);
-    }
-    return $value;
-}
-
-if (!function_exists('formatLeaveRequest')) {
-    function formatLeaveRequest($leaveRequest)
-    {
-        if (!$leaveRequest) {
-            return null;
+    if (!function_exists('formatTodo')) {
+        function formatTodo($todo)
+        {
+            return [
+                'id' => $todo->id,
+                'title' => $todo->title,
+                'priority' => $todo->priority,
+                'description' => $todo->description,
+                'workspace_id' => $todo->workspace_id,
+                'admin_id' => $todo->admin_id,
+                'creator' => [
+                    'id' => $todo->creator->id ?? 0,
+                    'first_name' => $todo->creator->first_name ?? '',
+                    'last_name' => $todo->creator->last_name ?? '',
+                    'photo' => isset($todo->creator->photo)
+                        ? asset('storage/' . $todo->creator->photo)
+                        : asset('storage/photos/no-image.jpg'),
+                ],
+                'created_at' => $todo->created_at ? $todo->created_at->format('Y-m-d H:i:s') : 0000-00-00 . ' 00:00:00',
+                'updated_at' => $todo->updated_at ? $todo->updated_at->format('Y-m-d H:i:s') : 0000-00-00 . ' 00:00:00',
+            ];
         }
-
+    }
+    function formatIssue($issue)
+    {
         return [
-            'id' => $leaveRequest->id,
-            'reason' => $leaveRequest->reason,
-            'from_date' => $leaveRequest->from_date,
-            'to_date' => $leaveRequest->to_date,
-            'from_time' => $leaveRequest->from_time,
-            'to_time' => $leaveRequest->to_time,
-            'status' => $leaveRequest->status,
-            'user_id' => $leaveRequest->user_id,
-            'workspace_id' => $leaveRequest->workspace_id,
-            'admin_id' => $leaveRequest->admin_id,
-            'action_by' => $leaveRequest->action_by,
-            'visible_to_all' => (bool) $leaveRequest->visible_to_all,
-            'created_at' => $leaveRequest->created_at ? $leaveRequest->created_at->toDateTimeString() : null,
-            'updated_at' => $leaveRequest->updated_at ? $leaveRequest->updated_at->toDateTimeString() : null,
-            // Optional: Include user details
-            'user' => $leaveRequest->user ? [
-                'id' => $leaveRequest->user->id,
-                'name' => $leaveRequest->user->name,
-                'email' => $leaveRequest->user->email,
-            ] : null,
-            // Optional: Include visibility users if not visible to all
-            'visible_to_users' => !$leaveRequest->visible_to_all
-                ? $leaveRequest->visibleToUsers->map(function ($user) {
+            'id' => $issue->id,
+            'project_id' => $issue->project_id,
+            'title' => $issue->title,
+            'description' => $issue->description,
+            'status' => $issue->status,
+
+            // Creator info
+            'created_by' => [
+                'id' => optional($issue->creator)->id,
+                'first_name' => optional($issue->creator)->first_name,
+                'last_name' => optional($issue->creator)->last_name,
+                'email' => optional($issue->creator)->email,
+            ],
+
+            // Assigned users
+            'assignees' => $issue->users->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'photo' => $user->photo ? asset('storage/' . $user->photo) : '',
+                ];
+            })->values(),
+
+            // Timestamps
+            'created_at' => $issue->created_at ? $issue->created_at->toDateTimeString() : '',
+            'updated_at' => $issue->updated_at ? $issue->updated_at->toDateTimeString() : '',
+        ];
+    }
+
+
+
+    if (!function_exists('getFavoriteStatus')) {
+        function getFavoriteStatus($id, $model = \App\Models\Favorite::class)
+        {
+            // Ensure the model is valid and exists
+            if (!class_exists($model) || !$model::find($id)) {
+                return false; // Return false if the model class doesn't exist or the specific entity doesn't exist
+            }
+
+            // Get the authenticated user (either a User or a Client)
+            $authUser = getAuthenticatedUser();
+
+            // Get the favorite based on the provided model (e.g., Project, Task, etc.)
+            $isFavorited = $authUser->favorites()
+                ->where('favoritable_type', $model)
+                ->where('favoritable_id', $id)
+                ->exists();
+
+            return (int) $isFavorited;
+        }
+    }
+    if (!function_exists('formatMeeting')) {
+        function formatMeeting($meeting)
+        {
+            return [
+                'id' => $meeting->id,
+                'title' => $meeting->title,
+                'start_date_time' => $meeting->start_date_time,
+                'end_date_time' => $meeting->end_date_time,
+                'workspace_id' => $meeting->workspace_id,
+                'admin_id' => $meeting->admin_id,
+                'user_id' => $meeting->user_id,
+                'users' => $meeting->users->map(function ($user) {
                     return [
                         'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
+                        'first_name' => $user->first_name,
+                        'last_name' => $user->last_name
+
                     ];
-                })->toArray()
-                : [],
-        ];
+                }),
+                'clients' => $meeting->clients->map(function ($client) {
+                    return [
+                        'id' => $client->id,
+                        'first_name' => $client->first_name,
+                        'last_name' => $client->last_name
+
+                    ];
+                }),
+                'created_at' => $meeting->created_at ? $meeting->created_at->toDateTimeString() : '',
+                'updated_at' => $meeting->updated_at ? $meeting->updated_at->toDateTimeString() : '',
+            ];
+        }
     }
-}
+    if (!function_exists('formatNote')) {
+        function formatNote($note)
+        {
+            return [
+                'id' => $note->id,
+                'title' => $note->title,
+                'note_type' => $note->note_type,
+                'color' => $note->color,
+                'description' => $note->description,
+                'drawing_data' => $note->note_type === 'drawing' ? $note->drawing_data : '',
+                'creator_id' => $note->creator_id,
+                'admin_id' => $note->admin_id,
+                'workspace_id' => $note->workspace_id,
+                'created_at' => format_date($note->created_at, true),
+                'updated_at' => format_date($note->updated_at, true),
+            ];
+        }
+    }
 
-
-if (!function_exists('formatApiValidationError')) {
-    function formatApiValidationError($isApi, $errors, $defaultMessage = 'Validation errors occurred')
+    function sanitizeUTF8($value)
     {
-        if ($isApi) {
-            $messages = collect($errors)->flatten()->implode("\n");
-            return response()->json([
-                'error' => true,
-                'message' => $messages,
-            ], 422);
-        } else {
-            return response()->json([
-                'error' => true,
-                'message' => $defaultMessage,
-                'errors' => $errors,
-            ], 422);
+        if (is_string($value)) {
+            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+        }
+        if (is_array($value)) {
+            return array_map('sanitizeUTF8', $value);
+        }
+        return $value;
+    }
+
+    if (!function_exists('formatLeaveRequest')) {
+        function formatLeaveRequest($leaveRequest)
+        {
+            if (!$leaveRequest) {
+                return null;
+            }
+
+            return [
+                'id' => $leaveRequest->id,
+                'reason' => $leaveRequest->reason,
+                'from_date' => $leaveRequest->from_date,
+                'to_date' => $leaveRequest->to_date,
+                'from_time' => $leaveRequest->from_time,
+                'to_time' => $leaveRequest->to_time,
+                'status' => $leaveRequest->status,
+                'user_id' => $leaveRequest->user_id,
+                'workspace_id' => $leaveRequest->workspace_id,
+                'admin_id' => $leaveRequest->admin_id,
+                'action_by' => $leaveRequest->action_by,
+                'visible_to_all' => (bool) $leaveRequest->visible_to_all,
+                'created_at' => $leaveRequest->created_at ? $leaveRequest->created_at->toDateTimeString() : '',
+                'updated_at' => $leaveRequest->updated_at ? $leaveRequest->updated_at->toDateTimeString() : '',
+                // Optional: Include user details
+                'user' => $leaveRequest->user ? [
+                    'id' => $leaveRequest->user->id,
+                    'name' => $leaveRequest->user->name,
+                    'email' => $leaveRequest->user->email,
+                ] : null,
+                // Optional: Include visibility users if not visible to all
+                'visible_to_users' => !$leaveRequest->visible_to_all
+                    ? $leaveRequest->visibleToUsers->map(function ($user) {
+                        return [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                        ];
+                    })->toArray()
+                    : [],
+            ];
         }
     }
-}
-if (!function_exists('validate_date_format_and_order')) {
-    /**
-     * Validate if a date matches the format specified and ensure the start date is before or equal to the end date.
-     *
-     * @param string|null $startDate
-     * @param string|null $endDate
-     * @param string|null $format
-     * @param string $startDateLabel
-     * @param string $endDateLabel
-     * @param string $startDateKey
-     * @param string $endDateKey
-     * @return array
-     */
-    function validate_date_format_and_order(
-        $startDate,
-        $endDate,
-        $format = null,
-        $startDateLabel = 'start date',
-        $endDateLabel = 'end date',
-        $startDateKey = 'start_date',
-        $endDateKey = 'end_date'
-    ) {
-        $matchFormat = $format ?? get_php_date_time_format();
 
-        $errors = [];
 
-        // Validate start date format
-        if ($startDate && !validate_date_format($startDate, $matchFormat)) {
-            $errors[$startDateKey][] = 'The ' . $startDateLabel . ' does not follow the format set in settings.';
-        }
-
-        // Validate end date format
-        if ($endDate && !validate_date_format($endDate, $matchFormat)) {
-            $errors[$endDateKey][] = 'The ' . $endDateLabel . ' does not follow the format set in settings.';
-        }
-
-        // Validate date order
-        if ($startDate && $endDate) {
-            $parsedStartDate = \DateTime::createFromFormat($matchFormat, $startDate);
-            $parsedEndDate = \DateTime::createFromFormat($matchFormat, $endDate);
-
-            if ($parsedStartDate && $parsedEndDate && $parsedStartDate > $parsedEndDate) {
-                $errors[$startDateKey][] = 'The ' . $startDateLabel . ' must be before or equal to the ' . $endDateLabel . '.';
+    if (!function_exists('formatApiValidationError')) {
+        function formatApiValidationError($isApi, $errors, $defaultMessage = 'Validation errors occurred')
+        {
+            if ($isApi) {
+                $messages = collect($errors)->flatten()->implode("\n");
+                return response()->json([
+                    'error' => true,
+                    'message' => $messages,
+                ], 422);
+            } else {
+                return response()->json([
+                    'error' => true,
+                    'message' => $defaultMessage,
+                    'errors' => $errors,
+                ], 422);
             }
         }
-
-        return $errors;
     }
-}
-if (!function_exists('validate_date_format')) {
-    /**
-     * Validate if a date matches the format specified in settings.
-     *
-     * @param string $date
-     * @param string|null $format
-     * @return bool
-     */
-    function validate_date_format($date, $format = null)
-    {
-        $format = $format ?? get_php_date_time_format();
-        $parsedDate = \DateTime::createFromFormat($format, $date);
-        return $parsedDate && $parsedDate->format($format) === $date;
-    }
-}
-
-
-if (!function_exists('validate_currency_format')) {
-    /**
-     * Validates currency format (e.g., 1,000.00 or 1000.00).
-     *
-     * @param string|float|null $value
-     * @param string $field
-     * @return string|null Error message or null if valid
-     */
-    function validate_currency_format($value, $field = 'amount')
-    {
-        if (is_null($value) || $value === '') {
-            return null; // Allow nullable
-        }
-
-        // Remove commas to allow formatted input like "1,000.00"
-        $unformatted = str_replace(',', '', $value);
-
-        // Check if it's a valid number with optional 2 decimal places
-        if (!preg_match('/^\d+(\.\d{1,2})?$/', $unformatted)) {
-            return ucfirst($field) . ' must be a valid currency format (e.g. 1000.00)';
-        }
-
-        return null; // Valid
-    }
-    if (!function_exists('formatUserHtml')) {
-    function formatUserHtml($user)
-    {
-        if (!$user) {
-            return "-";
-        }
-
-        // Get the authenticated user
-        $authenticatedUser = getAuthenticatedUser();
-
-        // Get the guard name (web or client)
-        $guardName = getGuardName();
-
-        // Check if the authenticated user is the same as the user being displayed
-        if (
-            ($guardName === 'web' && $authenticatedUser->id === $user->id) ||
-            ($guardName === 'client' && $authenticatedUser->id === $user->id)
+    if (!function_exists('validate_date_format_and_order')) {
+        /**
+         * Validate if a date matches the format specified and ensure the start date is before or equal to the end date.
+         *
+         * @param string|null $startDate
+         * @param string|null $endDate
+         * @param string|null $format
+         * @param string $startDateLabel
+         * @param string $endDateLabel
+         * @param string $startDateKey
+         * @param string $endDateKey
+         * @return array
+         */
+        function validate_date_format_and_order(
+            $startDate,
+            $endDate,
+            $format = null,
+            $startDateLabel = 'start date',
+            $endDateLabel = 'end date',
+            $startDateKey = 'start_date',
+            $endDateKey = 'end_date'
         ) {
-            // Don't show the "Make Call" option if it's the logged-in user
-            $makeCallIcon = '';
-        } else {
-            // Check if the phone number or both phone and country code exist
-            $makeCallIcon = '';
-            if (!empty($user->phone) || (!empty($user->phone) && !empty($user->country_code))) {
-                $makeCallLink = 'tel:' . ($user->country_code ? $user->country_code . $user->phone : $user->phone);
-                $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+            $matchFormat = $format ?? get_php_date_time_format();
+
+            $errors = [];
+
+            // Validate start date format
+            if ($startDate && !validate_date_format($startDate, $matchFormat)) {
+                $errors[$startDateKey][] = 'The ' . $startDateLabel . ' does not follow the format set in settings.';
+            }
+
+            // Validate end date format
+            if ($endDate && !validate_date_format($endDate, $matchFormat)) {
+                $errors[$endDateKey][] = 'The ' . $endDateLabel . ' does not follow the format set in settings.';
+            }
+
+            // Validate date order
+            if ($startDate && $endDate) {
+                $parsedStartDate = \DateTime::createFromFormat($matchFormat, $startDate);
+                $parsedEndDate = \DateTime::createFromFormat($matchFormat, $endDate);
+
+                if ($parsedStartDate && $parsedEndDate && $parsedStartDate > $parsedEndDate) {
+                    $errors[$startDateKey][] = 'The ' . $startDateLabel . ' must be before or equal to the ' . $endDateLabel . '.';
+                }
+            }
+
+            return $errors;
+        }
+    }
+    if (!function_exists('validate_date_format')) {
+        /**
+         * Validate if a date matches the format specified in settings.
+         *
+         * @param string $date
+         * @param string|null $format
+         * @return bool
+         */
+        function validate_date_format($date, $format = null)
+        {
+            $format = $format ?? get_php_date_time_format();
+            $parsedDate = \DateTime::createFromFormat($format, $date);
+            return $parsedDate && $parsedDate->format($format) === $date;
+        }
+    }
+
+
+    if (!function_exists('validate_currency_format')) {
+        /**
+         * Validates currency format (e.g., 1,000.00 or 1000.00).
+         *
+         * @param string|float|null $value
+         * @param string $field
+         * @return string|null Error message or null if valid
+         */
+        function validate_currency_format($value, $field = 'amount')
+        {
+            if (is_null($value) || $value === '') {
+                return null; // Allow nullable
+            }
+
+            // Remove commas to allow formatted input like "1,000.00"
+            $unformatted = str_replace(',', '', $value);
+
+            // Check if it's a valid number with optional 2 decimal places
+            if (!preg_match('/^\d+(\.\d{1,2})?$/', $unformatted)) {
+                return ucfirst($field) . ' must be a valid currency format (e.g. 1000.00)';
+            }
+
+            return null; // Valid
+        }
+        if (!function_exists('formatUserHtml')) {
+            function formatUserHtml($user)
+            {
+                if (!$user) {
+                    return "-";
+                }
+
+                // Get the authenticated user
+                $authenticatedUser = getAuthenticatedUser();
+
+                // Get the guard name (web or client)
+                $guardName = getGuardName();
+
+                // Check if the authenticated user is the same as the user being displayed
+                if (
+                    ($guardName === 'web' && $authenticatedUser->id === $user->id) ||
+                    ($guardName === 'client' && $authenticatedUser->id === $user->id)
+                ) {
+                    // Don't show the "Make Call" option if it's the logged-in user
+                    $makeCallIcon = '';
+                } else {
+                    // Check if the phone number or both phone and country code exist
+                    $makeCallIcon = '';
+                    if (!empty($user->phone) || (!empty($user->phone) && !empty($user->country_code))) {
+                        $makeCallLink = 'tel:' . ($user->country_code ? $user->country_code . $user->phone : $user->phone);
+                        $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
                                      <i class="bx bx-phone-call text-primary"></i>
                                    </a>';
-            }
-        }
+                    }
+                }
 
-        // If the user has 'manage_users' permission, return the full HTML with links
-        $profileLink = route('users.profile', ['id' => $user->id]);
-        $photoUrl = $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg');
+                // If the user has 'manage_users' permission, return the full HTML with links
+                $profileLink = route('users.profile', ['id' => $user->id]);
+                $photoUrl = $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg');
 
-        // Create the Send Mail link
-        $sendMailLink = 'mailto:' . $user->email;
-        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                // Create the Send Mail link
+                $sendMailLink = 'mailto:' . $user->email;
+                $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
                             <i class="bx bx-envelope text-primary"></i>
                           </a>';
 
-        return "<div class='d-flex justify-content-start align-items-center user-name'>
+                return "<div class='d-flex justify-content-start align-items-center user-name'>
                     <div class='avatar-wrapper me-3'>
                         <div class='avatar avatar-sm pull-up'>
                             <a href='{$profileLink}'>
@@ -3891,50 +3892,50 @@ if (!function_exists('validate_currency_format')) {
                         <small class='text-muted'>{$user->email} {$sendMailIcon}</small>
                     </div>
                 </div>";
-    }
-}
-if (!function_exists('formatClientHtml')) {
-    function formatClientHtml($client)
-    {
-        if (!$client) {
-            return "-";
-        }
-
-        // Get the authenticated user
-        $authenticatedUser = getAuthenticatedUser();
-
-        // Get the guard name (web or client)
-        $guardName = getGuardName();
-
-        // Check if the authenticated user is the same as the client being displayed
-        if (
-            ($guardName === 'web' && $authenticatedUser->id === $client->id) ||
-            ($guardName === 'client' && $authenticatedUser->id === $client->id)
-        ) {
-            // Don't show the "Make Call" option if it's the logged-in client
-            $makeCallIcon = '';
-        } else {
-            // Check if the phone number or both phone and country code exist
-            $makeCallIcon = '';
-            if (!empty($client->phone) || (!empty($client->phone) && !empty($client->country_code))) {
-                $makeCallLink = 'tel:' . ($client->country_code ? $client->country_code . $client->phone : $client->phone);
-                $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
-                                     <i class="bx bx-phone-call text-primary"></i>
-                                   </a>';
             }
         }
+        if (!function_exists('formatClientHtml')) {
+            function formatClientHtml($client)
+            {
+                if (!$client) {
+                    return "-";
+                }
 
-        // If the user has 'manage_clients' permission, return the full HTML with links
-        $profileLink = route('clients.profile', ['id' => $client->id]);
-        $photoUrl = $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg');
+                // Get the authenticated user
+                $authenticatedUser = getAuthenticatedUser();
 
-        // Create the Send Mail link
-        $sendMailLink = 'mailto:' . $client->email;
-        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                // Get the guard name (web or client)
+                $guardName = getGuardName();
+
+                // Check if the authenticated user is the same as the client being displayed
+                if (
+                    ($guardName === 'web' && $authenticatedUser->id === $client->id) ||
+                    ($guardName === 'client' && $authenticatedUser->id === $client->id)
+                ) {
+                    // Don't show the "Make Call" option if it's the logged-in client
+                    $makeCallIcon = '';
+                } else {
+                    // Check if the phone number or both phone and country code exist
+                    $makeCallIcon = '';
+                    if (!empty($client->phone) || (!empty($client->phone) && !empty($client->country_code))) {
+                        $makeCallLink = 'tel:' . ($client->country_code ? $client->country_code . $client->phone : $client->phone);
+                        $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+                                     <i class="bx bx-phone-call text-primary"></i>
+                                   </a>';
+                    }
+                }
+
+                // If the user has 'manage_clients' permission, return the full HTML with links
+                $profileLink = route('clients.profile', ['id' => $client->id]);
+                $photoUrl = $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg');
+
+                // Create the Send Mail link
+                $sendMailLink = 'mailto:' . $client->email;
+                $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
                             <i class="bx bx-envelope text-primary"></i>
                           </a>';
 
-        return "<div class='d-flex justify-content-start align-items-center user-name'>
+                return "<div class='d-flex justify-content-start align-items-center user-name'>
                     <div class='avatar-wrapper me-3'>
                         <div class='avatar avatar-sm pull-up'>
                             <a href='{$profileLink}'>
@@ -3947,9 +3948,7 @@ if (!function_exists('formatClientHtml')) {
                         <small class='text-muted'>{$client->email} {$sendMailIcon}</small>
                     </div>
                 </div>";
+            }
+        }
     }
-}
-}
-
-
 }

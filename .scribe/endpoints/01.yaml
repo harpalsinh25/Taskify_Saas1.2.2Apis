@@ -344,3 +344,124 @@ endpoints:
     method: null
     route: null
     custom: []
+  -
+    httpMethods:
+      - POST
+    uri: api/reset-password
+    metadata:
+      groupName: 'User Authentication'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Reset Password (API)'
+      description: "Reset a user's or client's password using a valid token. This is used after the user clicks a reset link in their email."
+      authenticated: false
+      custom: []
+    headers:
+      workspace_id: 'integer required The ID of the workspace the user belongs to. Example: 1'
+      Accept: application/json
+      Content-Type: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      token:
+        name: token
+        description: 'The password reset token from the reset email.'
+        required: true
+        example: abc123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      email:
+        name: email
+        description: 'The email of the user or client.'
+        required: true
+        example: john.doe@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      password:
+        name: password
+        description: 'The new password (min 6 characters).'
+        required: true
+        example: newPassword123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      password_confirmation:
+        name: password_confirmation
+        description: 'Must match the password field.'
+        required: true
+        example: newPassword123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      account_type:
+        name: account_type
+        description: 'Type of account: `user` or `client`.'
+        required: true
+        example: user
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      token: abc123
+      email: john.doe@example.com
+      password: newPassword123
+      password_confirmation: newPassword123
+      account_type: user
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Password reset successful.",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "error": true,
+            "message": "This password reset token is invalid.",
+            "data": []
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "An unexpected error occurred.",
+            "data": {
+              "error": "Exception message here"
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

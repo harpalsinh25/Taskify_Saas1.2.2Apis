@@ -176,6 +176,91 @@ class ForgotPasswordController extends Controller
         }
     }
 
+/**
+ * Reset Password (API)
+ *
+ * Reset a user's or client's password using a valid token. This is used after the user clicks a reset link in their email.
+ *
+ * @group User Authentication
+ *
+ * @header workspace_id integer required The ID of the workspace the user belongs to. Example: 1
+ * @header Accept string required Must be `application/json`. Example: application/json
+ * @header Content-Type string required Must be `application/json`. Example: application/json
+ *
+ * @bodyParam token string required The password reset token from the reset email. Example: abc123
+ * @bodyParam email string required The email of the user or client. Example: john.doe@example.com
+ * @bodyParam password string required The new password (min 6 characters). Example: newPassword123
+ * @bodyParam password_confirmation string required Must match the password field. Example: newPassword123
+ * @bodyParam account_type string required Type of account: `user` or `client`. Example: user
+ *
+ * @response 200 {
+ *   "error": false,
+ *   "message": "Password reset successful.",
+ *   "data": []
+ * }
+ *
+ * @response 422 {
+ *   "error": true,
+ *   "message": "This password reset token is invalid.",
+ *   "data": []
+ * }
+ *
+ * @response 500 {
+ *   "error": true,
+ *   "message": "An unexpected error occurred.",
+ *   "data": {
+ *     "error": "Exception message here"
+ *   }
+ * }
+ */
+
+    public function api_resetPassword(Request $request)
+{
+    $isApi = $request->get('isApi', true); // Default true for API context
+
+    try {
+        $formFields = $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required',
+        ]);
+
+        $provider = $this->determineProvider($request->email);
+
+        $broker = $provider === 'users' ? Password::broker('users') : Password::broker('clients');
+
+        $status = $broker->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password),
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+
+                // Optional: Trigger password reset event if email is configured
+                // if (isEmailConfigured()) {
+                //     event(new PasswordReset($user));
+                // }
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return formatApiResponse(false, __('Password reset successful.'), [], 200);
+        } else {
+            return formatApiResponse(true, __($status), [], 422);
+        }
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return formatApiValidationError($e, $isApi);
+    } catch (\Exception $e) {
+        return formatApiResponse(true, 'An unexpected error occurred.', [
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
     protected function determineProvider($email)
     {
         // Determine whether the email belongs to a user or a client

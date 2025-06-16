@@ -35,7 +35,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [UserController::class, 'register'])->middleware('isApi');
 Route::post('/login', [UserController::class, 'authenticate'])->middleware('isApi');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware('isApi');
-Route::post('/reset-password', [ForgotPasswordController::class, 'ResetPassword'])->middleware(['isApi']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'api_resetPassword']);
+
 //roles and permissions
 Route::get('/roles/{id?}', [RolesController::class, 'apiRolesIndex']);
 Route::get('/permissions/{id?}', [RolesController::class, 'apiPermissionList']);
@@ -48,7 +49,7 @@ Route::get('/settings/{variable}', [SettingsController::class, 'show']);
 
 Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'check.subscription', 'subscription.modules'])->group(function () {
     // Dashboard
-    Route::get('/dashboardList', [HomeController::class, 'apiDashboard']);
+    Route::get('/dashboardList', [HomeController::class, 'getStatistics']);
     Route::get('/upcoming-birthdays', [HomeController::class, 'api_upcoming_birthdays']);
     Route::get('/upcoming-work-anniversaries', [HomeController::class, 'api_upcoming_work_anniversaries']);//pending data not shown
     Route::get('/members-on-leave', [HomeController::class, 'members_on_leave']);//error
