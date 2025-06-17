@@ -83,6 +83,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-settings--variable-">
                                 <a href="#endpoints-GETapi-settings--variable-">GET api/settings/{variable}</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-master-panel-dashboardList">
+                                <a href="#endpoints-GETapi-master-panel-dashboardList">GET api/master-panel/dashboardList</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-master-panel-update-module-dates">
                                 <a href="#endpoints-POSTapi-master-panel-update-module-dates">POST api/master-panel/update-module-dates</a>
                             </li>
@@ -118,10 +121,7 @@
                     <a href="#dashboard">Dashboard</a>
                 </li>
                                     <ul id="tocify-subheader-dashboard" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-dashboardList">
-                                <a href="#dashboard-GETapi-master-panel-dashboardList">Get Dashboard Data</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-birthdays">
+                                                    <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-birthdays">
                                 <a href="#dashboard-GETapi-master-panel-upcoming-birthdays">Get Upcoming Birthdays</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="dashboard-GETapi-master-panel-upcoming-work-anniversaries">
@@ -220,7 +220,7 @@
                 </li>
                                     <ul id="tocify-subheader-project-comments" class="tocify-subheader">
                                                     <li class="tocify-item level-2" data-unique="project-comments-POSTapi-master-panel-comments">
-                                <a href="#project-comments-POSTapi-master-panel-comments">Add a comment to a model (e.g., project, task) with optional attachments and user mentions.</a>
+                                <a href="#project-comments-POSTapi-master-panel-comments">Add a comment .</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -543,7 +543,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 16, 2025</li>
+        <li>Last updated: June 17, 2025</li>
     </ul>
 </div>
 
@@ -1126,6 +1126,146 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>5</code></p>
             </div>
                     </form>
+
+                    <h2 id="endpoints-GETapi-master-panel-dashboardList">GET api/master-panel/dashboardList</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-master-panel-dashboardList">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/dashboardList" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/dashboardList"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-dashboardList">
+            <blockquote>
+            <p>Example response (302):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+location: http://localhost:8000
+content-type: text/html; charset=utf-8
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 57
+x-xss-protection: 1; mode=block
+x-content-type-options: nosniff
+referrer-policy: strict-origin-when-cross-origin
+x-frame-options: SAMEORIGIN
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;meta charset=&quot;UTF-8&quot; /&gt;
+        &lt;meta http-equiv=&quot;refresh&quot; content=&quot;0;url=&#039;http://localhost:8000&#039;&quot; /&gt;
+
+        &lt;title&gt;Redirecting to http://localhost:8000&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Redirecting to &lt;a href=&quot;http://localhost:8000&quot;&gt;http://localhost:8000&lt;/a&gt;.
+    &lt;/body&gt;
+&lt;/html&gt;</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-dashboardList" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-dashboardList"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-dashboardList"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-dashboardList" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-dashboardList">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-dashboardList" data-method="GET"
+      data-path="api/master-panel/dashboardList"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-dashboardList', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-dashboardList"
+                    onclick="tryItOut('GETapi-master-panel-dashboardList');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-dashboardList"
+                    onclick="cancelTryOut('GETapi-master-panel-dashboardList');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-dashboardList"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/dashboardList</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-dashboardList"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-dashboardList"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
 
                     <h2 id="endpoints-POSTapi-master-panel-update-module-dates">POST api/master-panel/update-module-dates</h2>
 
@@ -2532,228 +2672,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     <p>Retrieves a paginated list of users who have work anniversaries (based on their date of joining) within a specified number of upcoming days.
 This endpoint supports filtering, sorting, searching, and pagination.</p>
 
-                                <h2 id="dashboard-GETapi-master-panel-dashboardList">Get Dashboard Data</h2>
-
-<p>
-<small class="badge badge-darkred">requires authentication</small>
-</p>
-
-<p>This endpoint returns a comprehensive dashboard summary for the authenticated user within the selected workspace.
-It includes counts and detailed lists of users, clients, projects, tasks, to-dos, meetings, activities, and statuses.</p>
-
-<span id="example-requests-GETapi-master-panel-dashboardList">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request GET \
-    --get "http://localhost:8000/api/master-panel/dashboardList" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
-    --header "Accept: application/json" \
-    --header "workspace_id: 2" \
-    --header "Content-Type: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/dashboardList"
-);
-
-const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
-    "Accept": "application/json",
-    "workspace_id": "2",
-    "Content-Type": "application/json",
-};
-
-fetch(url, {
-    method: "GET",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-GETapi-master-panel-dashboardList">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-  &quot;error&quot;: false,
-  &quot;message&quot;: &quot;Dashboard data fetched successfully.&quot;,
-  &quot;data&quot;: {
-    &quot;counts&quot;: {
-      &quot;users_count&quot;: 5,
-      &quot;clients_count&quot;: 3,
-      &quot;projects_count&quot;: 8,
-      &quot;tasks_count&quot;: 22,
-      &quot;todos_count&quot;: 5,
-      &quot;meetings_count&quot;: 2,
-      &quot;statuses_count&quot;: 6,
-      &quot;activities_count&quot;: 10
-    },
-    &quot;users&quot;: [...],
-    &quot;clients&quot;: [...],
-    &quot;projects&quot;: [...],
-    &quot;tasks&quot;: [...],
-    &quot;todos&quot;: [...],
-    &quot;total_todos&quot;: [...],
-    &quot;meetings&quot;: [...],
-    &quot;auth_user&quot;: {
-      &quot;id&quot;: 1,
-      &quot;first_name&quot;: &quot;John&quot;,
-      &quot;last_name&quot;: &quot;Doe&quot;,
-      ...
-    },
-    &quot;statuses&quot;: [...],
-    &quot;activities&quot;: [...]
-  }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (400):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Missing or invalid workspace-id header.&quot;,
-    &quot;data&quot;: []
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (401):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Unauthorized: User not authenticated.&quot;,
-    &quot;data&quot;: []
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (404):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Workspace not found.&quot;,
-    &quot;data&quot;: []
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (500):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;Something went wrong.&quot;,
-    &quot;data&quot;: {
-        &quot;line&quot;: 123,
-        &quot;file&quot;: &quot;app/Http/Controllers/DashboardController.php&quot;,
-        &quot;error&quot;: &quot;Exception message here&quot;
-    }
-}</code>
- </pre>
-    </span>
-<span id="execution-results-GETapi-master-panel-dashboardList" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-GETapi-master-panel-dashboardList"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-GETapi-master-panel-dashboardList"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-GETapi-master-panel-dashboardList" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-GETapi-master-panel-dashboardList">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-GETapi-master-panel-dashboardList" data-method="GET"
-      data-path="api/master-panel/dashboardList"
-      data-authed="1"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-dashboardList', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-GETapi-master-panel-dashboardList"
-                    onclick="tryItOut('GETapi-master-panel-dashboardList');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-GETapi-master-panel-dashboardList"
-                    onclick="cancelTryOut('GETapi-master-panel-dashboardList');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-GETapi-master-panel-dashboardList"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-green">GET</small>
-            <b><code>api/master-panel/dashboardList</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization" class="auth-value"               data-endpoint="GETapi-master-panel-dashboardList"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="GETapi-master-panel-dashboardList"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="workspace_id"                data-endpoint="GETapi-master-panel-dashboardList"
-               value="2"
-               data-component="header">
-    <br>
-<p>Example: <code>2</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="GETapi-master-panel-dashboardList"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        </form>
-
-                    <h2 id="dashboard-GETapi-master-panel-upcoming-birthdays">Get Upcoming Birthdays</h2>
+                                <h2 id="dashboard-GETapi-master-panel-upcoming-birthdays">Get Upcoming Birthdays</h2>
 
 <p>
 <small class="badge badge-darkred">requires authentication</small>
@@ -5685,7 +5604,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php6740.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php7E9D.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5900,7 +5819,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php6740.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php7E9D.tmp</code></p>
         </div>
         </form>
 
@@ -5982,20 +5901,20 @@ fetch(url, {
                 <pre>
 
 <code class="language-json" style="max-height: 300px;">{
-    &quot;rows&quot;: [
-        {
-            &quot;id&quot;: 4,
-            &quot;file&quot;: &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; data-lightbox=\&quot;project-media\&quot;&gt; &lt;img src=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; alt=\&quot;images.jpg\&quot; width=\&quot;50\&quot;&gt;&lt;/a&gt;&quot;,
-            &quot;file_name&quot;: &quot;images.jpg&quot;,
-            &quot;file_size&quot;: &quot;11.89 KB&quot;,
-            &quot;created_at&quot;: &quot;2025-06-02&quot;,
-            &quot;updated_at&quot;: &quot;2025-06-02&quot;,
-            &quot;actions&quot;: [
-                &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; title=Download download&gt;&lt;i class=\&quot;bx bx-download bx-sm\&quot;&gt;&lt;/i&gt;&lt;/a&gt;&lt;button title=Delete type=\&quot;button\&quot; class=\&quot;btn delete\&quot; data-id=\&quot;4\&quot; data-type=\&quot;project-media\&quot; data-table=\&quot;project_media_table\&quot;&gt;&lt;i class=\&quot;bx bx-trash text-danger\&quot;&gt;&lt;/i&gt;&lt;/button&gt;&quot;
-            ]
-        }
-    ],
-    &quot;total&quot;: 1
+  &quot;rows&quot;: [
+    {
+      &quot;id&quot;: 4,
+      &quot;file&quot;: &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; data-lightbox=\&quot;project-media\&quot;&gt; &lt;img src=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; alt=\&quot;images.jpg\&quot; width=\&quot;50\&quot;&gt;&lt;/a&gt;&quot;,
+      &quot;file_name&quot;: &quot;images.jpg&quot;,
+      &quot;file_size&quot;: &quot;11.89 KB&quot;,
+      &quot;created_at&quot;: &quot;2025-06-02&quot;,
+      &quot;updated_at&quot;: &quot;2025-06-02&quot;,
+      &quot;actions&quot;: [
+        &quot;&lt;a href=\&quot;http://localhost:8000/storage/project-media/images.jpg\&quot; title=Download download&gt;&lt;i class=\&quot;bx bx-download bx-sm\&quot;&gt;&lt;/i&gt;&lt;/a&gt;&lt;button title=Delete type=\&quot;button&quot; class=&quot;btn delete&quot; data-id=&quot;4&quot; data-type=&quot;project-media&quot; data-table=&quot;project_media_table&quot;&gt;&lt;i class=&quot;bx bx-trash text-danger&quot;&gt;&lt;/i&gt;&lt;/button&gt;&quot;
+      ]
+    }
+  ],
+  &quot;total&quot;: 1
 }</code>
  </pre>
             <blockquote>
@@ -6584,7 +6503,7 @@ It supports filtering by title, description, status, and date ranges. Sorting an
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/create-milestone" \
-    --header "workspace_id: Example: 2" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -6605,7 +6524,7 @@ It supports filtering by title, description, status, and date ranges. Sorting an
 );
 
 const headers = {
-    "workspace_id": "Example: 2",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -6726,10 +6645,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="workspace_id"                data-endpoint="POSTapi-master-panel-create-milestone"
-               value="Example: 2"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>Example: 2</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -8091,7 +8010,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Optional flag to specify if request is API (true or false). Defaults to false. Example: <code>false</code></p>
+<p>Optional flag to specify if the request is API (true or false). Defaults to false. Example: <code>false</code></p>
         </div>
         </form>
 
@@ -8372,7 +8291,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     
 
-                                <h2 id="project-comments-POSTapi-master-panel-comments">Add a comment to a model (e.g., project, task) with optional attachments and user mentions.</h2>
+                                <h2 id="project-comments-POSTapi-master-panel-comments">Add a comment .</h2>
 
 <p>
 </p>
@@ -8394,7 +8313,7 @@ and also handles user mentions (e.g., @username), sending notifications to menti
     --form "model_id=14"\
     --form "content=This is a comment with a mention to @jane."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php69D3.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php80F1.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -8435,7 +8354,7 @@ fetch(url, {
         &quot;id&quot;: 21,
         &quot;commentable_type&quot;: &quot;App\\Models\\Project&quot;,
         &quot;commentable_id&quot;: 14,
-        &quot;content&quot;: &quot;This is a comment with mention to &lt;a href=&#039;/users/5&#039;&gt;@jane&lt;/a&gt;&quot;,
+        &quot;content&quot;: &quot;This is a comment with a mention to &lt;a href=&#039;/users/5&#039;&gt;@jane&lt;/a&gt;&quot;,
         &quot;user_id&quot;: 1,
         &quot;parent_id&quot;: null,
         &quot;created_at&quot;: &quot;2025-06-12T10:31:02.000000Z&quot;,
@@ -8635,7 +8554,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/projects/2/issues" \
-    --header "workspace_id: integer required The ID of the workspace context (e.g., `2`)" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -8656,7 +8575,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "workspace_id": "integer required The ID of the workspace context (e.g., `2`)",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -8792,10 +8711,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="workspace_id"                data-endpoint="POSTapi-master-panel-projects--project_id--issues"
-               value="integer required The ID of the workspace context (e.g., `2`)"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>integer required The ID of the workspace context (e.g.,</code>2<code>)</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -9171,7 +9090,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/master-panel/projects/issues/1" \
+    "http://localhost:8000/api/master-panel/projects/issues/2" \
     --header "Accept: application/json" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json"</code></pre></div>
@@ -9179,7 +9098,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/projects/issues/1"
+    "http://localhost:8000/api/master-panel/projects/issues/2"
 );
 
 const headers = {
@@ -9315,10 +9234,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="id_id"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
-               value="1"
+               value="2"
                data-component="url">
     <br>
-<p>The ID of the id. Example: <code>1</code></p>
+<p>The ID of the id. Example: <code>2</code></p>
             </div>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>project</code></b>&nbsp;&nbsp;
@@ -9665,6 +9584,7 @@ to the specified user or project.</h2>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/tasks/list-api/25?isApi=&amp;search=Design&amp;sort=title&amp;order=consequatur&amp;status_ids%5B%5D=1&amp;priority_ids%5B%5D=2&amp;user_ids%5B%5D=3&amp;client_ids%5B%5D=5&amp;project_ids%5B%5D=2&amp;task_start_date_from=2025-06-01&amp;task_start_date_to=2025-06-30&amp;task_end_date_from=2025-06-05&amp;task_end_date_to=2025-06-20&amp;limit=20" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -9694,6 +9614,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -9849,6 +9770,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/tasks/list-api/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-tasks-list-api--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10065,6 +9997,7 @@ It supports additional features like setting reminders and recurring schedules.<
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/create-tasks" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -10105,6 +10038,7 @@ It supports additional features like setting reminders and recurring schedules.<
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10296,6 +10230,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/create-tasks</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-create-tasks"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -10602,7 +10547,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/update-tasks/consequatur" \
-    --header "workspace_id: required Workspace ID in which task exists. Example: 2" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -10642,7 +10587,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "workspace_id": "required Workspace ID in which task exists. Example: 2",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -10789,10 +10734,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="workspace_id"                data-endpoint="PUTapi-master-panel-update-tasks--id-"
-               value="required Workspace ID in which task exists. Example: 2"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>required Workspace ID in which task exists. Example: 2</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -11100,6 +11045,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/delete-tasks/23" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -11110,6 +11056,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11210,6 +11157,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-delete-tasks--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -11259,6 +11217,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/destroy-multiple-tasks" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11277,6 +11236,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11384,6 +11344,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-destroy-multiple-tasks"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -11445,6 +11416,7 @@ Related data such as assigned users will also be duplicated.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/tasks/12/duplicate" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11460,6 +11432,7 @@ Related data such as assigned users will also be duplicated.</p>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11550,6 +11523,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-tasks--id--duplicate"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -11626,7 +11610,8 @@ It logs the status change in the task's status timeline and notifies assigned us
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/master-panel/task/consequatur/status/consequatur?isApi=1" \
+    "http://localhost:8000/api/master-panel/task/consequatur/status/1?isApi=1" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11638,7 +11623,7 @@ It logs the status change in the task's status timeline and notifies assigned us
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/task/consequatur/status/consequatur"
+    "http://localhost:8000/api/master-panel/task/consequatur/status/1"
 );
 
 const params = {
@@ -11648,6 +11633,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11780,6 +11766,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-task--id--status--newStatus-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -11815,14 +11812,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>newStatus</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="newStatus"                data-endpoint="POSTapi-master-panel-task--id--status--newStatus-"
-               value="consequatur"
+                <input type="number" style="display: none"
+               step="any"               name="newStatus"                data-endpoint="POSTapi-master-panel-task--id--status--newStatus-"
+               value="1"
                data-component="url">
     <br>
-<p>Example: <code>consequatur</code></p>
+<p>Example: <code>1</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -11885,6 +11882,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/tasks/save-view-preference" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -11899,6 +11897,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -11998,6 +11997,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-tasks-save-view-preference"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -12047,6 +12057,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/tasks/update-priority" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -12062,6 +12073,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12232,6 +12244,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-tasks-update-priority"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -12309,10 +12332,11 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/tasks/upload-media" \
+    --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php7202.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php8613.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12321,6 +12345,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -12428,6 +12453,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-tasks-upload-media"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -12490,6 +12526,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/tasks/25/media?search=image&amp;sort=file_name&amp;order=asc" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12508,6 +12545,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12588,6 +12626,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/tasks/{id}/media</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-tasks--id--media"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -12672,6 +12721,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/tasks/media/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12682,6 +12732,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12768,6 +12819,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-tasks-media--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -12833,6 +12895,7 @@ The tasks are formatted for use with FullCalendar.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/calendar/17?start=consequatur&amp;end=consequatur&amp;project_id=17" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -12851,6 +12914,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -12960,6 +13024,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-calendar--workspaceId-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13049,13 +13124,14 @@ Supports file attachments and user mentions within the comment content.</p>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/comments/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "model_type=App\Models\Task"\
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php6AED.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php8259.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13064,6 +13140,7 @@ Supports file attachments and user mentions within the comment content.</p>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -13182,6 +13259,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-comments--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13289,6 +13377,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/comments/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -13304,6 +13393,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13393,6 +13483,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-comments--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13465,6 +13566,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/comments/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -13479,6 +13581,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -13567,6 +13670,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-comments--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -13628,13 +13742,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/comments-create" \
+    --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "model_type=App\Models\Task"\
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php756E.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php873D.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13643,6 +13758,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "multipart/form-data",
     "Accept": "application/json",
 };
@@ -13754,6 +13870,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/comments-create</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -14266,7 +14393,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
-    "http://localhost:8000/api/master-panel/statuses/consequatur" \
+    "http://localhost:8000/api/master-panel/statuses/1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -14283,7 +14410,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/statuses/consequatur"
+    "http://localhost:8000/api/master-panel/statuses/1"
 );
 
 const headers = {
@@ -14433,14 +14560,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
                         <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
+<small>integer</small>&nbsp;
  &nbsp;
-                <input type="text" style="display: none"
-                              name="id"                data-endpoint="PUTapi-master-panel-statuses--id-"
-               value="consequatur"
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="PUTapi-master-panel-statuses--id-"
+               value="1"
                data-component="url">
     <br>
-<p>The ID of the status. Example: <code>consequatur</code></p>
+<p>The ID of the status. Example: <code>1</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
@@ -14887,7 +15014,7 @@ Requires a `workspace_id` header to identify the current workspace context.</h2>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/clients/17?isApi=1&amp;search=john&amp;sort=first_name&amp;order=ASC&amp;limit=15" \
-    --header "workspace_id: required The workspace ID to filter clients by." \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -14908,7 +15035,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
-    "workspace_id": "required The workspace ID to filter clients by.",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15037,10 +15164,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="workspace_id"                data-endpoint="GETapi-master-panel-clients--id--"
-               value="required The workspace ID to filter clients by."
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>required The workspace ID to filter clients by.</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -15160,7 +15287,7 @@ The request must include a <code>workspace-id</code> in the headers to identify 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/clients" \
-    --header "workspace-id: required The ID of the workspace in which to create the client. Example: 5" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -15194,7 +15321,7 @@ The request must include a <code>workspace-id</code> in the headers to identify 
 );
 
 const headers = {
-    "workspace-id": "required The ID of the workspace in which to create the client. Example: 5",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15334,15 +15461,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace-id</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="workspace-id"                data-endpoint="POSTapi-master-panel-clients"
-               value="required The ID of the workspace in which to create the client. Example: 5"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-clients"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>required The ID of the workspace in which to create the client. Example: 5</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -15653,7 +15780,7 @@ status, internal usage flag, password, and triggers account creation or email ve
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/clients/consequatur" \
-    --header "workspace_id: integer required Your current workspace ID. Example: 2" \
+    --header "workspace_id:: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -15686,7 +15813,7 @@ status, internal usage flag, password, and triggers account creation or email ve
 );
 
 const headers = {
-    "workspace_id": "integer required Your current workspace ID. Example: 2",
+    "workspace_id:": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -15801,15 +15928,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id:</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="workspace_id"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="integer required Your current workspace ID. Example: 2"
+                              name="workspace_id:"                data-endpoint="PUTapi-master-panel-clients--client-"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>integer required Your current workspace ID. Example: 2</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -16093,6 +16220,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/clients/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -16103,6 +16231,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16199,6 +16328,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-clients--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -16259,6 +16399,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/destroy-multiple-clients" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -16277,6 +16418,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -16393,6 +16535,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/destroy-multiple-clients</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-destroy-multiple-clients"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;

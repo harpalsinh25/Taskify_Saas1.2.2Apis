@@ -26,7 +26,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      workspace_id: 'required The workspace ID to filter clients by.'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -188,7 +188,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      workspace-id: 'required The ID of the workspace in which to create the client. Example: 5'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -514,7 +514,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
-      workspace_id: 'integer required Your current workspace ID. Example: 2'
+      'workspace_id:': '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -807,6 +807,7 @@ endpoints:
       authenticated: true
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -896,6 +897,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []

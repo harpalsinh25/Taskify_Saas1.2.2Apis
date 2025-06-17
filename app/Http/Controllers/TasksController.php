@@ -124,7 +124,7 @@ class TasksController extends Controller
      * @bodyParam recurrence_starts_from date Date from which recurrence starts. Must be today or future. Example: 2025-06-03
      * @bodyParam recurrence_occurrences integer Number of occurrences. Example: 5
      * @bodyParam task_list_id integer The ID of the task list (if any). Must exist in task_lists table. Example: 1
-     *
+     * @header workspace_id 2
      * @response 200 scenario="Task created successfully" {
      *   "error": false,
      *   "message": "Task created successfully.",
@@ -418,7 +418,7 @@ class TasksController extends Controller
  * @bodyParam recurrence_starts_from date Nullable. Start date for recurring tasks. Must be today or future. Example: 2025-06-13
  * @bodyParam recurrence_occurrences integer Nullable. Number of occurrences for recurrence. Example: 12
  *
- * @header workspace_id required Workspace ID in which task exists. Example: 2
+ * @header workspace_id 2
  * @authenticated
  *
  * @response 200 {
@@ -657,7 +657,7 @@ class TasksController extends Controller
      * This endpoint deletes a task along with its associated comments and their attachments.
      * All attachments are deleted from the `public` storage disk.
      * Uses the DeletionService to handle the final removal process.
-     *
+     * @header workspace_id 2
      * @urlParam id integer required The ID of the task to delete. Example: 23
      *
      * @response 200 scenario="Task deleted successfully" {
@@ -737,7 +737,7 @@ class TasksController extends Controller
      *
      * @bodyParam ids array required An array of task IDs to be deleted. Example: [101, 102, 103]
      * @bodyParam ids.* integer The ID of an individual task to delete. Must exist in the tasks table.
-     *
+     * @header workspace_id 2
      * @response 200 {
      *   "error": false,
      *   "message": "Task(s) deleted successfully.",
@@ -803,7 +803,7 @@ class TasksController extends Controller
         $end_date_to = (request('task_end_date_to')) ? trim(request('task_end_date_to')) : "";
         $labelNote = get_label('note', 'Note');
         $where = [];
-        if ($id) {
+        if ($id) {  
             $id = explode('_', $id);
             $belongs_to = $id[0];
             $belongs_to_id = $id[1];
@@ -1024,7 +1024,7 @@ class TasksController extends Controller
  *
  * @bodyParam id integer required The ID of the task to update. Example: 33
  * @bodyParam statusId integer required The new status ID to set on the task. Example: 4
- *
+ * @header workspace_id 2
  * @queryParam isApi boolean Optional. Set to true if calling from API to get a structured API response. Example: true
  *
  * @response 200 {
@@ -1147,7 +1147,7 @@ class TasksController extends Controller
      * Related data such as assigned users will also be duplicated.
      *@group Task Management
      * @urlParam id integer required The ID of the task to duplicate. Example: 12
-     *
+     * @header workspace_id 2
      * @bodyParam title string optional A new title for the duplicated task. If not provided, the system will use a default naming convention. Example: Copy of Design Review Task
      * @bodyParam reload string optional Set to "true" if you want to trigger a session flash message (usually used for reloading UI). Example: true
      *
@@ -1187,7 +1187,7 @@ class TasksController extends Controller
      * @group Task Media
      * Upload one or more media files to an existing task using its ID. The uploaded files will be stored
      * in the `task-media` media collection using Spatie MediaLibrary. This endpoint accepts multiple files.
-     *
+     * @header workspace_id 2
      * @bodyParam id integer required The ID of the task to which the files should be uploaded. Example: 25
      * @bodyParam media_files file[] required The media files to upload. Must be provided as an array of files.
      *
@@ -1252,7 +1252,7 @@ class TasksController extends Controller
  * Get task media list.
  *@group Task Media
  * Returns a list of media files associated with a specific task. Supports optional searching and sorting.
- *
+ * @header workspace_id 2
  * @urlParam id integer required The ID of the task to get media for. Example: 25
  * @queryParam search string Optional search term to filter by file name, ID, or creation date. Example: image
  * @queryParam sort string Field to sort by. Default is `id`. Example: file_name
@@ -1337,7 +1337,7 @@ class TasksController extends Controller
      * Delete a media file from a task.
      *@group Task Media
      * Deletes a specific media file associated with a task using its media ID. This removes the file from both the database and the storage disk.
-     *
+     * @header workspace_id 2
      * @urlParam mediaId int required The ID of the media file to delete. Example: 45
      *
      * @response 200 {
@@ -1405,7 +1405,7 @@ class TasksController extends Controller
      *@group Task status and performance
      * Stores the default task view (e.g., board, list, calendar) for the currently authenticated user or client.
      * This preference determines how tasks are displayed by default in the UI.
-     *
+     * @header workspace_id 2
      * Requires the user to be authenticated.
      *
      * @bodyParam view string required The view preference to set. Example: board
@@ -1445,7 +1445,7 @@ class TasksController extends Controller
      * This endpoint updates the priority of a specific task. You can provide a new priority or remove it by passing `null` or `0`.
      *
      * @urlParam id integer optional The ID of the task. If provided in the URL, it doesn't need to be in the body. Example: 25
-     *
+     * @header workspace_id 2
      * @bodyParam id integer required The ID of the task to update. Required if not provided in the URL. Example: 25
      * @bodyParam priorityId integer nullable The new priority ID. Use `null` or `0` to remove the priority. Example: 1
      *
@@ -1615,7 +1615,7 @@ class TasksController extends Controller
  * @queryParam start string optional Start date for filtering tasks (format: YYYY-MM-DD).
  * @queryParam end string optional End date for filtering tasks (format: YYYY-MM-DD).
  * @queryParam project_id integer optional Project ID to filter tasks by project.
- *
+ * @header workspace_id 2
  * @response 200 [
  *   {
  *     "id": 25,
@@ -1736,7 +1736,7 @@ class TasksController extends Controller
  * @bodyParam content string required The comment content. Mentions like @username will be parsed. Example: This is a test comment mentioning @john_doe
  * @bodyParam parent_id integer nullable The ID of the parent comment (for replies). Example: 5
  * @bodyParam attachments[] file optional Optional file attachments (JPG, PNG, PDF, etc). No-example
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "success": true,
  *   "message": "Comment Added Successfully",
@@ -1821,7 +1821,7 @@ class TasksController extends Controller
      * @bodyParam content string required The content of the comment. Mentions (e.g., @username) will be converted to user links. Example: This is a test comment with @johndoe mentioned.
      * @bodyParam parent_id integer nullable The ID of the parent comment if this is a reply. Example: 5
      * @bodyParam attachments file[] Optional array of files to attach to the comment (jpg, jpeg, png, pdf, xlsx, txt, docx, max 2MB each).
-     *
+     * @header workspace_id 2
      * @response 200 {
      *   "success": true,
      *   "comment": {
@@ -1876,7 +1876,7 @@ class TasksController extends Controller
      *
      * @bodyParam comment_id integer required The ID of the comment to update. Example: 15
      * @bodyParam content string required The updated content of the comment. User mentions using @username will be parsed and linked. Example: Updated comment mentioning @janedoe.
-     *
+     * @header workspace_id 2
      * @response 200 {
      *   "error": false,
      *   "message": "Comment updated successfully.",
@@ -1914,7 +1914,7 @@ class TasksController extends Controller
      * (files uploaded with the comment). Files will be removed from storage as well.
      *
      * @bodyParam comment_id integer required The ID of the comment to delete. Example: 12
-     *
+     * @header workspace_id 2
      * @response 200 {
      *   "error": false,
      *   "message": "Comment deleted successfully.",
@@ -2062,7 +2062,7 @@ class TasksController extends Controller
      * @queryParam task_end_date_from date Optional. Filter tasks due from this date. Format: Y-m-d. Example: 2025-06-05
      * @queryParam task_end_date_to date Optional. Filter tasks due up to this date. Format: Y-m-d. Example: 2025-06-20
      * @queryParam limit int Optional. Number of results per page. Default: 10. Example: 20
-     *
+     * @header workspace_id 2
      * @response 200 scenario="Single task response" {
      *  "id": 25,
      *  "workspace_id": 2,

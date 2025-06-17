@@ -226,6 +226,64 @@ endpoints:
     custom: []
   -
     httpMethods:
+      - GET
+    uri: api/master-panel/dashboardList
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 302
+        content: |-
+          <!DOCTYPE html>
+          <html>
+              <head>
+                  <meta charset="UTF-8" />
+                  <meta http-equiv="refresh" content="0;url='http://localhost:8000'" />
+
+                  <title>Redirecting to http://localhost:8000</title>
+              </head>
+              <body>
+                  Redirecting to <a href="http://localhost:8000">http://localhost:8000</a>.
+              </body>
+          </html>
+        headers:
+          cache-control: 'no-cache, private'
+          location: 'http://localhost:8000'
+          content-type: 'text/html; charset=utf-8'
+          x-ratelimit-limit: '60'
+          x-ratelimit-remaining: '57'
+          x-xss-protection: '1; mode=block'
+          x-content-type-options: nosniff
+          referrer-policy: strict-origin-when-cross-origin
+          x-frame-options: SAMEORIGIN
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
       - POST
     uri: api/master-panel/update-module-dates
     metadata:

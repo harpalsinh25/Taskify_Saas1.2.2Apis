@@ -15,7 +15,7 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      workspace_id: 'integer required The ID of the workspace context (e.g., `2`)'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -341,7 +341,7 @@ endpoints:
         name: id_id
         description: 'The ID of the id.'
         required: true
-        example: 1
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -368,7 +368,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id_id: 1
+      id_id: 2
       project: 5
       id: 8
     queryParameters: []

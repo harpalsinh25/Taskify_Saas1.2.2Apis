@@ -140,14 +140,23 @@ public function __construct()
     }
     public function list_view(Request $request, $type = null)
     {
-        $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects : $this->user->projects;
+        // Use query builder for flexible filtering
+        $projects = isAdminOrHasAllDataAccess() ? $this->workspace->projects() : $this->user->projects();
+        // Filter for favorites if needed
+        if ($type === 'favorite') {
+            $projects = $projects->where('is_favorite', 1);
+        }
+        // Retrieve the projects as a collection
+        $projects = $projects->get();
         $users = $this->workspace->users;
         $clients = $this->workspace->clients;
-        $is_favorites = 0;
-        if ($type === 'favorite') {
-            $is_favorites = 1;
-        }
-        return view('projects.projects', ['projects' => $projects, 'users' => $users, 'clients' => $clients, 'is_favorites' => $is_favorites]);
+        $is_favorites = $type === 'favorite' ? 1 : 0;
+        return view('projects.projects', [
+            'projects' => $projects,
+            'users' => $users,
+            'clients' => $clients,
+            'is_favorites' => $is_favorites
+        ]);
     }
     /**
      * Show the form for creating a new resource.
@@ -915,8 +924,8 @@ else {
                         'budget' => !empty($project->budget) && $project->budget !== null ? format_currency($project->budget) : '-',
                         'status_id' => "
                        <div class='d-flex align-items-center'>
-                         <select class='form-select form-select-sm select-bg-label-{$project->status->color}'
-                            id='statusSelect' data-id='{$project->id}' data-original-status-id='{$project->status->id}' data-original-color-class='select-bg-label-{$project->status->color}'> {$statusOptions} </select>
+                         <select class='form-select form-select-sm select-bg-label-" . ($project->status ? $project->status->color : 'secondary') . "'
+                            id='statusSelect' data-id='{$project->id}' data-original-status-id='" . ($project->status ? $project->status->id : '') . "' data-original-color-class='select-bg-label-" . ($project->status ? $project->status->color : 'secondary') . "'> {$statusOptions} </select>
                               " . (!empty($project->note) ? "
                             <span class='ms-2' data-bs-toggle='tooltip' title='{$labelNote}:{$project->note}'> <i class='bx bxs-notepad text-primary'></i></span>" : "") .
                             " </div>
@@ -1473,7 +1482,7 @@ public function apiList(Request $request, $id = null)
  *       "created_at": "2025-06-02",
  *       "updated_at": "2025-06-02",
  *       "actions": [
- *         "<a href=\"http://localhost:8000/storage/project-media/images.jpg\" title=Download download><i class=\"bx bx-download bx-sm\"></i></a><button title=Delete type=\"button\" class=\"btn delete\" data-id=\"4\" data-type=\"project-media\" data-table=\"project_media_table\"><i class=\"bx bx-trash text-danger\"></i></button>"
+ *         "<a href=\"http://localhost:8000/storage/project-media/images.jpg\" title=Download download><i class=\"bx bx-download bx-sm\"></i></a><button title=Delete type=\"button" class="btn delete" data-id="4" data-type="project-media" data-table="project_media_table"><i class="bx bx-trash text-danger"></i></button>"
  *       ]
  *     }
  *   ],
@@ -1621,8 +1630,7 @@ public function apiList(Request $request, $id = null)
             ? formatApiResponse(true, $message, [
                 'error' => $e->getMessage(),
                 'line' => $e->getLine(),
-                'file' => $e->getFile()
-            ])
+                'file' => $e->getFile()            ])
             : response()->json(['error' => true, 'message' => $message]);
     }
 }
@@ -1689,7 +1697,7 @@ public function apiList(Request $request, $id = null)
  *
  * @group Project Milestones
  *
- * @header workspace_id  Example: 2
+ * @header workspace_id 2
  *
  * @bodyParam project_id int required The ID of the project the milestone belongs to. Example: 5
  * @bodyParam title string required The title of the milestone. Example: Final Design Review
@@ -1767,7 +1775,7 @@ public function store_milestone(Request $request)
             'parent_id' => $milestone->project_id,
         ]);
     } catch (ValidationException $e) {
-        // dd($e->errors());
+        dd($e->errors());
         return formatApiValidationError($isApi, $e->errors());
     } catch (\Exception $e) {
         // dd($e);
@@ -1850,10 +1858,10 @@ public function store_milestone(Request $request)
             $milestone = Milestone::find($id);
 
             if (!$milestone) {
-                return formatApiResponse(true, 'Milestone not found.', [], 404);
+                return formatApiResponse(true, 'Milestone not found', [], 404);
             }
 
-            return formatApiResponse(false, 'Milestone retrieved successfully.', [
+            return formatApiResponse(false, 'Milestone retrieved successfully', [
                 'data' => $milestone->toArray()
             ]);
         } else {
@@ -2191,7 +2199,7 @@ public function store_milestone(Request $request)
  * @bodyParam id int required The ID of the project to update. Example: 438
  * @bodyParam statusId int required The ID of the new status to set. Example: 5
  * @bodyParam note string Optional note about the status update.
- * @bodyParam isApi bool Optional flag to specify if request is API (true or false). Defaults to false.
+ * @bodyParam isApi bool Optional flag to specify if the request is API (true or false). Defaults to false.
  * @header  Authorization  Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1
  * @header Accept application/json
  * @header workspace_id 2
@@ -2397,9 +2405,6 @@ public function store_milestone(Request $request)
  * }
  */
 
-
-
-
     public function update_priority(Request $request)
 {
     $isApi = $request->get('isApi', false);
@@ -2466,7 +2471,7 @@ public function store_milestone(Request $request)
     }
 }
 /**
- * Add a comment to a model (e.g., project, task) with optional attachments and user mentions.
+ * Add a comment .
  *
  * This endpoint allows the authenticated user to post a comment on any model (like a project or task)
  * using polymorphic relationships. It supports file attachments (images, PDFs, documents)
@@ -2487,7 +2492,7 @@ public function store_milestone(Request $request)
  *     "id": 21,
  *     "commentable_type": "App\\Models\\Project",
  *     "commentable_id": 14,
- *     "content": "This is a comment with mention to <a href='/users/5'>@jane</a>",
+ *     "content": "This is a comment with a mention to <a href='/users/5'>@jane</a>",
  *     "user_id": 1,
  *     "parent_id": null,
  *     "created_at": "2025-06-12T10:31:02.000000Z",
@@ -2608,11 +2613,11 @@ public function comments(Request $request)
 }
 
 /**
- * Get a specific comment by ID.
+ * Get  comment by ID.
  *
  * This endpoint retrieves the details of a specific comment, including any attachments associated with it.
  *
- * @group Project Comments
+ *  @group Project Comments
  *
  * @urlParam id integer required The ID of the comment to retrieve. Example: 21
  *
@@ -2643,19 +2648,36 @@ public function comments(Request $request)
  * }
  */
 
-    public function get_comment(Request $request, $id)
-    {
+   public function get_comment(Request $request, $id)
+{
+    $isApi = $request->get('isApi', true); // default to true for API
+dd($id);
+    try {
         $comment = Comment::with('attachments')->findOrFail($id);
+        dd($comment);
+        $formattedComment = formatComments($comment);
+
+        return $isApi
+            ? response()->json([
+                'success' => true,
+                'message' => get_label('comment_fetched_successfully', 'Comment fetched successfully'),
+                'comment' => $formattedComment,
+            ])
+            : $formattedComment;
+    } catch (\Exception $e) {
         return response()->json([
-            'comment' => $comment,
-        ]);
+            'success' => false,
+            'message' => 'An error occurred: ' . $e->getMessage(),
+        ], 500);
     }
+}
+
    /**
  * Update a comment
  *
  * This endpoint updates the content of an existing comment. It also handles user mention parsing and sends notifications to mentioned users.
  *
- * @group Project Comments
+ *  @group Project Comments
  *
  * @bodyParam comment_id int required The ID of the comment to update. Example: 12
  * @bodyParam content string required The new content of the comment. Mentions can be included using @username format. Example: "Updated comment with mention to @john"
@@ -3144,10 +3166,5 @@ public function comments(Request $request)
         });
         return response()->json($events);
     }
-
-
-
-
-
 }
 

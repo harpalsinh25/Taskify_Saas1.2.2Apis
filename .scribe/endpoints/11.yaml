@@ -19,6 +19,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -36,15 +37,15 @@ endpoints:
         name: newStatus
         description: ''
         required: true
-        example: consequatur
-        type: string
+        example: 1
+        type: integer
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
     cleanUrlParameters:
       id: consequatur
-      newStatus: consequatur
+      newStatus: 1
     queryParameters:
       isApi:
         name: isApi
@@ -164,8 +165,6 @@ endpoints:
       groupDescription: |-
         Stores the default task view (e.g., board, list, calendar) for the currently authenticated user or client.
         This preference determines how tasks are displayed by default in the UI.
-
-        Requires the user to be authenticated.
       subgroup: ''
       subgroupDescription: ''
       title: "Save User's Default Task View Preference"
@@ -173,6 +172,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -247,6 +247,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:

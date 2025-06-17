@@ -81,8 +81,8 @@ public function __construct()
  *
  * @group Client Management
  *
- * @header workspace-id required The ID of the workspace in which to create the client. Example: 5
  *
+ * @header workspace_id 2
  * @bodyParam first_name string required The first name of the client. Example: John
  * @bodyParam last_name string required The last name of the client. Example: Doe
  * @bodyParam company string The company name of the client. Example: Acme Corp
@@ -344,7 +344,7 @@ public function __construct()
  *
  * @urlParam id integer required The ID of the client to update. Example: 5
  *
- * @header workspace_id integer required Your current workspace ID. Example: 2
+ * @header workspace_id: 2
  *
  * @bodyParam first_name string required The client's first name. Example: John
  * @bodyParam last_name string required The client's last name. Example: Doe
@@ -500,7 +500,7 @@ public function __construct()
  * and uses a reusable deletion service for standardized deletion handling.
  *
  * @authenticated
- *
+ * @header workspace_id 2
  * @urlParam client int required The ID of the client to delete. Example: 15
  *
  * @response 200 {
@@ -555,7 +555,7 @@ public function __construct()
      * Deletes multiple clients by their IDs along with their associated todos.
      *
      * @group Client Management
-     *
+     * @header workspace_id 2
      * @bodyParam ids array required An array of client IDs to delete. Example: [1, 2, 3]
      * @bodyParam ids.* integer required Each client ID must exist in the clients table.
      *
@@ -797,7 +797,7 @@ public function __construct()
      * or a single client if an ID is provided. It supports searching, sorting, and pagination.
      *
      * Requires a `workspace_id` header to identify the current workspace context.
-     *
+     * @header workspace_id 2
      * @urlParam id int Optional. The ID of the client to retrieve. If not provided, a paginated list of clients will be returned.
      *
      * @queryParam isApi boolean Optional. Indicates if the request is from an API context. Default: false. Example: true
@@ -806,7 +806,7 @@ public function __construct()
      * @queryParam order string Optional. Sort direction: ASC or DESC. Default: DESC. Example: ASC
      * @queryParam limit int Optional. Number of clients per page. Default: 10. Example: 15
      *
-     * @header workspace_id required The workspace ID to filter clients by.
+     *
      *
      * @response 200 {
      *   "success": false,

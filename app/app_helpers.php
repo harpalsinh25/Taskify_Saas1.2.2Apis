@@ -3257,49 +3257,49 @@ if (!function_exists('formatProject')) {
     {
         $auth_user = getAuthenticatedUser();
         return [
-            'id' => $project->id,
+            'id' => $project->id?? 0,
             // dd($project->id),
-            'title' => $project->title,
-            'task_count' => isAdminOrHasAllDataAccess() ? count($project->tasks) : $auth_user->project_tasks($project->id)->count(),
-            'status' => $project->status->title,
-            'status_id' => $project->status->id,
+            'title' => $project->title?? '',
+            'task_count' => isAdminOrHasAllDataAccess() ? count($project->tasks) : $auth_user->project_tasks($project->id)->count()?? 0,
+            'status' => $project->status->title?? '',
+            'status_id' => $project->status->id?? 0,
             'priority' => $project->priority ? $project->priority->title : '',
             'priority_id' => $project->priority ? $project->priority->id : 0,
             'users' => $project->users->map(function ($user) {
                 // dd($user);
                 return [
-                    'id' => $user->id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'email' => $user->email,
-                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')
+                    'id' => $user->id?? 0,
+                    'first_name' => $user->first_name?? '',
+                    'last_name' => $user->last_name?? '',
+                    'email' => $user->email?? '',
+                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')?? ''
                 ];
             }),
-            'user_id' => $project->users->pluck('id')->toArray(),
+            'user_id' => $project->users->pluck('id')->toArray()?? [],
             'clients' => $project->clients->map(function ($client) {
                 return [
-                    'id' => $client->id,
-                    'first_name' => $client->first_name,
-                    'last_name' => $client->last_name,
-                    'email' => $client->email,
-                    'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')
+                    'id' => $client->id?? 0,
+                    'first_name' => $client->first_name?? '',
+                    'last_name' => $client->last_name?? '',
+                    'email' => $client->email?? '',
+                    'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')?? ''
                 ];
             }),
-            'client_id' => $project->clients->pluck('id')->toArray(),
+            'client_id' => $project->clients->pluck('id')->toArray()?? [],
             'tags' => $project->tags->map(function ($tag) {
                 return [
-                    'id' => $tag->id,
-                    'title' => $tag->title
+                    'id' => $tag->id?? 0,
+                    'title' => $tag->title?? ''
                 ];
             }),
-            'tag_ids' => $project->tags->pluck('id')->toArray(),
+            'tag_ids' => $project->tags->pluck('id')->toArray()?? [],
             'start_date' => $project->start_date ? format_date($project->start_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
             'end_date' => $project->end_date ? format_date($project->end_date, to_format: 'Y-m-d') : 0000 - 00 - 00,
             'budget' => $project->budget ?? 0,
             // dd($project->budget),
-            'task_accessibility' => $project->task_accessibility,
-            'description' => $project->description,
-            'note' => $project->note,
+            'task_accessibility' => $project->task_accessibility?? 'everyone',
+            'description' => $project->description?? '',
+            'note' => $project->note?? '',
             // dd($project->note),
             'favorite' => $project->is_favorite ? 1 : 0,
             'client_can_discuss' => $project->client_can_discuss ?? false,
@@ -3316,20 +3316,20 @@ if (!function_exists('formatComments')) {
             'id' => $comment->id,
             'content' => $comment->content,
             'user' => [
-                'id' => $comment->user?->id,
-                'name' => $comment->user?->name,
-                'email' => $comment->user?->email,
+                'id' => $comment->user?->id?? 0,
+                'name' => $comment->user?->name?? '',
+                'email' => $comment->user?->email?? '',
             ],
             'attachments' => $comment->attachments->map(function ($attachment) {
                 return [
-                    'file_name' => $attachment->file_name,
-                    'file_url' => asset('storage/' . $attachment->file_path),
-                    'file_type' => $attachment->file_type,
+                    'file_name' => $attachment->file_name?? '',
+                    'file_url' => asset('storage/' . $attachment->file_path?? ''),
+                    'file_type' => $attachment->file_type?? '',
                 ];
             }),
-            'parent_id' => $comment->parent_id,
-            'created_at' => $comment->created_at->toDateTimeString(),
-            'created_human' => $comment->created_at->diffForHumans(),
+            'parent_id' => $comment->parent_id ?? 0,
+            'created_at' => $comment->created_at->toDateTimeString()?? '',
+            'created_human' => $comment->created_at->diffForHumans()??'',
         ];
     }
 }
@@ -3421,43 +3421,43 @@ if (!function_exists('formateMedia')) {
         function formatClient($client, $isSignup = false)
         {
             return [
-                'id' => $client->id,
-                'first_name' => $client->first_name,
+                'id' => $client->id ?? 0,
+                'first_name' => $client->first_name?? '',
                 'last_name' => $client->last_name,
-                'role' => $client->getRoleNames()->first(),
-                'company' => $client->company,
-                'email' => $client->email,
-                'phone' => $client->phone,
-                'country_code' => $client->country_code,
-                'country_iso_code' => $client->country_iso_code,
-                'password' => $client->password,
-                'password_confirmation' => $client->password,
-                'type' => 'client',
+                'role' => $client->getRoleNames()->first() ?? 'client',
+                'company' => $client->company?? '',
+                'email' => $client->email?? '',
+                'phone' => $client->phone?? '',
+                'country_code' => $client->country_code?? '',
+                'country_iso_code' => $client->country_iso_code?? '',
+                'password' => $client->password?? '',
+                'password_confirmation' => $client->password?? '',
+                'type' => 'client'?? '',
                 'dob' => $client->dob ? format_date($client->dob, to_format: 'Y-m-d') : 0000-00-00,
                 'doj' => $client->doj ? format_date($client->doj, to_format: 'Y-m-d') : 0000-00-00,
                 'address' => $client->address ? $client->address : null,
-                'city' => $client->city,
-                'state' => $client->state,
-                'country' => $client->country,
-                'zip' => $client->zip,
-                'profile' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
-                'status' => $client->status,
-                'fcm_token' => $client->fcm_token,
-                'internal_purpose' => $client->internal_purpose,
-                'email_verification_mail_sent' => $client->email_verification_mail_sent,
-                'email_verified_at' => $client->email_verified_at,
-                'created_at' => format_date($client->created_at, to_format: 'Y-m-d'),
-                'updated_at' => format_date($client->updated_at, to_format: 'Y-m-d'),
+                'city' => $client->city?? '',
+                'state' => $client->state?? '',
+                'country' => $client->country?? '',
+                'zip' => $client->zip?? '',
+                'profile' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')?? '',
+                'status' => $client->status?? 'active',
+                'fcm_token' => $client->fcm_token?? '',
+                'internal_purpose' => $client->internal_purpose?? '',
+                'email_verification_mail_sent' => $client->email_verification_mail_sent?? 0,
+                'email_verified_at' => $client->email_verified_at?? 0000-00-00,
+                'created_at' => format_date($client->created_at, to_format: 'Y-m-d')?? '',
+                'updated_at' => format_date($client->updated_at, to_format: 'Y-m-d')?? '',
                 'assigned' => $isSignup ? [
-                    'projects' => 0,
-                    'tasks' => 0
+                    'projects' => 0?? 0,
+                    'tasks' => 0?? 0
                 ] : (
                     isAdminOrHasAllDataAccess('client', $client->id) ? [
-                        'projects' => Workspace::find(getWorkspaceId())->projects()->count(),
-                        'tasks' => Workspace::find(getWorkspaceId())->tasks()->count(),
+                        'projects' => Workspace::find(getWorkspaceId())->projects()->count()?? 0,
+                        'tasks' => Workspace::find(getWorkspaceId())->tasks()->count()?? 0,
                     ] : [
-                        'projects' => $client->projects()->count(),
-                        'tasks' => $client->tasks()->count()
+                        'projects' => $client->projects()->count()?? 0,
+                        'tasks' => $client->tasks()->count()?? 0
                     ]
                 )
             ];

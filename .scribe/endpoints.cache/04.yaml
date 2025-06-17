@@ -242,7 +242,7 @@ endpoints:
                 "created_at": "2025-06-02",
                 "updated_at": "2025-06-02",
                 "actions": [
-                  "<a href=\"http://localhost:8000/storage/project-media/images.jpg\" title=Download download><i class=\"bx bx-download bx-sm\"></i></a><button title=Delete type=\"button\" class=\"btn delete\" data-id=\"4\" data-type=\"project-media\" data-table=\"project_media_table\"><i class=\"bx bx-trash text-danger\"></i></button>"
+                  "<a href=\"http://localhost:8000/storage/project-media/images.jpg\" title=Download download><i class=\"bx bx-download bx-sm\"></i></a><button title=Delete type=\"button" class="btn delete" data-id="4" data-type="project-media" data-table="project_media_table"><i class="bx bx-trash text-danger"></i></button>"
                 ]
               }
             ],

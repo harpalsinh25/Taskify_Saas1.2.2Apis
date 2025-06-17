@@ -10,7 +10,7 @@ endpoints:
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Add a comment to a model (e.g., project, task) with optional attachments and user mentions.'
+      title: 'Add a comment .'
       description: |-
         This endpoint allows the authenticated user to post a comment on any model (like a project or task)
         using polymorphic relationships. It supports file attachments (images, PDFs, documents)
@@ -95,7 +95,7 @@ endpoints:
               "id": 21,
               "commentable_type": "App\\Models\\Project",
               "commentable_id": 14,
-              "content": "This is a comment with mention to <a href='/users/5'>@jane</a>",
+              "content": "This is a comment with a mention to <a href='/users/5'>@jane</a>",
               "user_id": 1,
               "parent_id": null,
               "created_at": "2025-06-12T10:31:02.000000Z",

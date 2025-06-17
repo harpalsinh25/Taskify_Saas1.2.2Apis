@@ -30,6 +30,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -320,6 +321,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -721,7 +723,7 @@ endpoints:
       authenticated: true
       custom: []
     headers:
-      workspace_id: 'required Workspace ID in which task exists. Example: 2'
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1073,6 +1075,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -1153,6 +1156,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -1238,6 +1242,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:

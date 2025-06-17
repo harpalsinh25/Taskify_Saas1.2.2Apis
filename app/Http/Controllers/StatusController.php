@@ -92,7 +92,12 @@ class StatusController extends Controller
         $roleIds = $request->input('role_ids');
         if ($status = Status::create($formFields)) {
             $status->roles()->attach($roleIds);
-            return response()->json(['error' => false, 'message' => 'Status created successfully.', 'id' => $status->id, 'status' => $status]);
+            return response()->json([
+            'error' => false,
+            'message' => 'Status created successfully.',
+            'id' => $status->id?? 0,
+            'status' => $status?? ''
+        ]);
         } else {
             return response()->json(['error' => true, 'message' => 'Status couldn\'t created.']);
         }
@@ -230,9 +235,10 @@ class StatusController extends Controller
             $roleIds = $request->input('role_ids');
             $status->roles()->sync($roleIds);
             return response()->json(['error' => false, 'message' => 'Status updated successfully.',
-            'id' => $status->id,
-            'title' =>$status->title,
-            'color'=>$status->color]);
+            'id' => $status->id?? 0,
+            'title' =>$status->title?? '',
+            'color'=>$status->color?? '',
+        ]);
         } else {
             return response()->json(['error' => true, 'message' => 'Status couldn\'t updated.']);
         }
@@ -464,12 +470,12 @@ class StatusController extends Controller
                     'total' => 1,
                     'data' => [
                         [
-                            'id' => $status->id,
-                            'title' => $status->title,
-                            'color' => $status->color,
+                            'id' => $status->id?? 0,
+                            'title' => $status->title?? '',
+                            'color' => $status->color?? '',
 
-                            'created_at' => format_date($status->created_at, to_format: 'Y-m-d'),
-                            'updated_at' => format_date($status->updated_at, to_format: 'Y-m-d'),
+                            'created_at' => format_date($status->created_at, to_format: 'Y-m-d')?? '',
+                            'updated_at' => format_date($status->updated_at, to_format: 'Y-m-d')??  '',
                         ]
                     ]
                 ]

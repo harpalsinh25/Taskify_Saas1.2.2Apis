@@ -162,7 +162,7 @@ endpoints:
         custom: []
       isApi:
         name: isApi
-        description: 'Optional flag to specify if request is API (true or false). Defaults to false.'
+        description: 'Optional flag to specify if the request is API (true or false). Defaults to false.'
         required: false
         example: false
         type: boolean

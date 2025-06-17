@@ -40,7 +40,7 @@ class IssueController extends Controller
  *
  * @authenticated
  *
- * @header workspace_id integer required The ID of the workspace context (e.g., `2`)
+ * @header workspace_id 2
  *
  * @urlParam project integer required The ID of the project in which the issue is being created. Example: 5
  *
@@ -404,7 +404,7 @@ class IssueController extends Controller
 
         // Get total issues count before applying pagination
         $totalIssues = $issuesQuery->count();
-        dd($totalIssues);
+        // dd($totalIssues);
 
         // Apply sorting and pagination
         $issues = $issuesQuery
