@@ -682,36 +682,6 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      password:
-        name: password
-        description: 'The password (required if not internal_purpose).'
-        required: false
-        example: secret123
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      password_confirmation:
-        name: password_confirmation
-        description: 'Must match the password.'
-        required: false
-        example: secret123
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      internal_purpose:
-        name: internal_purpose
-        description: 'Whether the client is for internal use.'
-        required: false
-        example: true
-        type: boolean
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
       status:
         name: status
         description: "The client's status (1 = active, 0 = inactive)."
@@ -747,9 +717,6 @@ endpoints:
       dob: '1990-05-01'
       doj: '2023-04-15'
       country_iso_code: IN
-      password: secret123
-      password_confirmation: secret123
-      internal_purpose: true
       status: 1
       require_ev: 1
     fileParameters: []

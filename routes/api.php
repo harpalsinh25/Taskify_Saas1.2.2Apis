@@ -186,7 +186,7 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
        });
     //note
        Route::post('/note',[NotesController::class,'store'])->middleware('log.activity');
-       Route::put('/note/{id}',[NotesController::class,'update'])->middleware('log.activity');
+       Route::put('/note/{id}',[NotesController::class,'api_update'])->middleware('log.activity');
        Route::delete('/note/{id}',[NotesController::class,'api_destroy']);
        Route::get('/note/{id?}',[NotesController::class,'apilist']);
     //leave request

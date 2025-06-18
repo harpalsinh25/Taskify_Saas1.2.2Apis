@@ -174,7 +174,7 @@ public function __construct()
  * }
  */
 
-   public function update(Request $request)
+  public function api_update(Request $request)
 {
     $isApi = $request->get('isApi', false);
 
@@ -213,6 +213,44 @@ public function __construct()
         return formatApiResponse(true, 'An error occurred while updating the note.', ['error' => $e->getMessage()], 500);
     }
 }
+public function update(Request $request)
+    {
+        $formFields = $request->validate([
+            'note_type' => ['required', 'in:text,drawing'],
+            'id' => ['required'],
+            'title' => ['required'],
+            'color' => ['required'],
+            'description' => ['nullable'],
+            'drawing_data' => ['nullable', 'string', 'required_if:note_type,drawing']
+        ]);
+        $drawingData = $request->input('drawing_data');
+
+        if ($drawingData) {
+            // Simply decode the base64 data without additional URL decoding
+            $decodedSvg = base64_decode($drawingData);
+        } else {
+            $decodedSvg = null;
+        }
+
+        $formFields['drawing_data'] = $decodedSvg;
+
+        $note = Note::findOrFail($request->id);
+
+        if ($note->update($formFields)) {
+            Session::flash('message', 'Note updated successfully.');
+            return response()->json(['error' => false, 'id' => $note->id]);
+        } else {
+            return response()->json(['error' => true, 'message' => 'Note couldn\'t updated.']);
+        }
+    }
+
+    public function get($id)
+    {
+        $note = Note::findOrFail($id);
+        return response()->json(['note' => $note]);
+    }
+
+
 
 
 /**

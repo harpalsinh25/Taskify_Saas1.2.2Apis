@@ -15,6 +15,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -228,6 +229,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -506,6 +508,7 @@ endpoints:
       authenticated: true
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -762,6 +765,7 @@ endpoints:
       authenticated: false
       custom: []
     headers:
+      workspace_id: '2'
       Content-Type: application/json
       Accept: application/json
     urlParameters:

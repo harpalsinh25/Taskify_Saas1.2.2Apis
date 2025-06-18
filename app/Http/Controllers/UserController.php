@@ -1285,13 +1285,16 @@ public function apiList(Request $request, $id = null)
 
     try {
          $workspace = Workspace::find(getWorkspaceId());
-
+        // dd(getWorkspaceId());
         if (!$workspace) {
             return formatApiResponse(true, 'Workspace not found', [], 404);
         }
 
         if ($id) {
             $user = $workspace->users()->where('users.id', $id)->first();
+            // dd($workspace->users()->pluck('users.id'));
+
+            // dd($user);
 
             if (!$user) {
                 return formatApiResponse(true, 'User not found', [], 404);

@@ -543,7 +543,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 17, 2025</li>
+        <li>Last updated: June 18, 2025</li>
     </ul>
 </div>
 
@@ -1601,6 +1601,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/todo/update-status" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -1617,6 +1618,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -1735,6 +1737,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/todo/update-status</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-todo-update-status"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -5604,7 +5617,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php7E9D.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php5239.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5819,7 +5832,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php7E9D.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php5239.tmp</code></p>
         </div>
         </form>
 
@@ -8313,7 +8326,7 @@ and also handles user mentions (e.g., @username), sending notifications to menti
     --form "model_id=14"\
     --form "content=This is a comment with a mention to @jane."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php80F1.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php545E.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12336,7 +12349,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php8613.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php5886.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13131,7 +13144,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php8259.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php55C6.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13749,7 +13762,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "model_id=25"\
     --form "content=This is a test comment mentioning @john_doe"\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php873D.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php5943.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15798,9 +15811,6 @@ status, internal usage flag, password, and triggers account creation or email ve
     \"dob\": \"1990-05-01\",
     \"doj\": \"2023-04-15\",
     \"country_iso_code\": \"IN\",
-    \"password\": \"secret123\",
-    \"password_confirmation\": \"secret123\",
-    \"internal_purpose\": true,
     \"status\": 1,
     \"require_ev\": 1
 }"
@@ -15833,9 +15843,6 @@ let body = {
     "dob": "1990-05-01",
     "doj": "2023-04-15",
     "country_iso_code": "IN",
-    "password": "secret123",
-    "password_confirmation": "secret123",
-    "internal_purpose": true,
     "status": 1,
     "require_ev": 1
 };
@@ -16137,49 +16144,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>The ISO code of the client's country. Example: <code>IN</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="password"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="secret123"
-               data-component="body">
-    <br>
-<p>The password (required if not internal_purpose). Example: <code>secret123</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>password_confirmation</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="text" style="display: none"
-                              name="password_confirmation"                data-endpoint="PUTapi-master-panel-clients--client-"
-               value="secret123"
-               data-component="body">
-    <br>
-<p>Must match the password. Example: <code>secret123</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>internal_purpose</code></b>&nbsp;&nbsp;
-<small>boolean</small>&nbsp;
-<i>optional</i> &nbsp;
-                <label data-endpoint="PUTapi-master-panel-clients--client-" style="display: none">
-            <input type="radio" name="internal_purpose"
-                   value="true"
-                   data-endpoint="PUTapi-master-panel-clients--client-"
-                   data-component="body"             >
-            <code>true</code>
-        </label>
-        <label data-endpoint="PUTapi-master-panel-clients--client-" style="display: none">
-            <input type="radio" name="internal_purpose"
-                   value="false"
-                   data-endpoint="PUTapi-master-panel-clients--client-"
-                   data-component="body"             >
-            <code>false</code>
-        </label>
-    <br>
-<p>Whether the client is for internal use. Example: <code>true</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -20059,6 +20023,7 @@ Requires the <code>id</code>, <code>title</code>, and <code>priority</code> fiel
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/todo" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -20075,6 +20040,7 @@ Requires the <code>id</code>, <code>title</code>, and <code>priority</code> fiel
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -20204,6 +20170,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-todo"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -20275,6 +20252,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/todo/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -20293,6 +20271,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -20429,6 +20408,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-todo--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -20544,6 +20534,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/todo/42" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -20554,6 +20545,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -20659,6 +20651,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-todo--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -20708,6 +20711,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/todo/consequatur?isApi=&amp;id=17&amp;search=consequatur&amp;sort=consequatur&amp;order=consequatur&amp;limit=17" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -20729,6 +20733,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -20841,6 +20846,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/todo/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-todo--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -20973,7 +20989,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/meeting" \
-    --header "workspace-id: integer required The ID of the workspace in which the meeting is to be created." \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -21001,7 +21017,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
-    "workspace-id": "integer required The ID of the workspace in which the meeting is to be created.",
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -21147,15 +21163,15 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace-id</code></b>&nbsp;&nbsp;
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="workspace-id"                data-endpoint="POSTapi-master-panel-meeting"
-               value="integer required The ID of the workspace in which the meeting is to be created."
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-meeting"
+               value="2"
                data-component="header">
     <br>
-<p>Example: <code>integer required The ID of the workspace in which the meeting is to be created.</code></p>
+<p>Example: <code>2</code></p>
             </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
@@ -21278,6 +21294,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/meeting/5?search=team+sync&amp;sort=start_date_time&amp;order=ASC&amp;limit=10&amp;status=ongoing&amp;user_id=2&amp;client_id=8&amp;start_date_from=2025-06-01&amp;start_date_to=2025-06-30&amp;end_date_from=2025-06-01&amp;end_date_to=2025-06-30&amp;isApi=1" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -21305,6 +21322,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -21447,6 +21465,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/meeting/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-meeting--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -21641,6 +21670,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/meeting/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -21670,6 +21700,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -21817,6 +21848,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/meeting/{id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-meeting--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -21981,6 +22023,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/meeting/15" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -21991,6 +22034,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -22085,6 +22129,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/meeting/{id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-meeting--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -23014,6 +23069,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
     "http://localhost:8000/api/master-panel/leaverequest" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -23042,6 +23098,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -23177,6 +23234,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/leaverequest</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-leaverequest"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -23373,6 +23441,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</h2>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
     --get "http://localhost:8000/api/master-panel/leaverequest/17?isApi=&amp;search=consequatur&amp;sort=consequatur&amp;order=consequatur&amp;user_ids[]=consequatur&amp;action_by_ids[]=consequatur&amp;types[]=consequatur&amp;statuses[]=consequatur&amp;start_date_from=consequatur&amp;start_date_to=consequatur&amp;end_date_from=consequatur&amp;end_date_to=consequatur&amp;limit=17" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -23401,6 +23470,7 @@ Object.keys(params)
     .forEach(key =&gt; url.searchParams.append(key, params[key]));
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -23544,6 +23614,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/leaverequest/{id?}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="GETapi-master-panel-leaverequest--id--"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
@@ -23759,6 +23840,7 @@ Leave requests already actioned (approved/rejected) can only be modified by an a
 <div class="bash-example">
     <pre><code class="language-bash">curl --request PUT \
     "http://localhost:8000/api/master-panel/leaverequest/consequatur" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
@@ -23786,6 +23868,7 @@ Leave requests already actioned (approved/rejected) can only be modified by an a
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -23964,6 +24047,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="PUTapi-master-panel-leaverequest--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;
  &nbsp;
@@ -24126,6 +24220,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
     "http://localhost:8000/api/master-panel/leaverequest/1" \
+    --header "workspace_id: 2" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json"</code></pre></div>
 
@@ -24136,6 +24231,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 );
 
 const headers = {
+    "workspace_id": "2",
     "Content-Type": "application/json",
     "Accept": "application/json",
 };
@@ -24231,6 +24327,17 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <b><code>api/master-panel/leaverequest/{id}</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-leaverequest--id-"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
                                 <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
 &nbsp;

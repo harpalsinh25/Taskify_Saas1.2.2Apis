@@ -360,9 +360,6 @@ public function __construct()
  * @bodyParam dob date The client's date of birth (YYYY-MM-DD). Example: 1990-05-01
  * @bodyParam doj date The client's date of joining (YYYY-MM-DD). Example: 2023-04-15
  * @bodyParam country_iso_code string The ISO code of the client's country. Example: IN
- * @bodyParam password string The password (required if not internal_purpose). Example: secret123
- * @bodyParam password_confirmation string Must match the password. Example: secret123
- * @bodyParam internal_purpose boolean Whether the client is for internal use. Example: true
  * @bodyParam status integer The client's status (1 = active, 0 = inactive). Example: 1
  * @bodyParam require_ev integer Set to 1 to send email verification, 0 to skip. Example: 1
  *

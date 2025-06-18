@@ -3493,26 +3493,26 @@ if (!function_exists('formateMedia')) {
         function formatUser($user)
         {
             return [
-                'id' => $user->id,
-                'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'full_name' => trim($user->first_name . ' ' . $user->last_name),
-                'email' => $user->email,
-                'phone' => $user->phone,
-                'address' => $user->address,
-                'country_code' => $user->country_code,
-                'city' => $user->city,
-                'state' => $user->state,
-                'country' => $user->country,
-                'zip' => $user->zip,
-                'dob' => optional($user->dob)->format('Y-m-d'),
-                'doj' => optional($user->doj)->format('Y-m-d'),
+                'id' => $user->id?? 0,
+                'first_name' => $user->first_name?? '',
+                'last_name' => $user->last_name ?? '',
+                'full_name' => trim($user->first_name . ' ' . $user->last_name?? ''),
+                'email' => $user->email?? '',
+                'phone' => $user->phone?? '',
+                'address' => $user->address?? '',
+                'country_code' => $user->country_code?? '',
+                'city' => $user->city?? '',
+                'state' => $user->state?? '',
+                'country' => $user->country?? '',
+                'zip' => $user->zip?? '',
+                'dob' => optional($user->dob)->format('Y-m-d')?? '',
+                'doj' => optional($user->doj)->format('Y-m-d')?? '',
                 'role' => $user->roles->pluck('name')->first(), // assuming one role per user
-                'status' => $user->status,
-                'email_verified' => !is_null($user->email_verified_at),
+                'status' => $user->status?? '',
+                'email_verified' => !is_null($user->email_verified_at)??0000-00-00,
                 'photo_url' => $user->photo
                     ? asset('storage/' . $user->photo)
-                    : asset('storage/photos/no-image.jpg'),
+                    : asset('storage/photos/no-image.jpg')?? '',
                 'created_at' => $user->created_at ? $user->created_at->toDateTimeString() :'',
                 'updated_at' => $user->updated_at ? $user->updated_at->toDateTimeString() : '',
             ];
@@ -3550,19 +3550,19 @@ if (!function_exists('formateMedia')) {
         function formatTodo($todo)
         {
             return [
-                'id' => $todo->id,
-                'title' => $todo->title,
-                'priority' => $todo->priority,
-                'description' => $todo->description,
-                'workspace_id' => $todo->workspace_id,
-                'admin_id' => $todo->admin_id,
+                'id' => $todo->id?? 0,
+                'title' => $todo->title?? '',
+                'priority' => $todo->priority?? '',
+                'description' => $todo->description?? '',
+                'workspace_id' => $todo->workspace_id?? 0,
+                'admin_id' => $todo->admin_id?? 0,
                 'creator' => [
                     'id' => $todo->creator->id ?? 0,
                     'first_name' => $todo->creator->first_name ?? '',
                     'last_name' => $todo->creator->last_name ?? '',
                     'photo' => isset($todo->creator->photo)
                         ? asset('storage/' . $todo->creator->photo)
-                        : asset('storage/photos/no-image.jpg'),
+                        : asset('storage/photos/no-image.jpg')?? '',
                 ],
                 'created_at' => $todo->created_at ? $todo->created_at->format('Y-m-d H:i:s') : 0000-00-00 . ' 00:00:00',
                 'updated_at' => $todo->updated_at ? $todo->updated_at->format('Y-m-d H:i:s') : 0000-00-00 . ' 00:00:00',

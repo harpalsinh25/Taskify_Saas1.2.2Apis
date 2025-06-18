@@ -58,7 +58,7 @@ public function __construct()
  * @group Meeting Managemant
  * @authenticated
  *
- * @header workspace-id integer required The ID of the workspace in which the meeting is to be created.
+ *@header workspace_id 2
  *
  * @bodyParam title string required The title of the meeting. Example: Project Kickoff
  * @bodyParam start_date date required The start date of the meeting (format: Y-m-d). Example: 2025-06-05
@@ -357,7 +357,7 @@ public function store(Request $request)
  * @queryParam end_date_from date Optional. End date filter from (Y-m-d). Example: 2025-06-01
  * @queryParam end_date_to date Optional. End date filter to (Y-m-d). Example: 2025-06-30
  * @queryParam isApi boolean Optional. Default is true. Used to enable API-formatted responses. Example: true
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "status": false,
  *   "message": "Meetings retrieved successfully.",
@@ -544,7 +544,7 @@ public function store(Request $request)
  * @bodyParam user_ids array Optional. An array of user IDs to assign to the meeting. Example: [1, 4, 5]
  * @bodyParam client_ids array Optional. An array of client IDs to assign to the meeting. Example: [2, 8]
  * @bodyParam isApi boolean Optional. Use true to get a standardized API response. Default is false. Example: true
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "status": false,
  *   "message": "meeting updated successfully.",
@@ -668,7 +668,7 @@ $formFields['end_date'] = $formFields['end_date'];
     }  catch (ValidationException $e) {
             return formatApiValidationError($isApi, $e->errors());
         } catch (\Exception $e) {
-            // dd($e);
+            dd($e);
             // Handle any unexpected errors
             return response()->json([
                 'error' => true,
@@ -683,7 +683,7 @@ $formFields['end_date'] = $formFields['end_date'];
  * This endpoint allows you to delete a meeting by its ID. Only users with proper permissions can delete meetings.
  *@group Meeting Managemant
  * @urlParam id int required The ID of the meeting to delete. Example: 15
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "success": true,
  *   "message": "Meeting deleted successfully.",

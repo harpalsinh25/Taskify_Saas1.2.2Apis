@@ -20,8 +20,11 @@ protected $user;
 public function __construct()
 {
     $this->middleware(function ($request, $next) {
-        $workspaceId = $request->header('workspace-id');
+        // Use helper function to get workspace ID
+        $workspaceId = getWorkspaceId();
         $this->workspace = Workspace::find($workspaceId);
+        // dd($this->workspace);
+
         $this->user = getAuthenticatedUser();
 
         return $next($request);
@@ -65,7 +68,7 @@ public function __construct()
  *
  * @group Todos Managemant
  * @authenticated
- *
+ * @header workspace_id 2
  * @bodyParam title string required The title of the todo item. Example: "Finish report"
  * @bodyParam priority string required The priority level of the todo. Example: "High"
  * @bodyParam description string nullable Optional detailed description of the todo. Example: "Complete the monthly sales report."
@@ -198,7 +201,7 @@ public function __construct()
  * @bodyParam priority string required The updated priority level. Example: High
  * @bodyParam description string The updated description for the Todo (optional). Example: Submit final version to manager
  * @bodyParam isApi boolean Whether the request is from API. Example: true
- *
+ *@header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Todo updated successfully.",
@@ -292,7 +295,7 @@ public function __construct()
  * Deletes a specific todo item by ID.
  *@group Todos Managemant
  * This endpoint will delete a Todo from the database. It returns a success response if the deletion was successful, or appropriate error messages otherwise.
- *
+ * @header workspace_id 2
  * @urlParam id integer required The ID of the todo to delete. Example: 42
  *
  * @response 200 {
@@ -361,7 +364,7 @@ public function destroy($id)
  * @bodyParam id integer required The ID of the Todo. Example: 12
  * @bodyParam status boolean required Status to set. 1 for completed, 0 for pending. Example: 1
  * @bodyParam isApi boolean optional Whether the request is API-based. Example: true
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Status updated successfully.",
@@ -482,7 +485,7 @@ public function destroy($id)
  * @queryParam sort string Optional. Column name to sort by. Default: id.
  * @queryParam order string Optional. Sort order: asc or desc. Default: desc.
  * @queryParam limit int Optional. Number of items per page for pagination. Default: 10.
- *
+ * @header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Todos retrieved successfully.",

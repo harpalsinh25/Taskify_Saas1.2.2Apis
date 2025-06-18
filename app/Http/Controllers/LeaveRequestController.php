@@ -64,7 +64,7 @@ class LeaveRequestController extends Controller
  * @bodyParam visible_to_ids array optional Required if leaveVisibleToAll is not set. An array of user IDs who can view the leave. Example: [3, 5, 7]
  * @bodyParam user_id integer optional Only admins or leave editors can create leave requests on behalf of another user. Example: 9
  * @bodyParam isApi boolean optional Indicates if this is an API request. Defaults to true. Example: true
- *
+ *@header workspace_id 2
  * @response 200 {
  *  "error": false,
  *  "message": "Leave request created successfully.",
@@ -588,7 +588,7 @@ class LeaveRequestController extends Controller
  * @queryParam end_date_from date Optional. Start range for to_date filter.
  * @queryParam end_date_to date Optional. End range for to_date filter.
  * @queryParam limit integer Optional. Results per page. Default: 10
- *
+ *@header workspace_id 2
  * @urlParam id int Optional. Leave request ID. If provided, returns only that leave request.
  *
  * @response 200 scenario="Single Leave Request Found" {
@@ -769,7 +769,7 @@ class LeaveRequestController extends Controller
  * @bodyParam leaveVisibleToAll string Optional. If "on", the leave will be visible to all users. Example: on
  * @bodyParam visible_to_ids array Optional. List of user IDs who can view this leave (if leaveVisibleToAll is not set). Example: [2, 3, 4]
  * @bodyParam status string optional New status of the leave. Allowed values: pending, approved, rejected. Required if user is admin or leave editor. Example: approved
- *
+ *@header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Leave request updated successfully.",
@@ -1020,7 +1020,7 @@ class LeaveRequestController extends Controller
  * @group leaverequest Managemant
  *
  * @urlParam id int required The ID of the leave request to delete. Example: 1
- *
+ *@header workspace_id 2
  * @response 200 {
  *   "error": false,
  *   "message": "Leave request deleted successfully.",
