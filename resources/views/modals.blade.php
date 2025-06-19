@@ -6203,6 +6203,227 @@ Request::is($prefix . '/tasks/draggable'))
     </div>
 </div>
 @endif
+
+
+{{-- Lead Stages --}}
+@if (Request::is($prefix . '/lead-stages') || Request::is($prefix . 'lead-stages/*'))
+    <div class="modal fade" id="create_lead_stage_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="{{ route('lead-stages.store') }}"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ get_label('create_lead_stage', 'Create Lead Stage') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                @csrf
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label">{{ get_label('name', 'Name') }}
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name"
+                                placeholder="{{ get_label('please_enter_name', 'Please Enter Name') }}">
+                            @error('title')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="color" class="form-label">{{ get_label('color', 'Color') }}
+                                <span class="asterisk">*</span>
+                            </label>
+                            <select class="form-select select-bg-label-primary" id="color" name="color">
+                                <option class="badge bg-label-primary" value="primary"
+                                    {{ old('color') == 'primary' ? 'selected' : '' }}>
+                                    <?= get_label('primary', 'Primary') ?>
+                                </option>
+                                <option class="badge bg-label-secondary" value="secondary"
+                                    {{ old('color') == 'secondary' ? 'selected' : '' }}>
+                                    <?= get_label('secondary', 'Secondary') ?></option>
+                                <option class="badge bg-label-success" value="success"
+                                    {{ old('color') == 'success' ? 'selected' : '' }}>
+                                    <?= get_label('success', 'Success') ?></option>
+                                <option class="badge bg-label-danger" value="danger"
+                                    {{ old('color') == 'danger' ? 'selected' : '' }}>
+                                    <?= get_label('danger', 'Danger') ?></option>
+                                <option class="badge bg-label-warning" value="warning"
+                                    {{ old('color') == 'warning' ? 'selected' : '' }}>
+                                    <?= get_label('warning', 'Warning') ?></option>
+                                <option class="badge bg-label-info" value="info"
+                                    {{ old('color') == 'info' ? 'selected' : '' }}><?= get_label('info', 'Info') ?>
+                                </option>
+                                <option class="badge bg-label-dark" value="dark"
+                                    {{ old('color') == 'dark' ? 'selected' : '' }}><?= get_label('dark', 'Dark') ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        {{ get_label('close', 'Close') }}
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        {{ get_label('create', 'Create') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit_lead_stage_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="{{ route('lead-stages.update') }}"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ get_label('edit_lead_stage', 'Edit Lead Stage') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                @csrf
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <input type="hidden" name="id" id="edit_lead_stage_id">
+                            <label for="name" class="form-label">{{ get_label('name', 'Name') }}
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name" id="edit_lead_stage_name"
+                                placeholder="{{ get_label('please_enter_name', 'Please Enter Name') }}">
+                            @error('title')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="color" class="form-label">{{ get_label('color', 'Color') }}
+                                <span class="asterisk">*</span>
+                            </label>
+                            <select class="form-select select-bg-label-primary" id="edit_lead_stages_color" name="color">
+                                <option class="badge bg-label-primary" value="primary"
+                                    {{ old('color') == 'primary' ? 'selected' : '' }}>
+                                    <?= get_label('primary', 'Primary') ?>
+                                </option>
+                                <option class="badge bg-label-secondary" value="secondary"
+                                    {{ old('color') == 'secondary' ? 'selected' : '' }}>
+                                    <?= get_label('secondary', 'Secondary') ?></option>
+                                <option class="badge bg-label-success" value="success"
+                                    {{ old('color') == 'success' ? 'selected' : '' }}>
+                                    <?= get_label('success', 'Success') ?></option>
+                                <option class="badge bg-label-danger" value="danger"
+                                    {{ old('color') == 'danger' ? 'selected' : '' }}>
+                                    <?= get_label('danger', 'Danger') ?></option>
+                                <option class="badge bg-label-warning" value="warning"
+                                    {{ old('color') == 'warning' ? 'selected' : '' }}>
+                                    <?= get_label('warning', 'Warning') ?></option>
+                                <option class="badge bg-label-info" value="info"
+                                    {{ old('color') == 'info' ? 'selected' : '' }}><?= get_label('info', 'Info') ?>
+                                </option>
+                                <option class="badge bg-label-dark" value="dark"
+                                    {{ old('color') == 'dark' ? 'selected' : '' }}><?= get_label('dark', 'Dark') ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        {{ get_label('close', 'Close') }}
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        {{ get_label('update', 'Update') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endif
+
+{{-- Lead Sources --}}
+@if (Request::is($prefix . '/lead-sources') || Request::is($prefix . 'lead-sources/*'))
+
+    <div class="modal fade" id="create_lead_source_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="{{ route('lead-sources.store') }}"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ get_label('create_lead_source', 'Create Lead Source') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                @csrf
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label">{{ get_label('name', 'Name') }}
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name"
+                                placeholder="{{ get_label('please_enter_name', 'Please Enter Name') }}">
+                            @error('title')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        {{ get_label('close', 'Close') }}
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        {{ get_label('create', 'Create') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit_lead_source_modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form class="modal-content form-submit-event" action="{{ route('lead-sources.update') }}"
+                    method="POST">
+                    <input type="hidden" name="dnr">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ get_label('edit_lead_source', 'Edit Lead Source') }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    @csrf
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <input type="hidden" name="id" id="lead_source_id">
+                                <label for="name" class="form-label">{{ get_label('name', 'Name') }}
+                                    <span class="asterisk">*</span>
+                                </label>
+                                <input class="form-control" type="text" name="name" id="lead_source_name"
+                                    placeholder="{{ get_label('please_enter_name', 'Please Enter Name') }}">
+                                @error('title')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            {{ get_label('close', 'Close') }}
+                        </button>
+                        <button type="submit" id="submit_btn" class="btn btn-primary">
+                            {{ get_label('create', 'Create') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+@endif
+x
 {{-- Task Lists Modals --}}
 <div class="modal fade" id="edit_task_list_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">

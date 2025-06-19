@@ -2258,14 +2258,23 @@ if (!function_exists('getDefaultViewRoute')) {
      * @param string $entity
      * @return string
      */
+if (!function_exists('getDefaultViewRoute')) {
+    /**
+     * Get the default view route for a given entity (projects or tasks).
+     *
+     * @param string $entity
+     * @return string
+     */
     function getDefaultViewRoute($entity)
     {
         $defaultView = getUserPreferences($entity, 'default_view');
+        // dd($entity);
         $routes = [
             'projects' => [
                 'list' => 'projects.list_view',
                 'grid' => 'projects.index',
                 'kanban_view' => 'projects.kanban_view',
+                'calendar-view' => 'projects.calendar_view'
             ],
             'tasks' => [
                 'tasks/draggable' => 'tasks.draggable',
@@ -2273,10 +2282,37 @@ if (!function_exists('getDefaultViewRoute')) {
                 'tasks/group-by-task-list' => 'tasks.groupByTaskList',
                 'default' => 'tasks.index',
             ],
+            'leave-requests' => [
+                'list' => 'leave_requests.index',
+                'calendar-view' => 'leave_requests.calendar_view',
+                'default' => 'leave_requests.index',
+            ],
+            'meetings' => [
+                'list' => 'meetings.index',
+                'calendar-view' => 'meetings.calendar_view',
+                'default' => 'meetings.index',
+            ],
+            'activity-log' => [
+                'list' => 'activity_log.index',
+                'calendar-view' => 'activity_log.calendar_view',
+                'default' => 'activity_log.index'
+            ],
+            'leads' => [
+                'list' => 'leads.index',
+                'kanban' => 'leads.kanban_view',
+                'default' => 'leads.index'
+            ],
+            'candidates' => [
+                'list' => 'candidate.index',
+                'kanban' => 'candidate.kanban_view',
+                'default' => 'candidate.index'
+            ]
+
         ];
         return route($routes[$entity][$defaultView] ?? $routes[$entity]['default'] ?? 'projects.index');
     }
 }
+
 
 // Function for sending reminders for tasks or birthday or work anniversary
 if (!function_exists('sendReminderNotification')) {
@@ -2868,6 +2904,46 @@ if (!function_exists('getMenus')) {
                 'show' => Auth::guard('web')->check() ? 1 : 0,
                 'category' => 'team'
             ],
+            [
+                'id' => 'leads_management',
+                'label' => get_label('leads_management', 'Leads Management'),
+                'url' => '',
+                'icon' => 'bx bxs-phone-call',
+                'class' => 'menu-item ' . (Request::is('master-panel/lead-sources') || Request::is('master-panel/lead-sources/*') || Request::is('master-panel/lead-stages') || Request::is('master-panel/lead-stages/*') || Request::is('master-panel/leads') || Request::is('master-panel/leads/*') ? 'active open' : ''),
+                'category' => get_label('utilities', 'Utilities'),
+                'show' =>  $user->can('manage_leads') ? 1 : 0,
+                'submenus' => [
+                    [
+                        'id' => 'lead_sources',
+                        'label' => get_label('lead_sources', 'Lead Sources'),
+                        'url' => route('lead-sources.index'),
+                        'show' => $user->can('manage_leads') ? 1 : 0,
+                        'class' => 'menu-item ' . (Request::is('master-panel/lead-sources') || Request::is('master-panel/lead-sources/*') ? 'active' : '')
+                    ],
+                    [
+                        'id' => 'lead_stages',
+                        'label' => get_label('lead_stages', 'Lead Stages'),
+                        'url' => route('lead-stages.index'),
+                        'show' => $user->can('manage_leads') ? 1 : 0,
+                        'class' => 'menu-item ' . (Request::is('master-panel/lead-stages') || Request::is('master-panel/lead-stages/*') ? 'active' : '')
+                    ],
+                    [
+                        'id' => 'leads',
+                        'label' => get_label('leads', 'Leads'),
+                        'url' => getDefaultViewRoute('leads'),
+                        'show' => $user->can('manage_leads') ? 1 : 0,
+                        'class' => 'menu-item ' . (Request::is('master-panel/leads') || (Request::is('master-panel/leads/*') && !Request::is('master-panel/leads/bulk-upload')) ? 'active' : '')
+                    ],
+                    [
+                        'id' => 'lead_bulk_upload',
+                        'label' => get_label('bulk_upload', 'Bulk Upload'),
+                        'url' => route('leads.upload'),
+                        'class' => 'menu-item' . (Request::is('master-panel/leads/bulk-upload') ? ' active' : ''),
+                        'show' => $user->can('manage_leads') ? 1 : 0,
+                    ],
+                ]
+            ],
+
             [
                 'id' => 'todos',
                 'label' => get_label('todos', 'Todos'),
@@ -3951,4 +4027,5 @@ if (!function_exists('formateMedia')) {
             }
         }
     }
+}
 }

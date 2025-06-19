@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
+
 class Workspace extends Model
 {
     use HasFactory;
@@ -127,12 +128,12 @@ class Workspace extends Model
 
         return Notification::leftJoin('notification_user', function ($join) use ($userId) {
             $join->on('notifications.id', '=', 'notification_user.notification_id')
-            ->where('notification_user.user_id', $userId)
+                ->where('notification_user.user_id', $userId)
                 ->where('notifications.workspace_id', $this->id);
         })
             ->leftJoin('client_notifications', function ($join) use ($userId) {
                 $join->on('notifications.id', '=', 'client_notifications.notification_id')
-                ->where('client_notifications.client_id', $userId) // Assuming client_notifications have a user_id column
+                    ->where('client_notifications.client_id', $userId) // Assuming client_notifications have a user_id column
                     ->where('notifications.workspace_id', $this->id);
             })
             ->select(
@@ -151,4 +152,40 @@ class Workspace extends Model
         return $this->hasMany(Note::class);
     }
 
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class);
+    }
+
+
+
+    public function scheduledEmails()
+    {
+        return $this->hasMany(ScheduledEmail::class);
+    }
+
+    public function email_templates()
+    {
+        return $this->hasMany(EmailTemplate::class);
+    }
+
+    public function lead_sources()
+    {
+        return DB::table('lead_sources')
+            ->where('workspace_id', $this->id)
+            ->orWhere(function ($query) {
+                $query->whereNull('workspace_id')
+                    ->where('is_default', 1);
+            });
+    }
+    public function lead_stages()
+    {
+        return DB::table('lead_stages')
+            ->where('workspace_id', $this->id)
+            ->orWhere(function ($query) {
+                $query->whereNull('workspace_id')
+                    ->where('is_default', 1);
+            });
+    }
 }

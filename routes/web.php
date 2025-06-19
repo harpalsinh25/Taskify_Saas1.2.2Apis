@@ -63,6 +63,11 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Http\Controllers\SuperAdmin\TransactionController;
 use App\Http\Controllers\SuperAdmin\SubscriptionController;
+use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LeadFollowUpController;
+use App\Http\Controllers\LeadImportController;
+use App\Http\Controllers\LeadSourceController;
+use App\Http\Controllers\LeadStageController;
 use App\Http\Controllers\SuperAdmin\PaymentMethodController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\SuperAdmin\HomeController as SuperAdminHomeController;
@@ -400,6 +405,62 @@ Route::middleware(['CheckInstallation', 'checkRole',])->group(function () {
             Route::get('/clients/get/{id}', [ClientController::class, 'get'])->name('clients.get');
             Route::get('/clients/{client}/permissions', [ClientController::class, 'permissions'])->name('clients.permissions');
             Route::put('/clients/{client}/permissions', [ClientController::class, 'update_permissions'])->name('clients.update_permissions');
+        });
+
+
+        // leads
+        Route::prefix('leads')->group(function () {
+            Route::get('/', [LeadController::class, 'index'])->name('leads.index');
+            Route::get('/create', [LeadController::class, 'create'])->name('leads.create')->middleware(['customcan:create_leads']);
+            Route::post('/store', [LeadController::class, 'store'])->name('leads.store')->middleware(['customcan:create_leads']);
+            Route::get('/get/{id?}', [LeadController::class, 'get'])->name('leads.get');
+            Route::get('/edit/{id}', [LeadController::class, 'edit'])->name('leads.edit')->middleware(['customcan:edit_leads']);
+            Route::get('/show/{id}', [LeadController::class, 'show'])->name('leads.show');
+            Route::get('/list', [LeadController::class, 'list'])->name('leads.list');
+            Route::post('/update/{id}', [LeadController::class, 'update'])->name('leads.update')->middleware(['customcan:edit_leads', 'log.activity']);
+            Route::delete('/destroy/{id}', [LeadController::class, 'destroy'])->name('leads.destroy')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::delete('/destroy_multiple', [LeadController::class, 'destroy_multiple'])->name('leads.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::post('/{lead}/convert-to-client', [LeadController::class, 'convertToClient'])->name('leads.convert_to_client');
+            Route::get('/kanban-view', [LeadController::class, 'kanban'])->name('leads.kanban_view');
+
+            // Lead Follow Up
+            Route::post('/follow-up/store', [LeadFollowUpController::class, 'store'])->name('lead_follow_up.store');
+            Route::get('/follow-up/get/{id}', [LeadFollowUpController::class, 'edit'])->name('lead_follow_up.edit');
+            Route::post('/follow-up/update', [LeadFollowUpController::class, 'update'])->name('lead_follow_up.update');
+            Route::delete('/follow-up/destroy/{id}', [LeadFollowUpController::class, 'destroy'])->name('lead_follow_up.destroy');
+            Route::get('/kanban-view', [LeadController::class, 'kanban'])->name('leads.kanban_view');
+            Route::post('/stage-change', [LeadController::class, 'stageChange'])->name('leads.stage_change')->middleware(['customcan:edit_leads', 'log.activity']);
+            // bulk upload
+            Route::get('/bulk-upload', [LeadImportController::class, 'index'])->name('leads.upload')->middleware(['customcan:create_leads']);
+            Route::post('/bulk-upload/parse', [LeadImportController::class, 'parse'])->name('leads.parse')->middleware(['customcan:create_leads']);
+            Route::post('/bulk-upload/import', [LeadImportController::class, 'import'])->name('leads.import')->middleware(['customcan:create_leads', 'log.activity']);
+            Route::any('/bulk-upload/mapped-leads', [LeadImportController::class, 'previewMappedLeads'])->name('leads.previewMappedLeads');
+            Route::post('/{lead}/convert-to-client', [LeadController::class, 'convertToClient'])->name('leads.convert_to_client');
+        });
+        Route::put('/save-leads-view-preference', [LeadController::class, 'saveViewPreference'])->name('save-leads-view-preference');
+
+        // Lead Stages
+        Route::prefix('lead-stages')->group(function () {
+            Route::get('/', [LeadStageController::class, 'index'])->name('lead-stages.index');
+            Route::get('/create', [LeadStageController::class, 'create'])->name('lead-stages.create');
+            Route::post('/store', [LeadStageController::class, 'store'])->name('lead-stages.store');
+            Route::get('/get/{id?}', [LeadStageController::class, 'get'])->name('lead-stages.get');
+            Route::get('/list', [LeadStageController::class, 'list'])->name('lead-stages.list');
+            Route::post('/update', [LeadStageController::class, 'update'])->name('lead-stages.update')->middleware(['customcan:edit_leads', 'log.activity']);
+            Route::delete('/destroy/{id}', [LeadStageController::class, 'destroy'])->name('lead-stages.destroy')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::post('/destroy_multiple', [LeadStageController::class, 'destroy_multiple'])->name('lead-stages.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::post('/reorder', [LeadStageController::class, 'reorder'])->name('lead-stages.reorder');
+        });
+
+        // Lead Sources
+        Route::prefix('lead-sources')->group(function () {
+            Route::get('/', [LeadSourceController::class, 'index'])->name('lead-sources.index');
+            Route::post('/store', [LeadSourceController::class, 'store'])->name('lead-sources.store')->middleware(['customcan:create_leads', 'log.activity']);
+            Route::get('/get/{id?}', [LeadSourceController::class, 'get'])->name('lead-sources.get');
+            Route::get('/list', [LeadSourceController::class, 'list'])->name('lead-sources.list');
+            Route::post('/update', [LeadSourceController::class, 'update'])->name('lead-sources.update')->middleware(['customcan:edit_leads', 'log.activity']);
+            Route::delete('/destroy/{id}', [LeadSourceController::class, 'destroy'])->name('lead-sources.destroy')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::post('/destroy_multiple', [LeadSourceController::class, 'destroy_multiple'])->name('lead-sources.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
         });
         //Settings-------------------------------------------------------------
         Route::middleware(['customRole:admin'])->group(function () {

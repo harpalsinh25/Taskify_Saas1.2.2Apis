@@ -6769,6 +6769,269 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php endif; ?>
 
+
+
+<?php if(Request::is($prefix . '/lead-stages') || Request::is($prefix . 'lead-stages/*')): ?>
+    <div class="modal fade" id="create_lead_stage_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="<?php echo e(route('lead-stages.store')); ?>"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo e(get_label('create_lead_stage', 'Create Lead Stage')); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <?php echo csrf_field(); ?>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label"><?php echo e(get_label('name', 'Name')); ?>
+
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name"
+                                placeholder="<?php echo e(get_label('please_enter_name', 'Please Enter Name')); ?>">
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="text-danger"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="color" class="form-label"><?php echo e(get_label('color', 'Color')); ?>
+
+                                <span class="asterisk">*</span>
+                            </label>
+                            <select class="form-select select-bg-label-primary" id="color" name="color">
+                                <option class="badge bg-label-primary" value="primary"
+                                    <?php echo e(old('color') == 'primary' ? 'selected' : ''); ?>>
+                                    <?= get_label('primary', 'Primary') ?>
+                                </option>
+                                <option class="badge bg-label-secondary" value="secondary"
+                                    <?php echo e(old('color') == 'secondary' ? 'selected' : ''); ?>>
+                                    <?= get_label('secondary', 'Secondary') ?></option>
+                                <option class="badge bg-label-success" value="success"
+                                    <?php echo e(old('color') == 'success' ? 'selected' : ''); ?>>
+                                    <?= get_label('success', 'Success') ?></option>
+                                <option class="badge bg-label-danger" value="danger"
+                                    <?php echo e(old('color') == 'danger' ? 'selected' : ''); ?>>
+                                    <?= get_label('danger', 'Danger') ?></option>
+                                <option class="badge bg-label-warning" value="warning"
+                                    <?php echo e(old('color') == 'warning' ? 'selected' : ''); ?>>
+                                    <?= get_label('warning', 'Warning') ?></option>
+                                <option class="badge bg-label-info" value="info"
+                                    <?php echo e(old('color') == 'info' ? 'selected' : ''); ?>><?= get_label('info', 'Info') ?>
+                                </option>
+                                <option class="badge bg-label-dark" value="dark"
+                                    <?php echo e(old('color') == 'dark' ? 'selected' : ''); ?>><?= get_label('dark', 'Dark') ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('create', 'Create')); ?>
+
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit_lead_stage_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="<?php echo e(route('lead-stages.update')); ?>"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo e(get_label('edit_lead_stage', 'Edit Lead Stage')); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <?php echo csrf_field(); ?>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <input type="hidden" name="id" id="edit_lead_stage_id">
+                            <label for="name" class="form-label"><?php echo e(get_label('name', 'Name')); ?>
+
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name" id="edit_lead_stage_name"
+                                placeholder="<?php echo e(get_label('please_enter_name', 'Please Enter Name')); ?>">
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="text-danger"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="color" class="form-label"><?php echo e(get_label('color', 'Color')); ?>
+
+                                <span class="asterisk">*</span>
+                            </label>
+                            <select class="form-select select-bg-label-primary" id="edit_lead_stages_color" name="color">
+                                <option class="badge bg-label-primary" value="primary"
+                                    <?php echo e(old('color') == 'primary' ? 'selected' : ''); ?>>
+                                    <?= get_label('primary', 'Primary') ?>
+                                </option>
+                                <option class="badge bg-label-secondary" value="secondary"
+                                    <?php echo e(old('color') == 'secondary' ? 'selected' : ''); ?>>
+                                    <?= get_label('secondary', 'Secondary') ?></option>
+                                <option class="badge bg-label-success" value="success"
+                                    <?php echo e(old('color') == 'success' ? 'selected' : ''); ?>>
+                                    <?= get_label('success', 'Success') ?></option>
+                                <option class="badge bg-label-danger" value="danger"
+                                    <?php echo e(old('color') == 'danger' ? 'selected' : ''); ?>>
+                                    <?= get_label('danger', 'Danger') ?></option>
+                                <option class="badge bg-label-warning" value="warning"
+                                    <?php echo e(old('color') == 'warning' ? 'selected' : ''); ?>>
+                                    <?= get_label('warning', 'Warning') ?></option>
+                                <option class="badge bg-label-info" value="info"
+                                    <?php echo e(old('color') == 'info' ? 'selected' : ''); ?>><?= get_label('info', 'Info') ?>
+                                </option>
+                                <option class="badge bg-label-dark" value="dark"
+                                    <?php echo e(old('color') == 'dark' ? 'selected' : ''); ?>><?= get_label('dark', 'Dark') ?>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('update', 'Update')); ?>
+
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+<?php if(Request::is($prefix . '/lead-sources') || Request::is($prefix . 'lead-sources/*')): ?>
+
+    <div class="modal fade" id="create_lead_source_modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form class="modal-content form-submit-event" action="<?php echo e(route('lead-sources.store')); ?>"
+                method="POST">
+                <input type="hidden" name="dnr">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php echo e(get_label('create_lead_source', 'Create Lead Source')); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <?php echo csrf_field(); ?>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="name" class="form-label"><?php echo e(get_label('name', 'Name')); ?>
+
+                                <span class="asterisk">*</span>
+                            </label>
+                            <input class="form-control" type="text" name="name"
+                                placeholder="<?php echo e(get_label('please_enter_name', 'Please Enter Name')); ?>">
+                            <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                <span class="text-danger"><?php echo e($message); ?></span>
+                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('create', 'Create')); ?>
+
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="edit_lead_source_modal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <form class="modal-content form-submit-event" action="<?php echo e(route('lead-sources.update')); ?>"
+                    method="POST">
+                    <input type="hidden" name="dnr">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><?php echo e(get_label('edit_lead_source', 'Edit Lead Source')); ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <?php echo csrf_field(); ?>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <input type="hidden" name="id" id="lead_source_id">
+                                <label for="name" class="form-label"><?php echo e(get_label('name', 'Name')); ?>
+
+                                    <span class="asterisk">*</span>
+                                </label>
+                                <input class="form-control" type="text" name="name" id="lead_source_name"
+                                    placeholder="<?php echo e(get_label('please_enter_name', 'Please Enter Name')); ?>">
+                                <?php $__errorArgs = ['title'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                    <span class="text-danger"><?php echo e($message); ?></span>
+                                <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <?php echo e(get_label('close', 'Close')); ?>
+
+                        </button>
+                        <button type="submit" id="submit_btn" class="btn btn-primary">
+                            <?php echo e(get_label('create', 'Create')); ?>
+
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+<?php endif; ?>
+x
+
 <div class="modal fade" id="edit_task_list_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
