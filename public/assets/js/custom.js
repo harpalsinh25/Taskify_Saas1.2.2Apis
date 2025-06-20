@@ -797,7 +797,7 @@ if ($("#total_days").length) {
 }
 $(document).ready(function () {
     $(
-        "#report_start_date_between,#report_end_date_between,#filter_date_range,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#start_date_between,#end_date_between,#expense_from_date_between"
+        "#report_start_date_between,#report_end_date_between,#filter_date_range,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#start_date_between,#end_date_between,#expense_from_date_between,#candidate_kanban_date_between,#candidate_filter_date_range,#interview_filter_date_range"
     ).daterangepicker({
         alwaysShowCalendars: true,
         showCustomRangeLabel: true,
@@ -810,7 +810,7 @@ $(document).ready(function () {
         },
     });
     $(
-        "#report_start_date_between,#report_end_date_between,#filter_date_range,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#start_date_between,#end_date_between,#expense_from_date_between"
+        "#report_start_date_between,#report_end_date_between,#filter_date_range,#project_start_date_between,#project_end_date_between,#task_start_date_between,#task_end_date_between,#lr_start_date_between,#lr_end_date_between,#contract_start_date_between,#contract_end_date_between,#timesheet_start_date_between,#timesheet_end_date_between,#meeting_start_date_between,#meeting_end_date_between,#activity_log_between_date,#start_date_between,#end_date_between,#expense_from_date_between,#candidate_kanban_date_between,#interview_filter_date_range"
     ).on("apply.daterangepicker", function (ev, picker) {
         $(this).val(
             picker.startDate.format(js_date_format) +
@@ -899,6 +899,7 @@ if ($("#task_start_date_between").length) {
         }
     );
 }
+
 if ($("#timesheet_start_date_between").length) {
     $("#timesheet_start_date_between").on(
         "apply.daterangepicker",
@@ -1512,6 +1513,11 @@ $(document).on("click", ".duplicate", function (e) {
         $("#duplicateModal").find("#updateTitle").val(title);
     } else {
         $("#duplicateModal").find("#titleDiv").addClass("d-none");
+    }
+    if (type == "workspaces") {
+        $("#duplicateModal").find("#selectionDiv").removeClass("d-none");
+    } else {
+        $("#duplicateModal").find("#selectionDiv").addClass("d-none");
     }
     $("#duplicateModal").on("click", "#confirmDuplicate", function (e) {
         e.preventDefault();
@@ -2274,12 +2280,12 @@ if (
     setInterval(updateUnreadNotifications, 30000);
 }
 $(
-    "textarea#email_verify_email,textarea#email_account_creation,textarea#email_forgot_password,textarea#email_project_assignment,textarea#email_task_assignment,textarea#email_workspace_assignment,textarea#email_meeting_assignment,textarea#email_leave_request_creation,textarea#email_leave_request_status_updation,textarea#email_project_status_updation,textarea#email_task_status_updation,textarea#email_team_member_on_leave_alert,textarea#email_project_issue_assignment,textarea#email_announcement,textarea#email_task_reminder,textarea#email_recurring_task"
+    "textarea#email_verify_email,textarea#email_account_creation,textarea#email_forgot_password,textarea#email_project_assignment,textarea#email_task_assignment,textarea#email_workspace_assignment,textarea#email_meeting_assignment,textarea#email_leave_request_creation,textarea#email_leave_request_status_updation,textarea#email_project_status_updation,textarea#email_task_status_updation,textarea#email_team_member_on_leave_alert,textarea#email_project_issue_assignment,textarea#email_announcement,textarea#email_task_reminder,textarea#email_recurring_task,#email_interview_status_update,#email_interview_assignment,#template-body,#editBody"
 ).tinymce({
     height: 821,
     menubar: true,
     plugins: [
-        "link",
+        "link", 
         "a11ychecker",
         "advlist",
         "advcode",
@@ -2549,73 +2555,353 @@ $(document).ready(function () {
         });
     });
 });
-$(document).on("click", ".edit-project", function () {
-    var id = $(this).data("id");
-    $("#edit_project_modal").modal("show");
-    $.ajax({
-        url: "/master-panel/projects/get/" + id,
-        type: "get",
-        headers: {
-            "X-CSRF-TOKEN": $('input[name="_token"]').attr("value"),
-        },
-        dataType: "json",
-        success: function (response) {
-            var formattedStartDate = moment(response.project.start_date).format(
-                js_date_format
-            );
-            var formattedEndDate = moment(response.project.end_date).format(
-                js_date_format
-            );
-            var $modal = $("#edit_project_modal"); // Cache the modal element for better performance
-            $("#project_id").val(response.project.id);
-            $("#project_title").val(response.project.title);
-            $modal
-                .find("#project_status_id")
-                .val(response.project.status_id)
-                .trigger("change");
-            $modal
-                .find("#project_priority_id")
-                .val(response.project.priority_id)
-                .trigger("change");
-            $("#project_budget").val(response.project.budget);
-            $("#update_start_date").val(formattedStartDate);
-            $("#update_end_date").val(formattedEndDate);
-            initializeDateRangePicker("#update_start_date, #update_end_date");
-            $("#task_accessiblity").val(response.project.task_accessiblity);
-            $("#edit_tasks_time_entries").prop(
-                "checked",
-                Boolean(response.project.enable_tasks_time_entries)
-            );
-            $("#project_description").val(response.project.description);
-            $("#projectNote").val(response.project.note);
-            // Populate project users in the multi-select dropdown
-            var usersSelect = $("#edit_project_modal").find(
-                '.js-example-basic-multiple[name="user_id[]"]'
-            );
-            // Preselect project users if they exist
-            var projectUsers = response.users.map((user) => user.id);
-            usersSelect.val(projectUsers);
-            usersSelect.trigger("change"); // Trigger change event to update select2
-            var clientsSelect = $("#edit_project_modal").find(
-                '.js-example-basic-multiple[name="client_id[]"]'
-            );
-            var projectClients = response.clients.map((client) => client.id);
-            clientsSelect.val(projectClients);
-            clientsSelect.trigger("change"); // Trigger change event to update select2
-            var tagsSelect = $("#edit_project_modal").find(
-                '[name="tag_ids[]"]'
-            );
-            var projectTags = response.tags.map((tag) => tag.id);
-            // Select old tags
-            tagsSelect.val(projectTags);
-            // Trigger change event to update Select2
-            tagsSelect.trigger("change.select2");
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-        },
+    // $(document).on("click", ".edit-project", function () {
+    //     var id = $(this).data("id");
+    //     $("#edit_project_modal").modal("show");
+    //     $.ajax({
+    //         url: "/master-panel/projects/get/" + id,
+    //         type: "get",
+    //         headers: {
+    //             "X-CSRF-TOKEN": $('input[name="_token"]').attr("value"),
+    //         },
+    //         dataType: "json",
+    //         success: function (response) {
+    //             var formattedStartDate = moment(response.project.start_date).format(js_date_format);
+    //             var formattedEndDate = moment(response.project.end_date).format(js_date_format);
+    //             var $modal = $("#edit_project_modal"); // Cache the modal element for better performance
+
+    //             // Set project basic information
+    //             $("#project_id").val(response.project.id);
+    //             $("#project_title").val(response.project.title);
+    //             $modal.find("#project_status_id").val(response.project.status_id).trigger("change");
+    //             $modal.find("#project_priority_id").val(response.project.priority_id).trigger("change");
+    //             $("#project_budget").val(response.project.budget);
+    //             $("#update_start_date").val(formattedStartDate);
+    //             $("#update_end_date").val(formattedEndDate);
+    //             initializeDateRangePicker("#update_start_date, #update_end_date");
+    //             $("#task_accessiblity").val(response.project.task_accessiblity);
+    //             $("#edit_tasks_time_entries").prop("checked", Boolean(response.project.enable_tasks_time_entries));
+    //             $("#project_description").val(response.project.description);
+    //             $("#projectNote").val(response.project.note);
+
+    //             // Populate project users in the multi-select dropdown
+    //             var usersSelect = $modal.find('.js-example-basic-multiple[name="user_id[]"]');
+    //             var projectUsers = response.users.map((user) => user.id);
+    //             usersSelect.val(projectUsers);
+    //             usersSelect.trigger("change"); // Trigger change event to update select2
+
+    //             // Populate project clients
+    //             var clientsSelect = $modal.find('.js-example-basic-multiple[name="client_id[]"]');
+    //             var projectClients = response.clients.map((client) => client.id);
+    //             clientsSelect.val(projectClients);
+    //             clientsSelect.trigger("change");
+
+    //             // Populate project tags
+    //             var tagsSelect = $modal.find('[name="tag_ids[]"]');
+    //             var projectTags = response.tags.map((tag) => tag.id);
+    //             tagsSelect.val(projectTags);
+    //             tagsSelect.trigger("change.select2");
+
+    //             // Handle custom fields
+    //             if (response.customFields && response.customFieldValues) {
+    //                 console.log("Processing custom fields...");
+
+    //                 // Populate each custom field with its value
+    //                 response.customFields.forEach(function(field) {
+    //                     var fieldId = field.id;
+    //                     console.log("Processing field:", field.field_label, "(ID:", fieldId, ")");
+
+    //                     // Get field value if exists, otherwise empty string
+    //                     var fieldValue = '';
+    //                     if (response.customFieldValues[fieldId]) {
+    //                         fieldValue = response.customFieldValues[fieldId].value || '';
+    //                         console.log("Found value for field:", fieldValue);
+    //                     } else {
+    //                         console.log("No value found for this field");
+    //                     }
+
+    //                     // Handle different field types
+    //                     switch(field.field_type) {
+    //                         case 'text':
+    //                         case 'password':
+    //                         case 'number':
+    //                             $('#cf_' + fieldId).val(fieldValue);
+    //                             console.log("Set text/password/number field value:", fieldValue);
+    //                             break;
+
+    //                         case 'textarea':
+    //                             $('#cf_' + fieldId).val(fieldValue);
+    //                             console.log("Set textarea field value:", fieldValue);
+    //                             break;
+
+    //                         case 'date':
+    //                             $('#cf_' + fieldId).val(fieldValue);
+    //                             console.log("Set date field value:", fieldValue);
+    //                             // Reinitialize datepicker
+    //                             if ($('#cf_' + fieldId).hasClass('custom-datepicker')) {
+    //                                 initializeDatePicker($('#cf_' + fieldId));
+    //                             }
+    //                             break;
+
+    //                         case 'select':
+    //                             $('#cf_' + fieldId).val(fieldValue).trigger('change');
+    //                             console.log("Set select field value:", fieldValue);
+    //                             break;
+
+    //                         case 'radio':
+    //                             var radioSelector = 'input[name="custom_fields[' + fieldId + ']"][value="' + fieldValue + '"]';
+    //                             $(radioSelector).prop('checked', true);
+    //                             console.log("Set radio button value:", fieldValue, "using selector:", radioSelector);
+    //                             break;
+
+    //                         case 'checkbox':
+    //                             console.log("Processing checkbox field with value:", fieldValue);
+    //                             try {
+    //                                 var checkboxValues;
+
+    //                                 // Handle string or array values
+    //                                 if (typeof fieldValue === 'string' && fieldValue.trim() !== '') {
+    //                                     try {
+    //                                         // Try to parse as JSON if it's a string
+    //                                         checkboxValues = JSON.parse(fieldValue);
+    //                                     } catch(e) {
+    //                                         // If not a valid JSON, treat as a single value
+    //                                         console.log("Not valid JSON, treating as single value");
+    //                                         checkboxValues = [fieldValue];
+    //                                     }
+    //                                 } else if (Array.isArray(fieldValue)) {
+    //                                     checkboxValues = fieldValue;
+    //                                 } else if (fieldValue) {
+    //                                     checkboxValues = [fieldValue];
+    //                                 } else {
+    //                                     checkboxValues = [];
+    //                                 }
+
+    //                                 // Make sure we have an array
+    //                                 if (!Array.isArray(checkboxValues)) {
+    //                                     checkboxValues = [checkboxValues];
+    //                                 }
+
+    //                                 console.log("Checkbox values to set:", checkboxValues);
+
+    //                                 // Check each checkbox value
+    //                                 checkboxValues.forEach(function(value) {
+    //                                     var checkboxSelector = 'input[name="custom_fields[' + fieldId + '][]"][value="' + value + '"]';
+    //                                     $(checkboxSelector).prop('checked', true);
+    //                                     console.log("Checking checkbox with value:", value, "using selector:", checkboxSelector);
+    //                                 });
+    //                             } catch(e) {
+    //                                 console.error("Error processing checkbox field:", e);
+    //                             }
+    //                             break;
+
+    //                         default:
+    //                             console.log("Unsupported field type:", field.field_type);
+    //                             break;
+    //                     }
+    //                 });
+
+    //                 // Initialize special controls for all custom fields
+    //                 $('.custom-datepicker').each(function() {
+    //                     initializeDatePicker($(this));
+    //                 });
+
+    //             } else {
+    //                 console.log("No custom fields or values found in response");
+    //             }
+
+    //             // Trigger a custom event to notify that the form has been fully populated
+    //             $modal.trigger('form:populated');
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.error(error);
+    //         },
+    //     });
+    // });
+
+    $(document).on("click", ".edit-project", function () {
+        var id = $(this).data("id");
+        var $modal = $("#edit_project_modal");
+        $modal.modal("show");
+
+        $.ajax({
+            url: "/master-panel/projects/get/" + id,
+            type: "get",
+            headers: {
+                "X-CSRF-TOKEN": $('input[name="_token"]').attr("value"),
+            },
+            dataType: "json",
+            success: function (response) {
+                var formattedStartDate = moment(response.project.start_date).format(js_date_format);
+                var formattedEndDate = moment(response.project.end_date).format(js_date_format);
+
+                // Existing code for standard fields
+                $("#project_id").val(response.project.id);
+                $("#project_title").val(response.project.title);
+                $modal.find("#project_status_id").val(response.project.status_id).trigger("change");
+                $modal.find("#project_priority_id").val(response.project.priority_id).trigger("change");
+                $("#project_budget").val(response.project.budget);
+                $("#update_start_date").val(formattedStartDate);
+                $("#update_end_date").val(formattedEndDate);
+                initializeDateRangePicker("#update_start_date, #update_end_date");
+                $("#task_accessiblity").val(response.project.task_accessiblity);
+                $("#edit_tasks_time_entries").prop("checked", Boolean(response.project.enable_tasks_time_entries));
+                $("#project_description").val(response.project.description);
+                $("#projectNote").val(response.project.note);
+
+                // Populate project users in the multi-select dropdown
+                var usersSelect = $modal.find('.js-example-basic-multiple[name="user_id[]"]');
+                var projectUsers = response.users.map((user) => user.id);
+                usersSelect.val(projectUsers);
+                usersSelect.trigger("change");
+
+                var clientsSelect = $modal.find('.js-example-basic-multiple[name="client_id[]"]');
+                var projectClients = response.clients.map((client) => client.id);
+                clientsSelect.val(projectClients);
+                clientsSelect.trigger("change");
+
+                var tagsSelect = $modal.find('[name="tag_ids[]"]');
+                var projectTags = response.tags.map((tag) => tag.id);
+                tagsSelect.val(projectTags);
+                tagsSelect.trigger("change.select2");
+
+                // Populate custom fields using the same switch case structure as in edit-task
+                if (response.customFieldValues) {
+                    console.log('Custom Fields:', response.customFieldValues);
+
+                    // Clear any existing custom field values first
+                    $modal.find('[id^="edit_cf_"]').each(function() {
+                        var $field = $(this);
+                        if ($field.is('select')) {
+                            $field.val('').trigger('change');
+                        } else if ($field.is('input[type="checkbox"], input[type="radio"]')) {
+                            $field.prop('checked', false);
+                        } else {
+                            $field.val('');
+                        }
+                    });
+
+                    // Now populate with new values
+                    $.each(response.customFieldValues, function (fieldId, fieldValue) {
+                        var fieldName = `custom_fields[${fieldId}]`;
+                        var fieldSelector = `#edit_cf_${fieldId}`;
+                        var $field = $modal.find(fieldSelector);
+
+                        console.log(`Processing field: ID: ${fieldId}, Value: ${fieldValue}, Selector: ${fieldSelector}, Exists: ${$field.length}`);
+
+                        // Determine field type
+                        var fieldType = '';
+                        if ($field.is('select')) {
+                            fieldType = 'select';
+                        } else if ($modal.find(`input[type="checkbox"][name="${fieldName}[]"]`).length) {
+                            fieldType = 'checkbox';
+                        } else if ($modal.find(`input[type="radio"][name="${fieldName}"]`).length) {
+                            fieldType = 'radio';
+                        } else if ($field.is('textarea')) {
+                            fieldType = 'textarea';
+                        } else if ($field.hasClass('custom-datepicker')) {
+                            fieldType = 'date';
+                        } else if ($field.is('input')) {
+                            fieldType = $field.attr('type') || 'text';
+                        }
+
+                        console.log(`Field type determined: ${fieldType}`);
+
+                        switch (fieldType) {
+                            case 'checkbox':
+                                try {
+                                    var values = fieldValue ? (typeof fieldValue === 'string' && fieldValue.includes('[') ? JSON.parse(fieldValue) : [fieldValue]) : [];
+                                    if (!Array.isArray(values)) {
+                                        values = [values];
+                                    }
+                                    $modal.find(`input[name="${fieldName}[]"]`).each(function () {
+                                        $(this).prop('checked', values.includes($(this).val()));
+                                    });
+                                } catch (e) {
+                                    console.error(`Error parsing checkbox values for field ${fieldId}:`, e);
+                                }
+                                break;
+                            case 'radio':
+                                $modal.find(`input[name="${fieldName}"]`).each(function () {
+                                    $(this).prop('checked', $(this).val() === fieldValue);
+                                });
+                                break;
+                            case 'select':
+                                if ($field.length) {
+                                    $field.val(fieldValue).trigger('change');
+                                    // If that didn't work, try direct selection
+                                    if ($field.val() !== fieldValue) {
+                                        $field.find(`option[value="${fieldValue}"]`).prop('selected', true);
+                                        $field.trigger('change');
+                                    }
+                                } else {
+                                    console.warn(`Select field not found: ${fieldSelector}`);
+                                }
+                                break;
+                            case 'textarea':
+                                if ($field.length) {
+                                    $field.val(fieldValue);
+                                } else {
+                                    console.warn(`Textarea field not found: ${fieldSelector}`);
+                                }
+                                break;
+                            case 'date':
+                                if ($field.length) {
+                                    var formattedDate = fieldValue ? moment(fieldValue).format(js_date_format) : '';
+                                    $field.val(formattedDate);
+
+                                    // Re-initialize this specific datepicker with the correct date
+                                    if ($field.data('daterangepicker')) {
+                                        $field.data('daterangepicker').remove();
+                                    }
+
+                                    $field.daterangepicker({
+                                        singleDatePicker: true,
+                                        showDropdowns: true,
+                                        autoUpdateInput: false,
+                                        locale: {
+                                            cancelLabel: "Clear",
+                                            format: js_date_format
+                                        },
+                                        startDate: formattedDate || moment()
+                                    });
+
+                                    $field.on('apply.daterangepicker', function(ev, picker) {
+                                        $(this).val(picker.startDate.format(js_date_format));
+                                    });
+
+                                    $field.on('cancel.daterangepicker', function(ev, picker) {
+                                        $(this).val('');
+                                        picker.setStartDate(moment()); // or moment().startOf('day')
+                                    });
+
+
+                                    console.log(`Date field initialized: ${fieldSelector} with value: ${formattedDate}`);
+                                } else {
+                                    console.log(`Date field not found: ${fieldSelector}`);
+                                }
+                                break;
+                            case 'text':
+                            case 'password':
+                            case 'number':
+                            default:
+                                if ($field.length) {
+                                    console.log('Setting input value: ', fieldSelector, fieldValue);
+                                    $field.val(fieldValue);
+                                    console.log('After set', fieldSelector, '=>', $field.val());
+                                } else {
+                                    console.log(`Input field not found: ${fieldSelector}`);
+                                }
+                                break;
+                        }
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error:', error);
+            },
+        });
     });
-});
 $(document).on("click", "#set-default-view", function (e) {
     e.preventDefault();
     var type = $(this).data("type");
@@ -2762,10 +3048,14 @@ $(document).on("click", ".quick-view", function (e) {
         },
     });
 });
+
 //edit task modal
+
 $(document).on("click", ".edit-task", function () {
     var id = $(this).data("id");
-    $("#edit_task_modal").modal("show");
+    var $modal = $("#edit_task_modal"); // Cache the modal element like in the working project code
+    $modal.modal("show");
+
     $.ajax({
         url: "/master-panel/tasks/get/" + id,
         type: "get",
@@ -2774,41 +3064,30 @@ $(document).on("click", ".edit-task", function () {
         },
         dataType: "json",
         success: function (response) {
-            console.log(response);
-            var formattedStartDate = moment(response.task.start_date).format(
-                js_date_format
+            console.log('Response:', response);
+            var formattedStartDate = moment(response.task.start_date).format(js_date_format);
+            var formattedEndDate = moment(response.task.due_date).format(js_date_format);
+
+            // Update the modal using the cached selector for better consistency
+            $modal.find("#task_update_users_associated_with_project").html(
+                "(" + label_users_associated_with_project + " <strong>" + response.project.title + "</strong>)"
             );
-            var formattedEndDate = moment(response.task.end_date).format(
-                js_date_format
-            );
-            $("#task_update_users_associated_with_project").html(
-                "(" +
-                label_users_associated_with_project +
-                " <strong>" +
-                response.project.title +
-                "</strong>)"
-            );
-            $("#id").val(response.task.id);
-            $("#title").val(response.task.title);
-            $("#task_status_id").val(response.task.status_id).trigger("change");
-            $("#priority_id").val(response.task.priority_id).trigger("change");
-            $("#update_start_date").val(formattedStartDate);
-            $("#update_end_date").val(formattedEndDate);
+            $modal.find("#id").val(response.task.id);
+            $modal.find("#title").val(response.task.title);
+            $modal.find("#task_status_id").val(response.task.status_id).trigger("change");
+            $modal.find("#priority_id").val(response.task.priority_id).trigger("change");
+            $modal.find("#update_start_date").val(formattedStartDate);
+            $modal.find("#update_end_date").val(formattedEndDate);
             initializeDateRangePicker("#update_start_date, #update_end_date");
-            $("#update_project_title").val(response.project.title);
-            $("#task_description").val(response.task.description);
-            $("#taskNote").val(response.task.note);
-            $("#edit_billing_type")
-                .val(response.task.billing_type)
-                .trigger("change");
-            $("#edit_completion_percentage")
-                .val(response.task.completion_percentage)
-                .trigger("change");
+            $modal.find("#update_project_title").val(response.project.title);
+            $modal.find("#task_description").val(response.task.description);
+            $modal.find("#taskNote").val(response.task.note);
+            $modal.find("#edit_billing_type").val(response.task.billing_type).trigger("change");
+            $modal.find("#edit_completion_percentage").val(response.task.completion_percentage).trigger("change");
+
             // Populate project users in the multi-select dropdown
-            var usersSelect = $("#edit_task_modal").find(
-                '.js-example-basic-multiple[name="user_id[]"]'
-            );
-            usersSelect.empty(); // Clear existing options
+            var usersSelect = $modal.find('.js-example-basic-multiple[name="user_id[]"]');
+            usersSelect.empty();
             $.each(response.project.users, function (index, user) {
                 var option = $("<option>", {
                     value: user.id,
@@ -2816,105 +3095,180 @@ $(document).on("click", ".edit-task", function () {
                 });
                 usersSelect.append(option);
             });
-            // Preselect task users if they exist
             var taskUsers = response.task.users.map((user) => user.id);
             usersSelect.val(taskUsers);
-            usersSelect.trigger("change"); // Trigger change event to update select2
+            usersSelect.trigger("change");
 
             // Populate reminders
             if (response.task.reminders && response.task.reminders.length > 0) {
                 const reminder = response.task.reminders[0];
-                console.log(reminder);
-
-                // Set reminder switch
-                $('#edit-reminder-switch').prop('checked', reminder.is_active === 1);
-
-                // Show reminder settings if active
+                $modal.find('#edit-reminder-switch').prop('checked', reminder.is_active === 1);
                 if (reminder.is_active === 1) {
-                    $('#edit-reminder-settings').removeClass('d-none');
+                    $modal.find('#edit-reminder-settings').removeClass('d-none');
                 } else {
-                    $('#edit-reminder-settings').addClass('d-none');
+                    $modal.find('#edit-reminder-settings').addClass('d-none');
                 }
-
-                // Set frequency type
-                $('#edit-frequency-type').val(reminder.frequency_type).trigger('change');
-
-                // Handle visibility and values for day selectors based on frequency type
+                $modal.find('#edit-frequency-type').val(reminder.frequency_type).trigger('change');
                 switch (reminder.frequency_type) {
                     case 'weekly':
-                        $('#edit-day-of-week-group').removeClass('d-none');
-                        $('#edit-day-of-month-group').addClass('d-none');
-                        $('#edit-day-of-week').val(reminder.day_of_week || '');
+                        $modal.find('#edit-day-of-week-group').removeClass('d-none');
+                        $modal.find('#edit-day-of-month-group').addClass('d-none');
+                        $modal.find('#edit-day-of-week').val(reminder.day_of_week || '');
                         break;
                     case 'monthly':
-                        $('#edit-day-of-month-group').removeClass('d-none');
-                        $('#edit-day-of-week-group').addClass('d-none');
-                        $('#edit-day-of-month').val(reminder.day_of_month || '');
+                        $modal.find('#edit-day-of-month-group').removeClass('d-none');
+                        $modal.find('#edit-day-of-week-group').addClass('d-none');
+                        $modal.find('#edit-day-of-month').val(reminder.day_of_month || '');
                         break;
-                    default: // daily
-                        $('#edit-day-of-week-group').addClass('d-none');
-                        $('#edit-day-of-month-group').addClass('d-none');
+                    default:
+                        $modal.find('#edit-day-of-week-group').addClass('d-none');
+                        $modal.find('#edit-day-of-month-group').addClass('d-none');
                 }
-
-                // Set time of day
-                // Convert the time string to correct format for input type="time"
-                const timeOfDay = reminder.time_of_day.slice(0, 5); // Get HH:mm from HH:mm:ss
-                $('#edit-time-of-day').val(timeOfDay);
+                const timeOfDay = reminder.time_of_day.slice(0, 5);
+                $modal.find('#edit-time-of-day').val(timeOfDay);
             }
 
             // Populate recurring task settings
             if (response.task.recurring_task) {
                 const recurring_task = response.task.recurring_task;
-
-
-                // Set recurring task switch
-                $('#edit-recurring-task-switch').prop('checked', recurring_task.is_active === 1);
-
-                // Show recurring task settings if active
+                $modal.find('#edit-recurring-task-switch').prop('checked', recurring_task.is_active === 1);
                 if (recurring_task.is_active === 1) {
-                    $('#edit-recurring-task-settings').removeClass('d-none');
+                    $modal.find('#edit-recurring-task-settings').removeClass('d-none');
                 } else {
-                    $('#edit-recurring-task-settings').addClass('d-none');
+                    $modal.find('#edit-recurring-task-settings').addClass('d-none');
                 }
-
-                // Set frequency type
-                $('#edit-recurrence-frequency').val(recurring_task.frequency).trigger('change');
-
-                // Handle visibility and values for day selectors based on frequency type
+                $modal.find('#edit-recurrence-frequency').val(recurring_task.frequency).trigger('change');
                 switch (recurring_task.frequency) {
                     case 'weekly':
-                        $('#edit-recurrence-day-of-week-group').removeClass('d-none');
-                        $('#edit-recurrence-day-of-month-group').addClass('d-none');
-                        $('#edit-recurrence-day-of-week').val(recurring_task.day_of_week || '');
+                        $modal.find('#edit-recurrence-day-of-week-group').removeClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-month-group').addClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-week').val(recurring_task.day_of_week || '');
                         break;
                     case 'monthly':
-                        $('#edit-recurrence-day-of-month-group').removeClass('d-none');
-                        $('#edit-recurrence-day-of-week-group').addClass('d-none');
-                        $('#edit-recurrence-day-of-month').val(recurring_task.day_of_month || '');
+                        $modal.find('#edit-recurrence-day-of-month-group').removeClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-week-group').addClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-month').val(recurring_task.day_of_month || '');
                         break;
                     case 'yearly':
-                        $('#edit-recurrence-day-of-month-group').removeClass('d-none');
-                        $('#edit-recurrence-day-of-week-group').addClass('d-none');
-                        $('#edit-recurrence-day-of-month').val(recurring_task.day_of_month || '');
-                        $('#edit-recurrence-month-of-year-group').removeClass('d-none');
-                        $('#edit-recurrence-month-of-year').val(recurring_task.month_of_year || '');
+                        $modal.find('#edit-recurrence-day-of-month-group').removeClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-week-group').addClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-month').val(recurring_task.day_of_month || '');
+                        $modal.find('#edit-recurrence-month-of-year-group').removeClass('d-none');
+                        $modal.find('#edit-recurrence-month-of-year').val(recurring_task.month_of_year || '');
                         break;
-                    default: // daily
-                        $('#edit-recurrence-day-of-week-group').addClass('d-none');
-                        $('#edit-recurrence-day-of-month-group').addClass('d-none');
-                        $('#edit-recurrence-month-of-year-group').addClass('d-none');
+                    default:
+                        $modal.find('#edit-recurrence-day-of-week-group').addClass('d-none');
+                        $modal.find('#edit-recurrence-day-of-month-group').addClass('d-none');
+                        $modal.find('#edit-recurrence-month-of-year-group').addClass('d-none');
                 }
+                $modal.find('#edit-recurrence-starts-from').val(recurring_task.starts_from);
+                $modal.find('#edit-recurrence-occurrences').val(recurring_task.number_of_occurrences);
+            }
 
-                // Starts From and Number of Occuerences
-                $('#edit-recurrence-starts-from').val(recurring_task.starts_from);
-                $('#edit-recurrence-occurrences').val(recurring_task.number_of_occurrences);
+            // Populate custom fields
+            if (response.task.formatted_custom_fields) {
+                console.log('Custom Fields:', response.task.formatted_custom_fields);
+
+                // Clear any existing custom field values first
+                $modal.find('[id^="edit_cf_"]').each(function() {
+                    var $field = $(this);
+                    if ($field.is('select')) {
+                        $field.val('').trigger('change');
+                    } else if ($field.is('input[type="checkbox"], input[type="radio"]')) {
+                        $field.prop('checked', false);
+                    } else {
+                        $field.val('');
+                    }
+                });
+
+                // Now populate with new values
+                $.each(response.task.formatted_custom_fields, function (fieldId, field) {
+                    var fieldName = `custom_fields[${field.field_id}]`;
+                    var fieldSelector = `#edit_cf_${field.field_id}`;
+                    var fieldType = field.field_type.toLowerCase();
+
+                    console.log(`Processing field: ${field.field_label}, Type: ${fieldType}, Value: ${field.value}, Selector: ${fieldSelector}, Exists: ${$modal.find(fieldSelector).length}`);
+
+                    switch (fieldType) {
+                        case 'checkbox':
+                            var values = field.value ? JSON.parse(field.value) : [];
+                            $modal.find(`input[name="${fieldName}[]"]`).each(function () {
+                                $(this).prop('checked', values.includes($(this).val()));
+                            });
+                            break;
+                        case 'radio':
+                            $modal.find(`input[name="${fieldName}"]`).each(function () {
+                                $(this).prop('checked', $(this).val() === field.value);
+                            });
+                            break;
+                        case 'select':
+                            if ($modal.find(fieldSelector).length) {
+                                $modal.find(fieldSelector).val(field.value).trigger('change');
+                            } else {
+                                console.warn(`Select field not found: ${fieldSelector}`);
+                            }
+                            break;
+                        case 'textarea':
+                            if ($modal.find(fieldSelector).length) {
+                                $modal.find(fieldSelector).val(field.value);
+                            } else {
+                                console.warn(`Textarea field not found: ${fieldSelector}`);
+                            }
+                            break;
+                        case 'date':
+                            if ($modal.find(fieldSelector).length) {
+                                var formattedDate = field.value ? moment(field.value).format(js_date_format) : '';
+                                $modal.find(fieldSelector).val(formattedDate);
+
+                                // Re-initialize this specific datepicker with the correct date
+                                if ($modal.find(fieldSelector).data('daterangepicker')) {
+                                    $modal.find(fieldSelector).data('daterangepicker').remove();
+                                }
+
+                                $modal.find(fieldSelector).daterangepicker({
+                                    singleDatePicker: true,
+                                    showDropdowns: true,
+                                    autoUpdateInput: true,
+                                    locale: {
+                                        cancelLabel: "Clear",
+                                        format: js_date_format
+                                    },
+                                    startDate: formattedDate || moment()
+                                });
+
+                                $modal.find(fieldSelector).on('cancel.daterangepicker', function(ev, picker) {
+                                    $(this).val('');
+                                });
+
+                                console.log(`Date field initialized: ${fieldSelector} with value: ${formattedDate}`);
+                            } else {
+                                console.warn(`Date field not found: ${fieldSelector}`);
+                            }
+                            break;
+                        case 'text':
+                        case 'password':
+                        case 'number':
+                            if ($modal.find(fieldSelector).length) {
+                                console.log('Trying to set: ', fieldSelector, field.value);
+                                $modal.find(fieldSelector).val(field.value);
+                                console.log('After set', fieldSelector, '=>', $modal.find(fieldSelector).val());
+
+                            } else {
+                                console.warn(`Input field not found: ${fieldSelector}`);
+                            }
+                            break;
+                        default:
+                            console.warn(`Unsupported field type: ${fieldType}`);
+                    }
+                });
             }
         },
         error: function (xhr, status, error) {
-            console.error(error);
+            console.error('AJAX Error:', error);
         },
     });
 });
+
 // Column Visibility
 $(document).on("click", ".save-column-visibility", function (e) {
     e.preventDefault();
@@ -2973,7 +3327,6 @@ $(document).on("click", ".save-column-visibility", function (e) {
 // Edit Workspace Modal
 $(document).on("click", ".edit-workspace", function () {
     var id = $(this).data("id");
-
     $("#editWorkspaceModal").modal("show");
     $.ajax({
         url: "/master-panel/workspaces/get/" + id,
@@ -3769,6 +4122,7 @@ $(document).ready(function () {
         menuItems.show(); // Show all menu items
     });
 });
+
 function calenderView() {
     var calendar = document.getElementById("taskCalenderDiv");
     // Check if the calendar element exists
@@ -3865,7 +4219,6 @@ function fetchProjects(
 projectsCalendarView();
 function projectsCalendarView() {
     var projectcalendar = document.getElementById("projectsCalenderDiv");
-    // Check if the calendar element exists
     if (projectcalendar) {
         var project_id = $("#project_id").val();
         var WAcalendar = new FullCalendar.Calendar(projectcalendar, {
@@ -3877,22 +4230,12 @@ function projectsCalendarView() {
             },
             editable: false,
             height: "auto",
-            selectable: true, // Enable date selection
-
+            selectable: true,
             events: function (fetchInfo, successCallback, failureCallback) {
-                // Fetch tasks for the current month
-                fetchProjects(
-                    fetchInfo.start,
-                    fetchInfo.end,
-                    successCallback,
-                    failureCallback
-                );
+                fetchProjects(fetchInfo.start, fetchInfo.end, successCallback, failureCallback);
             },
-
             eventClick: function (info) {
-                // Show the edit modal
                 var id = info.event.id;
-                $("#edit_project_modal").modal("show");
                 $.ajax({
                     url: "/master-panel/projects/get/" + id,
                     type: "get",
@@ -3901,86 +4244,189 @@ function projectsCalendarView() {
                     },
                     dataType: "json",
                     success: function (response) {
-                        var formattedStartDate = moment(response.project.start_date).format(
-                            js_date_format
-                        );
-                        var formattedEndDate = moment(response.project.end_date).format(
-                            js_date_format
-                        );
-                        var $modal = $("#edit_project_modal"); // Cache the modal element for better performance
+                        $("#edit_project_modal").modal("show");
+                        var formattedStartDate = moment(response.project.start_date).format(js_date_format);
+                        var formattedEndDate = moment(response.project.end_date).format(js_date_format);
+                        var $modal = $("#edit_project_modal");
+
+                        // Populate standard fields
                         $("#project_id").val(response.project.id);
                         $("#project_title").val(response.project.title);
-                        $modal
-                            .find("#project_status_id")
-                            .val(response.project.status_id)
-                            .trigger("change");
-                        $modal
-                            .find("#project_priority_id")
-                            .val(response.project.priority_id)
-                            .trigger("change");
+                        $modal.find("#project_status_id").val(response.project.status_id).trigger("change");
+                        $modal.find("#project_priority_id").val(response.project.priority_id).trigger("change");
                         $("#project_budget").val(response.project.budget);
                         $("#update_start_date").val(formattedStartDate);
                         $("#update_end_date").val(formattedEndDate);
                         initializeDateRangePicker("#update_start_date, #update_end_date");
                         $("#task_accessiblity").val(response.project.task_accessiblity);
-                        $("#edit_tasks_time_entries").prop(
-                            "checked",
-                            Boolean(response.project.enable_tasks_time_entries)
-                        );
+                        $("#edit_tasks_time_entries").prop("checked", Boolean(response.project.enable_tasks_time_entries));
                         $("#project_description").val(response.project.description);
                         $("#projectNote").val(response.project.note);
-                        // Populate project users in the multi-select dropdown
-                        var usersSelect = $("#edit_project_modal").find(
-                            '.js-example-basic-multiple[name="user_id[]"]'
-                        );
-                        // Preselect project users if they exist
+
+                        // Populate project users
+                        var usersSelect = $modal.find('.js-example-basic-multiple[name="user_id[]"]');
                         var projectUsers = response.users.map((user) => user.id);
-                        usersSelect.val(projectUsers);
-                        usersSelect.trigger("change"); // Trigger change event to update select2
-                        var clientsSelect = $("#edit_project_modal").find(
-                            '.js-example-basic-multiple[name="client_id[]"]'
-                        );
+                        usersSelect.val(projectUsers).trigger("change");
+
+                        // Populate project clients
+                        var clientsSelect = $modal.find('.js-example-basic-multiple[name="client_id[]"]');
                         var projectClients = response.clients.map((client) => client.id);
-                        clientsSelect.val(projectClients);
-                        clientsSelect.trigger("change"); // Trigger change event to update select2
-                        var tagsSelect = $("#edit_project_modal").find(
-                            '[name="tag_ids[]"]'
-                        );
+                        clientsSelect.val(projectClients).trigger("change");
+
+                        // Populate tags
+                        var tagsSelect = $modal.find('[name="tag_ids[]"]');
                         var projectTags = response.tags.map((tag) => tag.id);
-                        // Select old tags
-                        tagsSelect.val(projectTags);
-                        // Trigger change event to update Select2
-                        tagsSelect.trigger("change.select2");
+                        tagsSelect.val(projectTags).trigger("change.select2");
+
+                        // Populate custom fields
+                        if (response.customFieldValues) {
+                            console.log('Custom Fields:', response.customFieldValues);
+
+                            // Clear any existing custom field values first
+                            $modal.find('[id^="edit_cf_"]').each(function() {
+                                var $field = $(this);
+                                if ($field.is('select')) {
+                                    $field.val('').trigger('change');
+                                } else if ($field.is('input[type="checkbox"], input[type="radio"]')) {
+                                    $field.prop('checked', false);
+                                } else {
+                                    $field.val('');
+                                }
+                            });
+
+                            // Now populate with new values
+                            $.each(response.customFieldValues, function (fieldId, fieldValue) {
+                                var fieldName = `custom_fields[${fieldId}]`;
+                                var fieldSelector = `#edit_cf_${fieldId}`;
+                                var $field = $modal.find(fieldSelector);
+
+                                console.log(`Processing field: ID: ${fieldId}, Value: ${fieldValue}, Selector: ${fieldSelector}, Exists: ${$field.length}`);
+
+                                // Determine field type
+                                var fieldType = '';
+                                if ($field.is('select')) {
+                                    fieldType = 'select';
+                                } else if ($modal.find(`input[type="checkbox"][name="${fieldName}[]"]`).length) {
+                                    fieldType = 'checkbox';
+                                } else if ($modal.find(`input[type="radio"][name="${fieldName}"]`).length) {
+                                    fieldType = 'radio';
+                                } else if ($field.is('textarea')) {
+                                    fieldType = 'textarea';
+                                } else if ($field.hasClass('custom-datepicker')) {
+                                    fieldType = 'date';
+                                } else if ($field.is('input')) {
+                                    fieldType = $field.attr('type') || 'text';
+                                }
+
+                                console.log(`Field type determined: ${fieldType}`);
+
+                                switch (fieldType) {
+                                    case 'checkbox':
+                                        try {
+                                            var values = fieldValue ? (typeof fieldValue === 'string' && fieldValue.includes('[') ? JSON.parse(fieldValue) : [fieldValue]) : [];
+                                            if (!Array.isArray(values)) {
+                                                values = [values];
+                                            }
+                                            $modal.find(`input[name="${fieldName}[]"]`).each(function () {
+                                                $(this).prop('checked', values.includes($(this).val()));
+                                            });
+                                        } catch (e) {
+                                            console.error(`Error parsing checkbox values for field ${fieldId}:`, e);
+                                        }
+                                        break;
+                                    case 'radio':
+                                        $modal.find(`input[name="${fieldName}"]`).each(function () {
+                                            $(this).prop('checked', $(this).val() === fieldValue);
+                                        });
+                                        break;
+                                    case 'select':
+                                        if ($field.length) {
+                                            $field.val(fieldValue).trigger('change');
+                                            // If that didn't work, try direct selection
+                                            if ($field.val() !== fieldValue) {
+                                                $field.find(`option[value="${fieldValue}"]`).prop('selected', true);
+                                                $field.trigger('change');
+                                            }
+                                        } else {
+                                            console.warn(`Select field not found: ${fieldSelector}`);
+                                        }
+                                        break;
+                                    case 'textarea':
+                                        if ($field.length) {
+                                            $field.val(fieldValue);
+                                        } else {
+                                            console.warn(`Textarea field not found: ${fieldSelector}`);
+                                        }
+                                        break;
+                                    case 'date':
+                                        if ($field.length) {
+                                            var formattedDate = fieldValue ? moment(fieldValue).format(js_date_format) : '';
+                                            $field.val(formattedDate);
+
+                                            // Re-initialize this specific datepicker with the correct date
+                                            if ($field.data('daterangepicker')) {
+                                                $field.data('daterangepicker').remove();
+                                            }
+
+                                            $field.daterangepicker({
+                                                singleDatePicker: true,
+                                                showDropdowns: true,
+                                                autoUpdateInput: true,
+                                                locale: {
+                                                    cancelLabel: "Clear",
+                                                    format: js_date_format
+                                                },
+                                                startDate: formattedDate || moment()
+                                            });
+
+                                            $field.on('cancel.daterangepicker', function(ev, picker) {
+                                                $(this).val('');
+                                            });
+
+                                            console.log(`Date field initialized: ${fieldSelector} with value: ${formattedDate}`);
+                                        } else {
+                                            console.log(`Date field not found: ${fieldSelector}`);
+                                        }
+                                        break;
+                                    case 'text':
+                                    case 'password':
+                                    case 'number':
+                                    default:
+                                        if ($field.length) {
+                                            console.log('Setting input value: ', fieldSelector, fieldValue);
+                                            $field.val(fieldValue);
+                                            console.log('After set', fieldSelector, '=>', $field.val());
+                                        } else {
+                                            console.log(`Input field not found: ${fieldSelector}`);
+                                        }
+                                        break;
+                                }
+                            });
+                        }
                     },
                     error: function (xhr, status, error) {
-                        console.error(error);
+                        console.error('AJAX Error:', xhr.responseText);
                     },
                 });
             },
             datesSet: function (info) {
-                // Fetch tasks when the month changes
                 projectcalendar.removeAllEvents();
                 projectcalendar.refetchEvents();
             },
-             dateClick: function (info) {
+            dateClick: function (info) {
                 var start = moment(info.dateStr).format(js_date_format);
                 $("#start_date").val(start);
-                $("#start_time").val()
                 $("#end_date").val(start);
-                $("#end_time").val()
                 $("#create_project_modal").modal("show");
             },
             select: function (info) {
                 var startDate = moment(info.startStr).format(js_date_format);
-                var endDate = moment(info.endStr)
-                    .subtract(1, "days")
-                    .format(js_date_format);
+                var endDate = moment(info.endStr).subtract(1, "days").format(js_date_format);
                 $("#start_date").val(startDate);
                 $("#end_date").val(endDate);
                 $("#create_project_modal").modal("show");
             },
             eventMouseEnter: function (info) {
-                // Create a tooltip element
                 var tooltip = document.createElement("div");
                 tooltip.innerHTML = info.event.title;
                 tooltip.style.position = "absolute";
@@ -3989,21 +4435,14 @@ function projectsCalendarView() {
                 tooltip.style.padding = "5px";
                 tooltip.style.borderRadius = "5px";
                 tooltip.style.zIndex = "1000";
-                tooltip.style.pointerEvents = "none"; // Prevent mouse events
-                // Append the tooltip to the body
+                tooltip.style.pointerEvents = "none";
                 document.body.appendChild(tooltip);
-                // Position the tooltip
                 var rect = info.el.getBoundingClientRect();
                 tooltip.style.left = rect.left + window.scrollX + "px";
                 tooltip.style.top = rect.bottom + window.scrollY + "px";
-                // Remove tooltip on mouse leave
-                info.el.addEventListener(
-                    "mouseleave",
-                    function () {
-                        document.body.removeChild(tooltip);
-                    },
-                    { once: true }
-                );
+                info.el.addEventListener("mouseleave", function () {
+                    document.body.removeChild(tooltip);
+                }, { once: true });
             },
         });
         WAcalendar.render();
@@ -4690,6 +5129,8 @@ $(function () {
             true
         );
     }
+
+
 });
 $(document).ready(function () {
     $("#generate-password").on("click", function () {
@@ -4811,6 +5252,122 @@ $(function () {
             true
         );
     }
+    if ($("#select_lead_assignee").length) {
+        initSelect2Ajax(
+            "#select_lead_assignee",
+            "/master-panel/users/search-users",
+            label_select_user,
+            true,
+            0,
+            true
+        )
+    }
+    if ($("#select_lead_stage").length) {
+        initSelect2Ajax(
+            "#select_lead_stage",
+            "/master-panel/leads/search-leads",
+            label_select_stage, // e.g., "Select Stage"
+            true,
+            0,
+            true
+        );
+    }
+    if ($("#select_lead_source").length) {
+        initSelect2Ajax(
+            "#select_lead_source",
+            "/master-panel/leads/search", // Using your existing search route
+            label_select_source, // You can define this label like: var label_select_source = "Select Source";
+            true,
+            0,
+            true
+        );
+    }
+
+    if ($("#selected_sources").length) {
+        initSelect2Ajax(
+            "#selected_sources",
+            "/master-panel/leads/search",
+            label_select_source,
+            true,
+            0,
+            true
+        );
+    }
+
+    if ($("#selected_stages").length) {
+        initSelect2Ajax(
+            "#selected_stages",
+            "/master-panel/leads/search-stages",
+            label_select_stage,
+            true,
+            0,
+            true
+        );
+    }
+    if ($("#create_follow_up_assigned_to").length) {
+        initSelect2Ajax(
+            "#create_follow_up_assigned_to",
+            "/master-panel/users/search-users",
+            label_select_user,
+            true,
+            0,
+            true
+        );
+    }
+
+    if ($("#select_candidate_statuses").length) {
+        initSelect2Ajax(
+            "#select_candidate_statuses",
+            "/master-panel/candidate-statuses/search",
+            label_select_candidates_statuses,
+            true,
+            0,
+            true
+        );
+    }
+
+    if ($("#create_search_candidates").length) {
+        initSelect2Ajax(
+            "#create_search_candidates",
+            "/master-panel/candidate/search-candidates",
+            label_select_search_candidates,
+            true,
+            0,
+            true
+        );
+    }
+
+    if ($("#edit_search_candidates").length) {
+        initSelect2Ajax(
+            "#edit_search_candidates",
+            "/master-panel/candidate/search-candidates",
+            label_select_search_candidates,
+            true,
+            0,
+            true
+        );
+    }
+    if ($("#create_search_interviewer").length) {
+        initSelect2Ajax(
+            "#create_search_interviewer",
+            "/master-panel/users/search-users",
+            label_select_search_interviewer,
+            true,
+            0,
+            true
+        );
+    }
+    if ($("#edit_search_interviewer").length) {
+        initSelect2Ajax(
+            "#edit_search_interviewer",
+            "/master-panel/users/search-users",
+            label_select_search_interviewer,
+            true,
+            0,
+            true
+        );
+    }
+
 });
 // Check Email Settings Functionality
 $(document).on("click", "#test-email-settings", function () {
@@ -5356,3 +5913,197 @@ $(document).ready(function () {
         googleCalendarView(googleCalendarDiv);
     }
 });
+
+$(function () {
+    initializeCustomDatepickers();
+});
+
+function initializeCustomDatepickers(selector = '.custom-datepicker') {
+
+    $(selector).off('apply.daterangepicker cancel.daterangepicker');
+
+
+    $(selector).daterangepicker({
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoUpdateInput: false,
+        locale: {
+            cancelLabel: "Clear",
+            format: js_date_format,
+        },
+    });
+
+    $(selector).on('apply.daterangepicker', function (ev, picker) {
+        $(this).val(picker.startDate.format(js_date_format));
+    });
+
+    $(selector).on('cancel.daterangepicker', function (ev, picker) {
+        $(this).val('');
+        picker.setStartDate('');
+        picker.setEndDate('');
+    });
+
+}
+
+$(document).on("click", ".edit-lead-follow-up", function () {
+    var id = $(this).data("id");
+    $("#edit_lead_follow_up_modal").modal("show");
+
+    $.ajax({
+        url: "/master-panel/leads/follow-up/get/" + id,
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('input[name="_token"]').val()
+        },
+        dataType: "json",
+        success: function (response) {
+            console.log(response);
+
+            // Prefill the form with data from the response
+            var followUp = response.follow_up;
+            var lead = response.follow_up.lead;
+
+            // Prefill ID (hidden field)
+            $('input[name="id"]').val(followUp.id);
+
+            // Prefill Assigned To field (select)
+            var dropdownSelector = $('select[name="assigned_to"]');
+
+            if (dropdownSelector.length) {
+                var newItem = response.follow_up.assigned_to;
+
+                var newOption = $("<option></option>")
+                    .attr("value", newItem.id)
+                    .attr("selected", true)
+                    .text(newItem.first_name + " " + newItem.last_name);
+
+                dropdownSelector.append(newOption).trigger("change");
+            }
+
+            // Prefill Follow Up Date
+            var formatted = moment(followUp.follow_up_at).format('YYYY-MM-DDTHH:mm');
+            $('input[name="follow_up_at"]').val(formatted);
+
+            // Prefill Follow Up Type
+            $('select[name="type"]').val(followUp.type);
+
+            // Prefill Status field
+            $('select[name="status"]').val(followUp.status);
+
+            // Prefill Note field (make sure to decode HTML entities if needed)
+            $('#edit_follow_up_note').val(followUp.note);
+
+            // Optionally, you can populate any additional lead-related information if needed
+            // Example: Pre-fill any lead-specific info in the form, if required
+
+        },
+        error: function (xhr, status, error) {
+            console.error('Error:', error);
+        }
+    });
+});
+
+
+$(document).ready(function () {
+    if ($("textarea#follow_up_note,textarea#edit_follow_up_note").length > 0) {
+
+        $("textarea#follow_up_note,textarea#edit_follow_up_note").tinymce({
+            height: 300,
+            menubar: true,
+        });
+    }
+});
+
+$(document).ready(function () {
+    // Use event delegation to handle clicks on dynamically loaded buttons
+    $(document).on('click', '.convert-to-client', function (e) {
+        e.preventDefault();
+
+        var leadId = $(this).data('id');
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+        if (!leadId) {
+            toastr.error('Invalid lead ID.');
+            return;
+        }
+
+        $.ajax({
+            url: '/master-panel/leads/' + leadId + '/convert-to-client',
+            type: 'POST',
+            data: {
+                _token: csrfToken,
+                lead_id: leadId
+            },
+            success: handleConvertSuccess,
+            error: handleConvertError
+        });
+    });
+
+    function handleConvertSuccess(response) {
+        if (response.error || response.status === false) {
+            toastr.error(response.message || 'Conversion failed.');
+        } else {
+            toastr.success(response.message || 'Lead successfully converted.');
+            setTimeout(() => {
+                location.reload();
+            }, parseFloat(toastTimeOut) * 1000);
+        }
+    }
+
+    function handleConvertError(xhr) {
+        let message = 'Something went wrong.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
+        }
+        toastr.error(message);
+        setTimeout(() => {
+            location.reload();
+        }, parseFloat(toastTimeOut) * 1000);
+    }
+});
+
+// $(document).ready(function(){
+//     initPhoneInput('leads-phone-input');
+// })
+
+// function openWordDocViewer(viewerUrl, documentName) {
+//     // Create modal if it doesn't exist
+//     if (!document.getElementById('wordDocViewerModal')) {
+//         const modal = document.createElement('div');
+//         modal.id = 'wordDocViewerModal';
+//         modal.className = 'modal fade';
+//         modal.setAttribute('tabindex', '-1');
+//         modal.setAttribute('role', 'dialog');
+//         modal.setAttribute('aria-labelledby', 'wordDocViewerModalLabel');
+//         modal.innerHTML = `
+//             <div class="modal-dialog modal-xl" role="document">
+//                 <div class="modal-content">
+//                     <div class="modal-header">
+//                         <h5 class="modal-title" id="wordDocViewerModalLabel">Document Viewer</h5>
+//                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+//                     </div>
+//                     <div class="modal-body">
+//                         <iframe id="wordDocViewerFrame" width="100%" height="600" frameborder="0"></iframe>
+//                     </div>
+//                     <div class="modal-footer">
+//                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+//                     </div>
+//                 </div>
+//             </div>
+//         `;
+//         document.body.appendChild(modal);
+//     }
+
+//     // Update modal title and iframe source
+//     document.getElementById('wordDocViewerModalLabel').textContent = documentName;
+//     document.getElementById('wordDocViewerFrame').src = viewerUrl;
+
+//     // Initialize and show the modal
+//     const wordDocModal = new bootstrap.Modal(document.getElementById('wordDocViewerModal'));
+//     wordDocModal.show();
+// }
+
+// // Alternative: If Google Docs viewer isn't reliable, you can open in new tab
+// function openWordDocInNewTab(viewerUrl) {
+//     window.open(viewerUrl, '_blank', 'noopener,noreferrer');
+// }

@@ -90,8 +90,10 @@
                             <label for="lead_sources" class="form-label">{{ get_label('lead_sources', 'Lead Sources') }}
                                 <span class="text-danger">*</span></label>
                             <select class="form-select" name="source_id" id="select_lead_source">
-                                {{-- You can keep the default option if needed --}}
                                 <option value="">{{ get_label('select_lead_source', 'Select Lead Source') }}</option>
+                                @foreach ($lead_sources as $source)
+                                    <option value="{{ $source->id }}">{{ $source->name }}</option>
+                                @endforeach
                             </select>
                             @error('source_id')
                                 <span class="text-danger">{{ $message }}</span>
@@ -104,7 +106,9 @@
                                 <span class="text-danger">*</span> </label>
                             <select class="form-select" name="stage_id" id="selected_stages">
                                 <option value="">{{ get_label('select_lead_stage', 'Select Lead Stage') }}</option>
-
+                                @foreach ($lead_stages as $stage)
+                                    <option value="{{ $stage->id }}">{{ $stage->name }}</option>
+                                @endforeach
                             </select>
                             @error('stage_id')
                                 <span class="text-danger">{{ $message }}</span>
@@ -116,7 +120,9 @@
                                     class="text-danger">*</span></label>
                             <select name="assigned_to" class="form-select" id="select_lead_assignee" required>
                                 <option value="">{{ get_label('select_assignee', 'Assigned To') }}</option>
-
+                                {{-- @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach --}}
                             </select>
                             @error('assigned_to')
                                 <span class="text-danger">{{ $message }}</span>
@@ -263,12 +269,12 @@
                     <div class="mt-4 text-start">
                         <button type="submit" class="btn btn-primary me-2"
                             id="submit_btn"><?= get_label('create', 'Create') ?></button>
-                        <button type="reset" class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
+                        <button type="reset"
+                            class="btn btn-outline-secondary"><?= get_label('cancel', 'Cancel') ?></button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     <script src="{{ asset('assets/js/pages/lead.js') }}"></script>
-
 @endsection

@@ -57,4 +57,11 @@
     var label_no_task_list = "{{ get_label('no_task_list', 'No Task List') }}";
     var label_searching = "{{ get_label('searching', 'Searching...') }}";
     var label_delete_selected = "{{ get_label('delete_selected', 'Delete selected') }}";
+    var label_select_source = "{{ get_label('select_lead_source', 'Select Lead Source') }}";
+    var label_select_stage = "{{ get_label('select_lead_stage', 'Select Lead Stage') }}";
+    var label_select_candidates = "{{ get_label('select_candidates', 'Select Candidates') }}";
+    var label_select_candidates_statuses = "{{ get_label('select_candidates_statuses', 'Select Candidates Statuses') }}";
+    var label_select_search_candidates = "{{ get_label('search_candidate', 'Search Candidates') }}";
+    var label_select_search_interviewer = "{{ get_label('search_interviewer', 'Search Interviewer') }}";
+
 </script>

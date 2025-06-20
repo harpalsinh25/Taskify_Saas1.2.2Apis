@@ -40,7 +40,7 @@
 
             </div>
             <div class="table-responsive text-nowrap">
-                <input type="hidden" id="data_type" value="lead-stages">
+                <input type="hidden" id="data_type" value="lead-sources">
                 <input type="hidden" id="save_column_visibility">
                 <table id="table" data-toggle="table" data-loading-template="loadingTemplate"
                             data-url="{{ route('lead-sources.list') }}" data-icons-prefix="bx" data-icons="icons"

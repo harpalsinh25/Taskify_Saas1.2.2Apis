@@ -4,6 +4,7 @@ use App\Models\Tax;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\Candidate;
 use App\Models\Client;
 use App\Models\Status;
 use App\Models\Update;
@@ -986,6 +987,8 @@ if (!function_exists('processNotifications')) {
                     $recipientModel = User::find($recipientId);
                 } elseif (substr($recipient, 0, 2) === 'c_') {
                     $recipientModel = Client::find($recipientId);
+                }elseif (substr($recipient, 0, 2) === 'ca') {
+                    $recipientModel = Candidate::find($recipientId);
                 }
 
                 // Check if recipient was found
@@ -2910,7 +2913,7 @@ if (!function_exists('getMenus')) {
                 'url' => '',
                 'icon' => 'bx bxs-phone-call',
                 'class' => 'menu-item ' . (Request::is('master-panel/lead-sources') || Request::is('master-panel/lead-sources/*') || Request::is('master-panel/lead-stages') || Request::is('master-panel/lead-stages/*') || Request::is('master-panel/leads') || Request::is('master-panel/leads/*') ? 'active open' : ''),
-                'category' => get_label('utilities', 'Utilities'),
+                'category' => 'utilities',
                 'show' =>  $user->can('manage_leads') ? 1 : 0,
                 'submenus' => [
                     [
@@ -3173,6 +3176,37 @@ if (!function_exists('getMenus')) {
                 ],
             ],
             [
+                'id' => 'hrms_management',
+                'label' => get_label('HRMS', 'HRMS'),
+                'icon' => 'bx bx-group',
+                'class' => 'menu-item' . (Request::is('master-panel/candidate*') || Request::is('master-panel/candidate_status*') || Request::is('master-panel/interviews*') ? ' active open' : ''),
+                'show' => ($user->can('manage_candidate') || $user->can('manage_candidate_status') || $user->can('manage_interview')) ? 1 : 0,
+                'category' => 'utilities',
+                'submenus' => [
+                    [
+                        'id' => 'candidates',
+                        'label' => get_label('candidate', 'Candidates'),
+                        'url' => getDefaultViewRoute('candidates'),
+                        'class' => 'menu-item' . (Request::is('master-panel/candidate') || Request::is('master-panel/candidate/*') ? ' active' : ''),
+                        'show' => $user->can('manage_candidate') ? 1 : 0,
+                    ],
+                    [
+                        'id' => 'candidates_status',
+                        'label' => get_label('candidate_status', 'Candidates Status'),
+                        'url' => route('candidate_status.index'),
+                        'class' => 'menu-item' . (Request::is('master-panel/candidate-status*') ? ' active' : ''),
+                        'show' => $user->can('manage_candidate_status') ? 1 : 0,
+                    ],
+                    [
+                        'id' => 'interviews',
+                        'label' => get_label('interviews', 'Interviews'),
+                        'url' => route('interviews.index'),
+                        'class' => 'menu-item' . (Request::is('master-panel/interviews*') ? ' active' : ''),
+                        'show' => $user->can('manage_interview') ? 1 : 0,
+                    ],
+                ]
+            ],
+            [
                 'id' => 'notes',
                 'label' => get_label('notes', 'Notes'),
                 'url' => route('notes.index'),
@@ -3274,7 +3308,95 @@ if (!function_exists('getMenus')) {
         ];
     }
 }
+if (!function_exists('formatLeadUserHtml')) {
+    function formatLeadUserHtml($lead)
+    {
+        if (!$lead) {
+            return "-";
+        }
 
+        // Check if the lead has phone and/or country code
+        $makeCallIcon = '';
+        if (!empty($lead->phone) || (!empty($lead->phone) && !empty($lead->country_code))) {
+            $makeCallLink = 'tel:' . ($lead->country_code ? $lead->country_code . $lead->phone : $lead->phone);
+            $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+                             <i class="bx bx-phone-call text-primary"></i>
+                         </a>';
+        }
+
+
+
+        // Email & Mail Link
+        $sendMailLink = 'mailto:' . $lead->email;
+        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                        <i class="bx bx-envelope text-primary"></i>
+                     </a>';
+
+        return "<div class='d-flex justify-content-start align-items-center user-name'>
+
+                <div class='d-flex flex-column'>
+                    <span class='fw-semibold'>" . ucwords($lead->first_name . ' ' . $lead->last_name) . " {$makeCallIcon}</span>
+                    <small class='text-muted'>{$lead->email} {$sendMailIcon}</small>
+                </div>
+            </div>";
+    }
+}
+if (!function_exists('formatUserHtml')) {
+    function formatUserHtml($user)
+    {
+        if (!$user) {
+            return "-";
+        }
+
+        // Get the authenticated user
+        $authenticatedUser = getAuthenticatedUser();
+
+        // Get the guard name (web or client)
+        $guardName = getGuardName();
+
+        // Check if the authenticated user is the same as the user being displayed
+        if (
+            ($guardName === 'web' && $authenticatedUser->id === $user->id) ||
+            ($guardName === 'client' && $authenticatedUser->id === $user->id)
+        ) {
+            // Don't show the "Make Call" option if it's the logged-in user
+            $makeCallIcon = '';
+        } else {
+            // Check if the phone number or both phone and country code exist
+            $makeCallIcon = '';
+            if (!empty($user->phone) || (!empty($user->phone) && !empty($user->country_code))) {
+                $makeCallLink = 'tel:' . ($user->country_code ? $user->country_code . $user->phone : $user->phone);
+                $makeCallIcon = '<a href="' . $makeCallLink . '" class="text-decoration-none" title="' . get_label('make_call', 'Make Call') . '">
+                                     <i class="bx bx-phone-call text-primary"></i>
+                                   </a>';
+            }
+        }
+
+        // If the user has 'manage_users' permission, return the full HTML with links
+        $profileLink = route('users.show', ['id' => $user->id]);
+        $photoUrl = $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg');
+
+        // Create the Send Mail link
+        $sendMailLink = 'mailto:' . $user->email;
+        $sendMailIcon = '<a href="' . $sendMailLink . '" class="text-decoration-none" title="' . get_label('send_mail', 'Send Mail') . '">
+                            <i class="bx bx-envelope text-primary"></i>
+                          </a>';
+
+        return "<div class='d-flex justify-content-start align-items-center user-name'>
+                    <div class='avatar-wrapper me-3'>
+                        <div class='avatar avatar-sm pull-up'>
+                            <a href='{$profileLink}'>
+                                <img src='{$photoUrl}' alt='Photo' class='rounded-circle'>
+                            </a>
+                        </div>
+                    </div>
+                    <div class='d-flex flex-column'>
+                        <span class='fw-semibold'>{$user->first_name} {$user->last_name} {$makeCallIcon}</span>
+                        <small class='text-muted'>{$user->email} {$sendMailIcon}</small>
+                    </div>
+                </div>";
+    }
+}
 
 
 if (!function_exists('getWorkspaceId')) {

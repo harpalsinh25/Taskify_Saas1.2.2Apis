@@ -57,5 +57,11 @@
     var label_no_task_list = "<?php echo e(get_label('no_task_list', 'No Task List')); ?>";
     var label_searching = "<?php echo e(get_label('searching', 'Searching...')); ?>";
     var label_delete_selected = "<?php echo e(get_label('delete_selected', 'Delete selected')); ?>";
-</script>
-<?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/labels.blade.php ENDPATH**/ ?>
+    var label_select_source = "<?php echo e(get_label('select_lead_source', 'Select Lead Source')); ?>";
+    var label_select_stage = "<?php echo e(get_label('select_lead_stage', 'Select Lead Stage')); ?>";
+    var label_select_candidates = "<?php echo e(get_label('select_candidates', 'Select Candidates')); ?>";
+    var label_select_candidates_statuses = "<?php echo e(get_label('select_candidates_statuses', 'Select Candidates Statuses')); ?>";
+    var label_select_search_candidates = "<?php echo e(get_label('search_candidate', 'Search Candidates')); ?>";
+    var label_select_search_interviewer = "<?php echo e(get_label('search_interviewer', 'Search Interviewer')); ?>";
+
+</script><?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/labels.blade.php ENDPATH**/ ?>

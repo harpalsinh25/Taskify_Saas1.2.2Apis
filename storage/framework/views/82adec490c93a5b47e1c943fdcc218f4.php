@@ -3245,7 +3245,7 @@ Request::is($prefix . '/projects/list') ||
 Request::is($prefix . '/users/profile/*') ||
 Request::is($prefix . '/clients/profile/*') ||
 Request::is($prefix . '/projects/calendar-view') ||
-Request::is($prefix . '/projects/kanban-view')): ?> 
+Request::is($prefix . '/projects/kanban-view')): ?>
 <div class="modal fade" id="create_project_modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form action="<?php echo e(route('projects.store')); ?>" class="form-submit-event modal-content" method="POST">
@@ -5328,7 +5328,7 @@ unset($__errorArgs, $__bag); ?>
     </div>
 </div>
 
-<?php if(Request::is($prefix . '/meetings') || 
+<?php if(Request::is($prefix . '/meetings') ||
 Request::is($prefix . '/meetings/calendar-view')): ?>
 <div class="modal fade" id="createMeetingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -6768,7 +6768,719 @@ unset($__errorArgs, $__bag); ?>
     </div>
 </div>
 <?php endif; ?>
+<!-- Candidate Modal -->
 
+<div class="modal fade" id="candidateModal" tabindex="-1" aria-labelledby="candidateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form action="<?php echo e(route('candidate.store')); ?>" method="POST" class="form-submit-event"
+            enctype="multipart/form-data">
+            <?php echo csrf_field(); ?>
+            <input type="hidden" name="dnr" />
+            <input type="hidden" name="table" value="table" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="candidateModalLabel"><?php echo e(get_label('create_candidate', 'Create Candidate')); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body row g-3">
+                    <!-- Other form fields remain the same -->
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Full Name <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" placeholder="Full Name"
+                            required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control" placeholder="Email" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" placeholder="Phone">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="position" class="form-label">Position <span class="text-danger">*</span></label>
+                        <input type="text" name="position" class="form-control" placeholder="Position">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="source" class="form-label">Source <span class="text-danger">*</span></label>
+                        <input type="text" name="source" class="form-control" placeholder="Source">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+
+                        <?php if(isset($candidate_statuses) && $candidate_statuses->isNotEmpty()): ?>
+                            <select name="status_id" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <?php $__currentLoopData = $candidate_statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option class="badge bg-label-<?php echo e($status->color); ?>" value="<?php echo e($status->id); ?>">
+                                         <?php echo e($status->name); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+
+                            
+                        <?php else: ?>
+                            <h6 class="text-danger">No Statuses found</h6>
+                        <?php endif; ?>
+                    </div>
+
+                    
+                    <div class="col-12">
+                        <label for="attachments" class="form-label fw-semibold">
+                            <?php echo e(get_label('attachments', 'Attachments')); ?>
+
+                            <span
+                                class="text-muted fw-normal small">(<?php echo e(get_label('optional', 'Optional')); ?>)</span>
+                        </label>
+
+                        <div class="bg-light rounded border px-3 py-3">
+                            <div class="mb-2">
+                                <input type="file" name="attachments[]" id="attachments"
+                                    class="form-control file-input" multiple>
+                            </div>
+
+                            <div id="file-list" class="mt-2">
+                                <h6 class="text-muted small mb-1">
+                                    <?php echo e(get_label('selected_files', 'Selected Files')); ?></h6>
+                                <ul class="list-group list-group-sm file-names-list" id="file-names"></ul>
+                            </div>
+
+                            <small class="text-muted d-block mt-2">
+                                <?php echo e(get_label('accepted_file_types', 'Accepted file types: pdf, doc, docx, jpg, png')); ?>
+
+                            </small>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('create', 'Create')); ?>
+
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Create Candidate Status Modal -->
+<div class="modal fade" id="createStatusModal" tabindex="-1" aria-labelledby="createStatusLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="<?php echo e(route('candidate_status.store')); ?>" method="POST" id="createStatusForm"
+            class="form-submit-event">
+            <?php echo csrf_field(); ?>
+            <input type="hidden" name="dnr" />
+            <input type="hidden" name="table" value="table " />
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createStatusLabel">Create Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="statusName" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" id="statusName"
+                            placeholder="Enter status name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="nameBasic" class="form-label"><?= get_label('color', 'Color') ?> <span
+                                class="asterisk">*</span></label>
+                        <select class="form-select select-bg-label-primary" id="color" name="color">
+                            <option class="badge bg-label-primary" value="primary"
+                                <?php echo e(old('color') == 'primary' ? 'selected' : ''); ?>>
+                                <?= get_label('primary', 'Primary') ?>
+                            </option>
+                            <option class="badge bg-label-secondary" value="secondary"
+                                <?php echo e(old('color') == 'secondary' ? 'selected' : ''); ?>>
+                                <?= get_label('secondary', 'Secondary') ?></option>
+                            <option class="badge bg-label-success" value="success"
+                                <?php echo e(old('color') == 'success' ? 'selected' : ''); ?>>
+                                <?= get_label('success', 'Success') ?></option>
+                            <option class="badge bg-label-danger" value="danger"
+                                <?php echo e(old('color') == 'danger' ? 'selected' : ''); ?>>
+                                <?= get_label('danger', 'Danger') ?></option>
+                            <option class="badge bg-label-warning" value="warning"
+                                <?php echo e(old('color') == 'warning' ? 'selected' : ''); ?>>
+                                <?= get_label('warning', 'Warning') ?></option>
+                            <option class="badge bg-label-info" value="info"
+                                <?php echo e(old('color') == 'info' ? 'selected' : ''); ?>><?= get_label('info', 'Info') ?>
+                            </option>
+                            <option class="badge bg-label-dark" value="dark"
+                                <?php echo e(old('color') == 'dark' ? 'selected' : ''); ?>><?= get_label('dark', 'Dark') ?>
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('create', 'Create')); ?>
+
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="candidateUpdateModal" tabindex="-1" aria-labelledby="candidateUpdateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" id="updateCandidateForm" class="form-submit-event">
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
+            <input type="hidden" name="dnr" />
+            <input type="hidden" name="table" value="table" />
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="candidateUpdateModalLabel">
+                        <?php echo e(get_label('update_candidate', 'Update Candidate')); ?></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="<?php echo e(get_label('close', 'Close')); ?>"></button>
+                </div>
+
+                <div class="modal-body row g-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label"><?php echo e(get_label('full_name', 'Full Name')); ?> <span
+                                class="text-danger">*</span></label>
+                        <input type="text" name="name" class="form-control" id="candidateName" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="email" class="form-label"><?php echo e(get_label('email', 'Email')); ?> <span
+                                class="text-danger">*</span></label>
+                        <input type="email" name="email" class="form-control" id="candidateEmail" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label"><?php echo e(get_label('phone', 'Phone')); ?></label>
+                        <input type="text" name="phone" class="form-control" id="candidatePhone">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="position" class="form-label"><?php echo e(get_label('position', 'Position')); ?> <span class="text-danger">*</span></label>
+                        <input type="text" name="position" class="form-control" id="candidatePosition">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="source" class="form-label"><?php echo e(get_label('source', 'Source')); ?> <span class="text-danger">*</span></label>
+                        <input type="text" name="source" class="form-control" id="candidateSource">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="status" class="form-label"><?php echo e(get_label('status', 'Status')); ?><span class="text-danger">*</span></label>
+                        <?php if(isset($candidate_statuses) && $candidate_statuses->isNotEmpty()): ?>
+                            <select name="status_id" class="form-select select-bg-label-primary" id="candidateStatusId" required>
+                                <option value=""><?php echo e(get_label('select_status', 'Select Status')); ?></option>
+                                <?php $__currentLoopData = $candidate_statuses; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $status): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option class="badge bg-label-<?php echo e($status->color); ?>"
+                                        value="<?php echo e($status->id); ?>"
+                                        data-color="<?php echo e($status->color); ?>">
+                                        <?php echo e($status->name); ?>
+
+                                    </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        <?php else: ?>
+                            <h6 class="text-danger"><?php echo e(get_label('no_status_found', 'No Statuses found')); ?></h6>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="attachments" class="form-label fw-semibold">
+                            <?php echo e(get_label('attachments', 'Attachments')); ?>
+
+                            <span
+                                class="text-muted fw-normal small">(<?php echo e(get_label('optional', 'Optional')); ?>)</span>
+                        </label>
+                        <div class="bg-light rounded border px-3 py-3">
+                            <div class="mb-2">
+                                <input type="file" name="attachments[]" id="attachments"
+                                    class="form-control file-input" multiple>
+                            </div>
+                            <div id="file-list" class="mt-2">
+                                <h6 class="text-muted small mb-1">
+                                    <?php echo e(get_label('selected_files', 'Selected Files')); ?></h6>
+                                <ul class="list-group list-group-sm file-names-list" id="file-names"></ul>
+                            </div>
+                            <small
+                                class="text-muted d-block mt-2"><?php echo e(get_label('accepted_file_types', 'Accepted file types: pdf, doc, docx, jpg, png')); ?></small>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <?php echo e(get_label('close', 'Close')); ?>
+
+                    </button>
+                    <button type="submit" id="submit_btn" class="btn btn-primary">
+                        <?php echo e(get_label('update', 'Update')); ?>
+
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- Create Interview Modal -->
+<?php if(isset($candidates) && isset($users)): ?>
+
+
+    <div class="modal fade" id="createInterviewModal" tabindex="-1" role="dialog"
+        aria-labelledby="createInterviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="createInterviewForm" action="<?php echo e(route('interviews.store')); ?>" method="POST"
+                    class="form-submit-event">
+                    <?php echo csrf_field(); ?>
+
+                    <input type="hidden" name="dnr" />
+                    <input type="hidden" name="table" value="table" />
+                    <input type="hidden" id="editStatusId" />
+
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createInterviewModalLabel">Schedule Interview</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body row g-3">
+
+                        <div class="form-group col-md-6">
+
+
+                            <label for="candidate_id">Candidate <span class="text-danger">*</span></label>
+                            
+<select class="form-select"
+                                    id="create_search_candidates" name="candidate_id" required
+                                    data-placeholder="<?php echo e(get_label('select_candidate', 'Select Candidate')); ?>"
+                                    data-single-select="true">
+                                    <option value=""><?php echo e(get_label('select_candidate', 'Select Candidate')); ?></option>
+                                        <option value=""> </option>
+                                    </select>
+
+                                    
+
+                            
+                        </div>
+
+                        
+                        <div class="form-group col-md-6">
+                            <label for="interviewer_id">Interviewer <span class="text-danger">*</span></label>
+                            <select class="form-select select-interview-interviewer"
+                                id="create_search_interviewer" name="interviewer_id" required
+                                data-placeholder="<?php echo e(get_label('select_interviewer', 'Select Interviewer')); ?>"
+                                data-single-select="true">
+                                <option value="">Select Interviewer</option>
+                                
+                                
+                            </select>
+
+
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+                            <label for="round">Round <span class="text-danger">*</span></label>
+                            <input type="text" name="round" class="form-control"
+                                placeholder="e.g. Technical, HR" required>
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+                            <label for="scheduled_at">Scheduled At <span class="text-danger">*</span></label>
+                            <input type="datetime-local" name="scheduled_at" class="form-control" required>
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+                            <label for="mode">Mode <span class="text-danger">*</span></label>
+                            <select name="mode" class="form-select" required>
+                                <option value="">Select Mode</option>
+                                <option value="online">Online</option>
+                                <option value="offline">Offline</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group col-md-6">
+                            <label for="location">Location</label>
+                            <input type="text" name="location" class="form-control"
+                                placeholder="e.g. Zoom link or Office Room No.">
+                        </div>
+
+
+
+                        <div class="form-group col-md-6">
+                            <label for="status">Status <span class="text-danger">*</span></label>
+                            <select name="status" class="form-select" required>
+                                <option value="">Select Status</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <?php echo e(get_label('close', 'Close')); ?>
+
+                        </button>
+                        <button type="submit" id="submit_btn" class="btn btn-primary">
+                            <?php echo e(get_label('create', 'Create')); ?>
+
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+
+
+<?php if(isset($candidates) && isset($users)): ?>
+        <div class="modal fade" id="editInterviewModal" tabindex="-1" role="dialog"
+            aria-labelledby="editInterviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <form id="editInterviewForm" method="POST" action="<?php echo e(route('interviews.store')); ?>" class="form-submit-event">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('PUT'); ?> <!-- This is important for updating -->
+                        <input type="hidden" name="dnr" />
+                        <input type="hidden" name="table" value="table" />
+                        <input type="hidden" id="editStatusId" />
+
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editInterviewModalLabel">Edit Interview</h5>
+                            <!-- Close button placed correctly within the header -->
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body row">
+                            <div class="form-group col-md-6">
+                                <label for="candidate_id">Candidate</label>
+                                <?php if(Route::currentRouteName() == 'interviews.index'): ?>
+                                    <select class="form-select" name="candidate_id" id="edit_search_candidates" data-single-select="true"
+                                data-allow-clear="false" data-consider-workspace="true">
+                                
+                                <?php $__currentLoopData = $candidates; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $candidate): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($candidate->id); ?>">
+                                            <?php echo e($candidate->name); ?>
+
+                                        </option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                                <?php else: ?>
+                                    <select name="candidate_id" id="candidate_id" class="form-control" required>
+                                        <option value="<?php echo e($candidates->id); ?>"><?php echo e($candidates->name); ?></option>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="interviewer_id">Interviewer</label>
+                                <select name="interviewer_id" class="form-select" id="edit_search_interviewer" aria-label="Default select example" required>
+                                    <?php $__currentLoopData = $users; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($user->id); ?>">
+                                            <?php echo e($user->first_name . ' ' . $user->last_name); ?>
+
+                                        </option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+
+
+                            <div class="form-group col-md-6">
+                                <label for="round">Round</label>
+                                <input type="text" name="round" id="round" class="form-control"
+                                    placeholder="e.g. Technical, HR" required>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="scheduled_at">Scheduled At</label>
+                                <input type="datetime-local" name="scheduled_at" id="scheduled_at"
+                                    class="form-control" required>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="mode">Mode</label>
+                                <select name="mode" id="mode" class="form-control" required>
+                                    <option value="">Select Mode</option>
+                                    <option value="online">Online</option>
+                                    <option value="offline">Offline</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="location">Location</label>
+                                <input type="text" name="location" id="location" class="form-control"
+                                    placeholder="e.g. Zoom link or Office Room No.">
+                            </div>
+
+                            <!-- New Status Field for Editing -->
+                            <div class="form-group col-md-6">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" class="form-control" required>
+                                    <option value="">Select Status</option>
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <?php echo e(get_label('close', 'Close')); ?>
+
+                            </button>
+                            <button type="submit" id="submit_btn" class="btn btn-primary">
+                                <?php echo e(get_label('update', 'Update')); ?>
+
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+<?php endif; ?>
+
+<!-- Interview Details Modal -->
+<div class="modal fade" id="interviewDetailsModal" tabindex="-1" aria-labelledby="interviewDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="interviewDetailsModalLabel">
+                    <i class="bx bx-calendar-check me-2"></i>
+                    <?php echo e(get_label('interview_details', 'Interview Details')); ?>
+
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="<?php echo e(get_label('close', 'Close')); ?>"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" id="interviewDetailsContent">
+                <!-- Loading Spinner (Initial State) -->
+                <div class="text-center py-5" id="interviewLoading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden"><?php echo e(get_label('loading', 'Loading...')); ?></span>
+                    </div>
+                </div>
+
+                <!-- Dynamic Content Container (Hidden Initially) -->
+                <div id="interviewData" class="d-none">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('candidate_name', 'Candidate Name')); ?></label>
+                            <div class="text-muted" id="interviewCandidateName">—</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('position', 'Position')); ?></label>
+                            <div class="text-muted" id="interviewPosition">—</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('interview_date', 'Interview Date')); ?></label>
+                            <div class="text-muted" id="interviewDate">—</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('interview_time', 'Interview Time')); ?></label>
+                            <div class="text-muted" id="interviewTime">—</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('interviewer', 'Interviewer')); ?></label>
+                            <div class="text-muted" id="interviewInterviewer">—</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold"><?php echo e(get_label('mode', 'Mode')); ?></label>
+                            <div class="text-muted" id="interviewMode">—</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <label class="form-label fw-semibold"><?php echo e(get_label('additional_notes', 'Additional Notes')); ?></label>
+                        <div class="text-muted" id="interviewNotes">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <?php echo e(get_label('close', 'Close')); ?>
+
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick View Modal for candidate kanban-->
+<div class="modal fade" id="candidateQuickViewModal" tabindex="-1"
+    aria-labelledby="candidateQuickViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="candidateQuickViewModalLabel">
+                    <?php echo e(get_label('candidate_profile', 'Candidate Profile')); ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Candidate Info -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-4">
+                            <img id="candidate-avatar" src="<?php echo e(asset('/storage/photos/no-image.jpg')); ?>"
+                                alt="candidate-avatar" class="rounded" height="100" width="100" />
+                            <div>
+                                <h4 class="card-title fw-bold" id="candidate-name"></h4>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-primary" id="candidate-position"></span>
+                                    <span class="badge bg-info ms-2" id="candidate-status"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Candidate Details -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('phone_number', 'Phone Number')); ?></label>
+                                <input type="tel" class="form-control" id="candidate-phone" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('email', 'E-mail')); ?></label>
+                                <input class="form-control" type="text" id="candidate-email" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('position', 'Position')); ?></label>
+                                <input class="form-control" type="text" id="candidate-position-input" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('source', 'Source')); ?></label>
+                                <input class="form-control" type="text" id="candidate-source" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('status', 'Status')); ?></label>
+                                <input class="form-control" type="text" id="candidate-status-input" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label"><?php echo e(get_label('created_at', 'Created At')); ?></label>
+                                <input class="form-control" id="candidate-created-at" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attachments -->
+                <div class="card mb-4">
+                    <h5 class="card-header"><?php echo e(get_label('attachments', 'Attachments')); ?></h5>
+                    <div class="card-body">
+                        <div id="attachments-empty" class="d-none py-5 text-center">
+                            <div class="mb-3">
+                                <i class="bx bx-file text-primary"></i>
+                            </div>
+                            <h6><?php echo e(get_label('no_attachments', 'No Attachments Found')); ?></h6>
+                            <p class="text-muted">
+                                <?php echo e(get_label('no_attachments_desc', 'Upload documents related to this candidate')); ?>
+
+                            </p>
+                        </div>
+                        <div class="table-responsive text-nowrap" id="attachments-table d-none">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo e(get_label('id', 'ID')); ?></th>
+                                        <th><?php echo e(get_label('name', 'Name')); ?></th>
+                                        <th><?php echo e(get_label('type', 'Type')); ?></th>
+                                        <th><?php echo e(get_label('size', 'Size')); ?></th>
+                                        <th><?php echo e(get_label('uploaded_at', 'Uploaded At')); ?></th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody id="attachments-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interviews -->
+                <div class="card">
+                    <h5 class="card-header"><?php echo e(get_label('interviews', 'Interviews')); ?></h5>
+                    <div class="card-body">
+                        <div id="interviews-empty" class="d-none py-5 text-center">
+                            <p><?php echo e(get_label('no_interviews', 'No interviews scheduled.')); ?></p>
+                        </div>
+                        <div class="table-responsive text-nowrap" id="interviews-table d-none">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><?php echo e(get_label('id', 'ID')); ?></th>
+                                        <th><?php echo e(get_label('candidate', 'Candidate')); ?></th>
+                                        <th><?php echo e(get_label('interviewer', 'Interviewer')); ?></th>
+                                        <th><?php echo e(get_label('round', 'Round')); ?></th>
+                                        <th><?php echo e(get_label('scheduled_at', 'Scheduled At')); ?></th>
+                                        <th><?php echo e(get_label('status', 'Status')); ?></th>
+                                        <th><?php echo e(get_label('location', 'Location')); ?></th>
+                                        <th><?php echo e(get_label('mode', 'Mode')); ?></th>
+                                        <th><?php echo e(get_label('created_at', 'Created At')); ?></th>
+                                        <th><?php echo e(get_label('updated_at', 'Updated At')); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="interviews-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal"><?php echo e(get_label('close', 'Close')); ?></button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <?php if(Request::is($prefix . '/lead-stages') || Request::is($prefix . 'lead-stages/*')): ?>
@@ -7145,4 +7857,5 @@ unset($__errorArgs, $__bag); ?>
             </div>
         </form>
     </div>
-</div><?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/modals.blade.php ENDPATH**/ ?>
+</div>
+<?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/modals.blade.php ENDPATH**/ ?>

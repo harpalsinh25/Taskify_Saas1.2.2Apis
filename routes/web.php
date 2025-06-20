@@ -68,6 +68,9 @@ use App\Http\Controllers\LeadFollowUpController;
 use App\Http\Controllers\LeadImportController;
 use App\Http\Controllers\LeadSourceController;
 use App\Http\Controllers\LeadStageController;
+use App\Http\Controllers\CandidateController;
+use App\Http\controllers\CandidateStatusController;
+use App\Http\controllers\InterviewController;
 use App\Http\Controllers\SuperAdmin\PaymentMethodController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Http\Controllers\SuperAdmin\HomeController as SuperAdminHomeController;
@@ -448,7 +451,7 @@ Route::middleware(['CheckInstallation', 'checkRole',])->group(function () {
             Route::get('/list', [LeadStageController::class, 'list'])->name('lead-stages.list');
             Route::post('/update', [LeadStageController::class, 'update'])->name('lead-stages.update')->middleware(['customcan:edit_leads', 'log.activity']);
             Route::delete('/destroy/{id}', [LeadStageController::class, 'destroy'])->name('lead-stages.destroy')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
-            Route::post('/destroy_multiple', [LeadStageController::class, 'destroy_multiple'])->name('lead-stages.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::delete('/destroy_multiple', [LeadStageController::class, 'destroy_multiple'])->name('lead-stages.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
             Route::post('/reorder', [LeadStageController::class, 'reorder'])->name('lead-stages.reorder');
         });
 
@@ -460,8 +463,60 @@ Route::middleware(['CheckInstallation', 'checkRole',])->group(function () {
             Route::get('/list', [LeadSourceController::class, 'list'])->name('lead-sources.list');
             Route::post('/update', [LeadSourceController::class, 'update'])->name('lead-sources.update')->middleware(['customcan:edit_leads', 'log.activity']);
             Route::delete('/destroy/{id}', [LeadSourceController::class, 'destroy'])->name('lead-sources.destroy')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
-            Route::post('/destroy_multiple', [LeadSourceController::class, 'destroy_multiple'])->name('lead-sources.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
+            Route::delete('/destroy_multiple', [LeadSourceController::class, 'destroy_multiple'])->name('lead-sources.destroy_multiple')->middleware(['customcan:delete_leads', 'demo_restriction', 'log.activity']);
         });
+
+
+          // Candidates
+       Route::prefix('candidate')->group(function () {
+    Route::get('/', [CandidateController::class, 'index'])->name('candidate.index');
+    Route::post('/candidate/store', [CandidateController::class, 'store'])->name('candidate.store');
+    Route::post('/store', [CandidateController::class, 'store'])->name('candidate.store')->middleware('customcan:create_candidate');
+    Route::put('/update/{id}', [CandidateController::class, 'update'])->name('candidate.update')->middleware('customcan:edit_candidate');
+    Route::post('/{id}/update_status', [CandidateController::class, 'update_status'])->name('candidate.update.status')->middleware('customcan:edit_candidate');
+    Route::delete('/destroy/{id}', [CandidateController::class, 'destroy'])->name('candidate.destroy')->middleware('customcan:delete_candidate');
+    Route::delete('/destroy_multiple', [CandidateController::class, 'destroy_multiple'])->name('candidate.destroy_multiple')->middleware('customcan:delete_candidate');
+    Route::get('/list', [CandidateController::class, 'list'])->name('candidate.list');
+    Route::get('/kanban', [CandidateController::class, 'kanbanView'])->name('candidate.kanban_view');
+
+    Route::get('/search-candidates', [CandidateController::class, 'search_candidates'])->name('candidate.search_candidates');
+
+    // Generic routes with parameters should come AFTER specific routes
+    Route::get('/{id}/interviews', [CandidateController::class, 'getInterviewDetails'])->name('candidate.interviews.details');
+    Route::get('/{id}/attachments/list', [CandidateController::class, 'attachmentsList'])->name('candidate.attachmentsList');
+    Route::get('/{id}/quick-view', [CandidateController::class, 'getCandidate'])->name('candidate.quick-view');
+    Route::get('/{candidateId}/attachment/{mediaId}/download', [CandidateController::class, 'download'])->name('candidate.attachment.download');
+    Route::get('/{candidateId}/attachment/{mediaId}/view', [CandidateController::class, 'view'])->name('candidate.attachment.view');
+
+    Route::get('/{id}', [CandidateController::class, 'show'])->name('candidate.show');
+
+    Route::post('/{id}/upload-attachment', [CandidateController::class, 'upload'])->name('candidate.upload');
+    Route::delete('/candidate-media/destroy/{id}', [CandidateController::class, 'delete'])->name('candidate.delete');
+});
+        Route::put('/save-candidates-view-preference', [CandidateController::class, 'saveViewPreference'])->name('save-candidates-view-preference');
+
+        // Candidate Status
+            Route::prefix('candidate-status')->group(function () {
+                Route::get('/', [CandidateStatusController::class, 'index'])->name('candidate_status.index');
+                Route::post('/store', [CandidateStatusController::class, 'store'])->name('candidate_status.store')->middleware('customcan:create_candidate_status');
+                Route::put('/update/{id}', [CandidateStatusController::class, 'update'])->name('candidate_status.update')->middleware('customcan:edit_candidate_status');
+                Route::delete('/destroy/{id}', [CandidateStatusController::class, 'destroy'])->name('candidate_status.destroy')->middleware('customcan:delete_candidate_status');
+                Route::delete('/destroy_multiple', [CandidateStatusController::class, 'destroy_multiple'])->name('candidate_status.destroy_multiple')->middleware('customcan:delete_candidate_status');
+                Route::post('/reorder', [CandidateStatusController::class, 'reorder'])->name('candidate_status.reorder');
+                Route::get('/list', [CandidateStatusController::class, 'list'])->name('candidate_status.list');
+            });
+
+        // Interviews
+
+        Route::prefix('interviews')->group(function () {
+            Route::get('/', [InterviewController::class, 'index'])->name('interviews.index');
+            Route::post('/store', [InterviewController::class, 'store'])->name('interviews.store');
+            Route::put('/update/{id}', [InterviewController::class, 'update'])->name('interviews.update');
+            Route::delete('/destroy/{id}', [InterviewController::class, 'destroy'])->name('interviews.destroy');
+            Route::post('/destroy_multiple', [InterviewController::class, 'destroy_multiple'])->name('interviews.destroy_multiple');
+            Route::get('/list', [InterviewController::class, 'list'])->name('interviews.list');
+        });
+
         //Settings-------------------------------------------------------------
         Route::middleware(['customRole:admin'])->group(function () {
             Route::get('/subscription-plan', [SubscriptionPlan::class, 'index'])->name('subscription-plan.index');
