@@ -70,6 +70,8 @@ use App\Http\Controllers\LeadSourceController;
 use App\Http\Controllers\LeadStageController;
 use App\Http\Controllers\CandidateController;
 use App\Http\controllers\CandidateStatusController;
+use App\Http\Controllers\EmailSendController;
+use App\Http\Controllers\EmailTemplateController;
 use App\Http\controllers\InterviewController;
 use App\Http\Controllers\SuperAdmin\PaymentMethodController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -516,6 +518,44 @@ Route::middleware(['CheckInstallation', 'checkRole',])->group(function () {
             Route::post('/destroy_multiple', [InterviewController::class, 'destroy_multiple'])->name('interviews.destroy_multiple');
             Route::get('/list', [InterviewController::class, 'list'])->name('interviews.list');
         });
+        
+        //Email Templates
+        Route::middleware(['customcan:manage_email_template'])->group(function () {
+            Route::get('/email-templates', [EmailTemplateController::class, 'index'])->name('email.templates');
+            Route::post('/email-templates/store', [EmailTemplateController::class, 'store'])->name('email.templates.store')->middleware('customcan:create_email_template');
+            Route::put('/email-templates/update/{id}', [EmailTemplateController::class, 'update'])->name('email.templates.update');
+            Route::delete('/email-templates/destroy/{id}', [EmailTemplateController::class, 'destroy'])->name('email.templates.delete')->middleware('customcan:delete_email_template');
+            Route::post('/email_templates/destroy_multiple', [EmailTemplateController::class, 'destroy_multiple'])->name('email.templates.delete_multiple')->middleware('customcan:delete_email_template');
+            Route::get('/email-templates/list', [EmailTemplateController::class, 'list'])->name('email.templates.list');
+        });
+
+        // Email Sending Routes
+        //         Route::prefix('emails')->middleware('customcan:send_email')->group(function () {
+        //             Route::get('/', [EmailSendController::class, 'index'])->name('emails.index');
+        //             Route::get('/create', [EmailSendController::class, 'create'])->name('emails.send');
+        //             Route::post('/store', [EmailSendController::class, 'store'])->name('emails.store')->middleware('log.activity');
+        //             Route::post('/preview', [EmailSendController::class, 'preview'])->name('emails.preview');
+
+        //             Route::get('/historyList', [EmailSendController::class, 'historyList'])->name('emails.historyList');
+        //            Route::delete('/index/destroy/{id}', [EmailSendController::class, 'destroy'])->name('emails.index.destroy');
+        // Route::post('/index/destroy_multiple', [EmailSendController::class, 'destroy_multiple'])->name('emails.index.destroy_multiple');
+        //             Route::get('/template-data/{id}', [EmailSendController::class, 'getTemplateData']);
+        //             Route::get('/search-users', [UserController::class, 'searchUsers'])->name('users.searchUsers');
+        //         })->middleware(['auth:web']);
+
+        // Email Routes
+        Route::prefix('emails')->middleware(['auth:web', 'customcan:send_email'])->group(function () {
+            Route::get('/', [EmailSendController::class, 'index'])->name('emails.index');
+            Route::get('/create', [EmailSendController::class, 'create'])->name('emails.send');
+            Route::post('/store', [EmailSendController::class, 'store'])->name('emails.store')->middleware('log.activity');
+            Route::post('/preview', [EmailSendController::class, 'preview'])->name('emails.preview');
+            Route::get('/list', [EmailSendController::class, 'historyList'])->name('emails.historyList');
+            Route::delete('/destroy/{id}', [EmailSendController::class, 'destroy'])->name('emails.destroy');
+            Route::delete('/destroy_multiple', [EmailSendController::class, 'destroy_multiple'])->name('emails.destroy_multiple');
+            Route::get('/template-data/{id}', [EmailSendController::class, 'getTemplateData'])->name('emails.template_data');
+            Route::get('/search-users', [UserController::class, 'searchUsers'])->name('emails.search_users');
+        });
+
 
         //Settings-------------------------------------------------------------
         Route::middleware(['customRole:admin'])->group(function () {

@@ -2946,6 +2946,31 @@ if (!function_exists('getMenus')) {
                     ],
                 ]
             ],
+             [
+                'id' => 'email',
+                'label' => get_label('email', 'Email'),
+                'class' => 'menu-item' . (Request::is('master-panel/emails') || Request::is('master-panel/emails/create') || Request::is('master-panel/email-templates') ? ' active open' : ''),
+                'show' => ($user->can('send_email') || $user->can('manage_email_template')) ? 1 : 0,
+                'icon' => 'bx bx-mail-send',
+                'category' => 'utilities',
+                'submenus' => [
+                    [
+                        'id' => 'send_email',
+                        'label' => get_label('send_email', 'Send Email'),
+                        'url' => route('emails.index'),
+                        'class' => 'menu-item' . (Request::is('master-panel/emails') || Request::is('master-panel/emails/create') ? ' active' : ''),
+                        'show' => $user->can('send_email') ? 1 : 0
+                    ],
+                    [
+                        'id' => 'email_templates',
+                        'label' => get_label('email_templates', 'Email Templates'),
+                        'url' => route('email.templates'),
+                        'class' => 'menu-item' . (Request::is('master-panel/email-templates') ? ' active' : ''),
+                        'show' => $user->can('manage_email_template') ? 1 : 0
+                    ],
+                ],
+
+            ],
 
             [
                 'id' => 'todos',

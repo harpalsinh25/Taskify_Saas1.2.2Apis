@@ -6485,6 +6485,67 @@ Request::is($prefix . '/tasks/draggable'))
 </div>
 
 
+{{-- Create Template Modal --}}
+
+<div class="modal fade" id="createTemplateModal" tabindex="-1" aria-labelledby="createTemplateLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content form-submit-event" method="POST"
+            action="{{ route('email.templates.store') }}">
+            @csrf
+            <input type="hidden" name="dnr" />
+            <input type="hidden" name="table" value="table " />
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTemplateLabel">
+                    {{ get_label('create_email_template', 'Create Email Template') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="{{ get_label('close', 'Close') }}"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="template-name"
+                        class="form-label">{{ get_label('template_name', 'Template Name') }} <span
+                            class="text-danger">*</span></label>
+                    <input type="text" name="name" id="template-name" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="template-subject"
+                        class="form-label">{{ get_label('email_subject', 'Email Subject') }} <span
+                            class="text-danger">*</span></label>
+                    <input type="text" name="subject" id="template-subject" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="template-body" class="form-label">
+                        {{ get_label('email_body', 'Email Body') }} <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-text text-dark alert alert-primary mb-2">
+                        {{ get_label('placeholder_note', 'Note: You can use placeholders like') }}
+                        <code>{{ '{name}' }}</code>, <code>{{ '{email}' }}</code>,
+                        <code>{{ '{project_title}' }}</code> etc. – these will be dynamically replaced when sending
+                        the email.
+                    </div>
+                    <textarea name="content" id="template-body" class="form-control" rows="6" required>
+                        @include('partials.default_email_template')
+                    </textarea>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <?= get_label('close', 'Close') ?></label>
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="submit_btn">
+                                    <?= get_label('create', 'Create') ?></label>
+                                </button>
+                            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Create Interview Modal -->
 @if (isset($candidates) && isset($users))
 

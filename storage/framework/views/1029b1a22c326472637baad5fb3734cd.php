@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title'); ?>
     <?php echo e(get_label('create_lead', 'Create Leads')); ?>
 
