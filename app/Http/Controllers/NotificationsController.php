@@ -278,6 +278,7 @@ class NotificationsController extends Controller
     {
         $unreadNotificationsCount = $this->user->notifications->where('pivot.read_at', null)->count();
         $unreadNotifications = $this->user->notifications()
+        
             ->wherePivot('read_at', null)
             ->getQuery()
             ->orderBy('id', 'desc')
@@ -285,12 +286,14 @@ class NotificationsController extends Controller
             ->get();
         $unreadNotificationsHtml = view('partials.unread_notifications')
             ->with('unreadNotificationsCount', $unreadNotificationsCount)
+            // dd($unreadNotifications);
             ->with('unreadNotifications', $unreadNotifications)
             ->render();
 
         // Return JSON response with count and HTML
         return response()->json([
             'count' => $unreadNotificationsCount,
+            // dd($unreadNotificationsHtml),
             'html' => $unreadNotificationsHtml
         ]);
     }

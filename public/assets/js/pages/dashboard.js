@@ -244,7 +244,6 @@ $('#birthday_user_filter').on('change', function (e) {
 
 })
 
-
 function queryParamsUpcomingWa(p) {
     return {
         "upcoming_days": $('#upcoming_days_wa').val(),

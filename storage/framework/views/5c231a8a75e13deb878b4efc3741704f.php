@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('title'); ?>
     <?php echo e(get_label('candidates', 'Candidates')); ?>
 

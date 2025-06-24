@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Admin;
+use App\Models\CustomField;
 use App\Models\Client;
 use App\Models\Status;
 use App\Models\Setting;
@@ -31,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
     }
     public function boot()
     {
+          set_time_limit(3600);
         Paginator::useBootstrapFive();
         try {
             DB::connection()->getPdo();
@@ -65,6 +67,8 @@ class AppServiceProvider extends ServiceProvider
             $date_format = explode('|', $general_settings['date_format']);
             $js_date_format = $date_format[0];
             $php_date_format = $date_format[1];
+                   $taskCustomFields = CustomField::where('module', 'task')->get();
+            $projectCustomFields = CustomField::where('module', 'project')->get();
             $TimeTrackerProjects=[];
             if (Session::has('workspace_id')) {
                 $TimeTrackerProjects = Project::where('workspace_id' , Session::get('workspace_id'))->get();
@@ -108,47 +112,53 @@ class AppServiceProvider extends ServiceProvider
             $data = compact('general_settings', 'email_settings', 'pusher_settings',
                             'media_storage_settings', 'languages', 'js_date_format',
                             'php_date_format', 'security_settings', 'TimeTrackerProjects',
-                            'TimeTrackerTasks');
+                            'TimeTrackerTasks', 'taskCustomFields',
+                'projectCustomFields');
 
             $view->with($data);
         });
-    }
-    private function getGeneralSettings()
-    {
-        $general_settings = get_settings('general_settings');
+    }private function getGeneralSettings()
+{
+    $general_settings = get_settings('general_settings');
 
-        $defaults = [
-            'full_logo' => 'storage/logos/default_full_logo.png',
-            'half_logo' => 'storage/logos/default_half_logo.png',
-            'favicon' => 'storage/logos/default_favicon.png',
-            'footer_logo' => 'storage/logos/footer_logo.png',
-            'company_title' => 'Taskify - SaaS',
-            'currency_symbol' => '₹',
-            'currency_full_form' => 'Indian Rupee',
-            'currency_code' => 'INR',
-            'date_format' => 'DD-MM-YYYY|d-m-Y',
-            'toast_time_out' => '5',
-            'toast_position' => 'toast-top-right',
-        ];
-        foreach ($defaults as $key => $value) {
-            if (!isset($general_settings[$key]) || empty($general_settings[$key])) {
-                $general_settings[$key] = $value;
-            } elseif (in_array($key, ['full_logo', 'half_logo', 'favicon', 'footer_logo'])) {
-                $general_settings[$key] = 'storage/' . $general_settings[$key];
-            }
-        }
-        if (getAuthenticatedUser() && !(getAuthenticatedUser()->hasRole("superadmin") || getAuthenticatedUser()->hasRole("manager"))) {
-            $adminSettings = Admin::findOrFail(getAdminIdByUserRole())->admin_settings;
-            if (!empty($adminSettings)) {
-                $adminSettings = json_decode($adminSettings, true);
-                $general_settings['full_logo'] = !isset($adminSettings['full_logo']) || empty($adminSettings['full_logo']) ? $general_settings['full_logo'] : 'storage/' . $adminSettings['full_logo'];
-                $general_settings['half_logo'] = !isset($adminSettings['half_logo']) || empty($adminSettings['half_logo']) ? $general_settings['half_logo'] : 'storage/' . $adminSettings['half_logo'];
-                $general_settings['company_title'] = !isset($adminSettings['company_title']) || empty($adminSettings['company_title']) ? $general_settings['company_title'] : $adminSettings['company_title'];
+    $defaults = [
+        'full_logo' => 'storage/logos/default_full_logo.png',
+        'half_logo' => 'storage/logos/default_half_logo.png',
+        'favicon' => 'storage/logos/default_favicon.png',
+        'footer_logo' => 'storage/logos/footer_logo.png',
+        'company_title' => 'Taskify - SaaS',
+        'currency_symbol' => '₹',
+        'currency_full_form' => 'Indian Rupee',
+        'currency_code' => 'INR',
+        'date_format' => 'DD-MM-YYYY|d-m-Y',
+        'toast_time_out' => '5',
+        'toast_position' => 'toast-top-right',
+    ];
 
-            }
+    foreach ($defaults as $key => $value) {
+        if (!isset($general_settings[$key]) || empty($general_settings[$key])) {
+            $general_settings[$key] = $value;
+        } elseif (in_array($key, ['full_logo', 'half_logo', 'favicon', 'footer_logo'])) {
+            $general_settings[$key] = 'storage/' . $general_settings[$key];
         }
-        return $general_settings;
     }
+
+    if (getAuthenticatedUser() && !(getAuthenticatedUser()->hasRole("superadmin") || getAuthenticatedUser()->hasRole("manager"))) {
+        $adminId = getAdminIdByUserRole();
+        $admin = $adminId ? Admin::find($adminId) : null;
+
+        if ($admin && !empty($admin->admin_settings)) {
+            $adminSettings = json_decode($admin->admin_settings, true);
+
+            $general_settings['full_logo'] = empty($adminSettings['full_logo']) ? $general_settings['full_logo'] : 'storage/' . $adminSettings['full_logo'];
+            $general_settings['half_logo'] = empty($adminSettings['half_logo']) ? $general_settings['half_logo'] : 'storage/' . $adminSettings['half_logo'];
+            $general_settings['company_title'] = empty($adminSettings['company_title']) ? $general_settings['company_title'] : $adminSettings['company_title'];
+        }
+    }
+
+    return $general_settings;
+}
+
     private function getPusherSettings()
     {
         return array_merge([

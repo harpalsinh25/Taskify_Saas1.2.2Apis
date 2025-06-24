@@ -86,10 +86,10 @@ Route::prefix('master-panel')->middleware(['multiguard', 'custom-verified', 'che
     Route::put('/update-status/{id}', [ProjectsController::class, 'update_status'])->middleware(['customcan:edit_projects', 'log.activity'])->name('update-project-status');
     Route::put('/update-priority/{id}', [ProjectsController::class, 'update_priority'])->middleware(['customcan:edit_projects', 'log.activity'])->name('update-project-priority');
     //comments
-    Route::POST('/comments', [ProjectsController::class, 'comments']);
-    Route::get('/comments/{id}', [ProjectsController::class, 'get_comment']);
-    Route::put('/comments/{id}', [ProjectsController::class, 'update_comment']);
-    Route::delete('/comments/{id}', [ProjectsController::class, 'destroy_comment']);
+    Route::POST('/project/comments', [ProjectsController::class, 'comments']);
+    Route::get('/project/comments/{id}', [ProjectsController::class, 'get_comment']);
+    Route::put('/project/comments/{id}', [ProjectsController::class, 'update_comment']);
+    Route::delete('/project/comments/{id}', [ProjectsController::class, 'destroy_comment']);
     // Route::delete('/comment-attachment/{id}', [ProjectsController::class, 'destroy_comment_attachment']);//pending
     Route::post('/update-module-dates', [ProjectsController::class, 'update_module_dates']);
     //issues

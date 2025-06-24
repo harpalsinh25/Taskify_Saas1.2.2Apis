@@ -39,19 +39,17 @@
             </a>
         </div>
         <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
-            <div class="nav-item">
-                <i class="bx bx-search"></i><span class="mx-2 cursor-pointer" id="global-search">
-                    <?php echo e(get_label('search_ctrl_k', 'Search [CTRL + K]')); ?>
+            <div class="nav-item d-flex align-items-center">
+                <i class="bx bx-search"></i>
+                <span class="cursor-pointer mx-2" id="global-search">
+                    <?php echo e(get_label('search','Search')); ?>
 
+                    <span class="d-none d-sm-inline">[CTRL + K]</span>
                 </span>
             </div>
 
             <ul class="navbar-nav align-items-center ms-auto flex-row">
-                <?php if(config('constants.ALLOW_MODIFICATION') === 0): ?>
-                    <li><span class="badge bg-danger demo-mode">Demo mode</span><span class="demo-mode-icon-only">
-                            <i class='bx bx-error-alt text-danger'></i>
-                        </span></li>
-                <?php endif; ?>
+                
                 <?php if(!$authenticatedUser->hasRole('superadmin')): ?>
                     <li class="nav-item navbar-dropdown dropdown-user dropdown ml-1">
                     <li class="nav-item navbar-dropdown dropdown">
@@ -156,12 +154,19 @@
                     <?php if($authenticatedUser->can('manage_announcements')): ?>
                         <li class="nav-item navbar-dropdown dropdown-user dropdown ml-1">
                         <li class="dropdown nav-item navbar-dropdown me-3">
-                            <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
-                                data-bs-toggle="dropdown">
-                                <i class='bx bxs-megaphone bx-sm' data-bs-toggle="tooltip" data-bs-placement="bottom"
-                                    data-bs-original-title="<?php echo e(get_label('announcements', 'Announcements')); ?>"></i>
-                                <span id="unreadAnnouncementsCount"
-                                    class="badge bg-warning fs-tiny position-absolute rounded-pill start-100 translate-middle <?php echo e($unreadAnnouncementsCount > 0 ? '' : 'd-none'); ?>"><?php echo e($unreadAnnouncementsCount); ?></span>
+                            <a class="nav-link dropdown-toggle hide-arrow position-relative" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                <div class="position-relative d-inline-block">
+                                    <i class='bx bxs-megaphone bx-sm'
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="bottom"
+                                        data-bs-original-title="<?php echo e(get_label('announcements', 'Announcements')); ?>">
+                                    </i>
+                                    <span id="unreadAnnouncementsCount"
+                                        class="badge bg-warning fs-tiny position-absolute top-0 start-100 translate-middle rounded-pill <?php echo e($unreadAnnouncementsCount > 0 ? '' : 'd-none'); ?>">
+                                        <?php echo e($unreadAnnouncementsCount); ?>
+
+                                    </span>
+                                </div>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end w-px-400">
                                 <li class="dropdown-header dropdown-header-highlighted">

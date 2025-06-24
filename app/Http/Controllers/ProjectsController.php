@@ -455,7 +455,7 @@ public function store(Request $request)
  * @bodyParam task_accessibility string required The task accessibility setting. Example: project_users
  * @bodyParam description string A brief description of the project. Nullable. Example: "A complete redesign of the company website."
  * @bodyParam note string Additional notes for the project. Nullable. Example: "Client prefers Figma for designs."
- *  @bodyParam user_id int[] required Array of user IDs to assign. Example: [1, 2, 3]
+ * @bodyParam user_id int[] required Array of user IDs to assign. Example: [1, 2, 3]
  * @bodyParam client_id int[] required Array of client IDs to assign. Example: [1, 43]
  * @bodyParam tag_ids int[] required Array of tag IDs to attach. Example: [1]
  * @bodyParam enable_tasks_time_entries boolean Whether to enable time entries on tasks. Example: true
@@ -523,7 +523,7 @@ public function update(Request $request)
     {
          $isApi = $request->get('isApi', false);
 
-    try {
+    // try {
         $formFields = $request->validate([
             'id' => 'required|exists:projects,id',
             'title' => ['required'],
@@ -615,15 +615,15 @@ public function update(Request $request)
                     'data' => formatProject($project)
                 ]
             );
-        } catch (ValidationException $e) {
-            return formatApiValidationError($isApi, $e->errors());
-        } catch (\Exception $e) {
-            // Handle any unexpected errors
-            return response()->json([
-                'error' => true,
-                'message' => 'An error occurred while updating the project.'
-            ], 500);
-        }
+        // } catch (ValidationException $e) {
+        //     return formatApiValidationError($isApi, $e->errors());
+        // } catch (\Exception $e) {
+        //     // Handle any unexpected errors
+        //     return response()->json([
+        //         'error' => true,
+        //         'message' => 'An error occurred while updating the project.'
+        //     ], 500);
+        // }
     }
 
     public function get($projectId)
@@ -1797,7 +1797,7 @@ public function store_milestone(Request $request)
  * This API returns either a single milestone (if an `id` is provided) or a paginated list of milestones.
  * It supports filtering by title, description, status, and date ranges. Sorting and pagination are also supported.
  *
- * @urlParam id integer optional The ID of the milestone to retrieve. If provided, returns a single milestone. Example: 3
+ * @urlParam id integer optional The ID of the milestone to retrieve. If provided, other filters are ignored. Example: 3
  *
  * @queryParam search string optional A keyword to search by milestone title, description, or ID. Example: Review
  * @queryParam status string optional Filter by milestone status. Example: complete
@@ -2112,7 +2112,7 @@ public function store_milestone(Request $request)
  * }
  */
 
-    public function delete_milestone($id)
+    public function destroy_milestone($id)
     {
         $ms = Milestone::findOrFail($id);
         DeletionService::delete(Milestone::class, $id, 'Milestone');
@@ -2471,7 +2471,7 @@ public function store_milestone(Request $request)
     }
 }
 /**
- * Add a comment .
+ * Add a comment.
  *
  * This endpoint allows the authenticated user to post a comment on any model (like a project or task)
  * using polymorphic relationships. It supports file attachments (images, PDFs, documents)
@@ -2479,7 +2479,7 @@ public function store_milestone(Request $request)
  *
  * @group Project Comments
  *
- * @bodyParam model_type string required The fully qualified model class name. Example: App\Models\Project
+ * @bodyParam model_type string required The fully qualified model class name. Example: App\\Models\\Project
  * @bodyParam model_id int required The ID of the model being commented on. Example: 14
  * @bodyParam content string required The comment content. Mentions like "@john" are supported. Example: This is a comment with a mention to @jane.
  * @bodyParam parent_id int Optional. The ID of the parent comment (for replies). Example: 5
@@ -2528,9 +2528,7 @@ public function store_milestone(Request $request)
  *   "success": false,
  *   "message": "An error occurred: [error details]"
  * }
- */
-
-
+     */
 public function comments(Request $request)
 {
     $isApi = $request->get('isApi', false);
@@ -2548,7 +2546,7 @@ public function comments(Request $request)
         // Process mentions
         list($processedContent, $mentionedUserIds) = replaceUserMentionsWithLinks($request->content);
 
-        // Create comment
+
         $comment = Comment::with('user')->create([
             'commentable_type' => $request->model_type,
             'commentable_id' => $request->model_id,
@@ -2568,7 +2566,6 @@ public function comments(Request $request)
             foreach ($request->file('attachments') as $file) {
                 $path = $file->store('public/comment_attachments');
                 $path = str_replace('public/', '', $path);
-
                 CommentAttachment::create([
                     'comment_id' => $comment->id,
                     'file_name' => $file->getClientOriginalName(),
@@ -2651,10 +2648,10 @@ public function comments(Request $request)
    public function get_comment(Request $request, $id)
 {
     $isApi = $request->get('isApi', true); // default to true for API
-dd($id);
+// dd($id);
     try {
         $comment = Comment::with('attachments')->findOrFail($id);
-        dd($comment);
+        // dd($comment);
         $formattedComment = formatComments($comment);
 
         return $isApi
@@ -2712,7 +2709,7 @@ dd($id);
         public function update_comment(Request $request)
         {
             $is_Api = $request->get('isApi', false);
-            try{
+            // try{
             $request->validate([
                 'comment_id' => ['required'],
                 'content' => 'required|string',
@@ -2723,17 +2720,20 @@ dd($id);
             $comment->content = $processedContent;
             if ($comment->save()) {
                 sendMentionNotification($comment, $mentionedUserIds, session()->get('workspace_id'), auth()->id());
-                return response()->json(['error' => false, 'message' => 'Comment updated successfully.', 'id' => $id, 'type' => 'project']);
+                 $formattedComment = formatComments($comment);
+                return response()->json(['error' => false, 'message' => 'Comment updated successfully.', 'id' => $id,
+               'comment' => $formattedComment,
+                 'type' => 'project']);
             } else {
                 return response()->json(['error' => true, 'message' => 'Comment couldn\'t updated.']);
             }
-        }catch (\Exception $e) {
-                if ($is_Api) {
-                    return formatApiResponse(true, 'Internal Server Error', [], 500);
-                } else {
-                    return response()->json(['error' => true, 'message' => 'Internal Server Error'], 500);
-                }
-            }
+        // }catch (\Exception $e) {
+        //         if ($is_Api) {
+        //             return formatApiResponse(true, 'Internal Server Error', [], 500);
+        //         } else {
+        //             return response()->json(['error' => true, 'message' => 'Internal Server Error'], 500);
+        //         }
+        //     }
         }
 /**
  * Delete a comment

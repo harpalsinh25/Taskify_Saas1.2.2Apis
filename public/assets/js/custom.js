@@ -2285,7 +2285,7 @@ $(
     height: 821,
     menubar: true,
     plugins: [
-        "link", 
+        "link",
         "a11ychecker",
         "advlist",
         "advcode",

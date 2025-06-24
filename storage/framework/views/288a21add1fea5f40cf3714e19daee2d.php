@@ -64,4 +64,5 @@
     var label_select_search_candidates = "<?php echo e(get_label('search_candidate', 'Search Candidates')); ?>";
     var label_select_search_interviewer = "<?php echo e(get_label('search_interviewer', 'Search Interviewer')); ?>";
 
-</script><?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/labels.blade.php ENDPATH**/ ?>
+</script>
+<?php /**PATH C:\Users\Dikshita\Desktop\Taskify-SaaS v1.2.1 - Project Mangement - Task Mangement  & Productivity Tool\saas\resources\views/labels.blade.php ENDPATH**/ ?>

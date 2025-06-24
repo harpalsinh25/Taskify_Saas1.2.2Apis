@@ -3321,10 +3321,22 @@ if (!function_exists('getMenus')) {
                         'class' => 'menu-item' . (Request::is('master-panel/settings') ? ' active' : ''),
                     ],
                     [
+                        'id' => 'subscription_plan',
+                        'label' => get_label('subscription_plan', 'Subscription plan'),
+                        'url' => route('subscription-plan.index'),
+                        'class' => 'menu-item' . (Request::is('master-panel/subscription-plan') || Request::is('master-panel/subscription-plan/*') ? ' active' : ''),
+                    ],
+                    [
                         'id' => 'google_calendar',
                         'label' => get_label('google_calendar', 'Google Calendar'),
                         'url' => route('google_calendar.index'),
                         'class' => 'menu-item' . (Request::is('master-panel/settings/google-calendar') ? ' active' : ''),
+                    ],
+                      [
+                        'id' => 'custom_fields',
+                        'label' => get_label('custom_fields', 'Custom fields'),
+                        'url' => route('custom_fields.index'),
+                        'class' => 'menu-item' . (Request::is('master-panel/settings/custom-fields') ? ' active' : ''),
                     ],
                 ]
             ]
@@ -3630,13 +3642,13 @@ if (!function_exists('formateMedia')) {
     function formateMedia($media)
     {
         return [
-            'id' => $media->id,
-            'name' => $media->name,
-            'file_name' => $media->file_name,
-            'file_size' => $media->file_size,
-            'file_type' => $media->file_type,
-            'created_at' => format_date($media->created_at, to_format: 'Y-m-d'),
-            'updated_at' => format_date($media->updated_at, to_format: 'Y-m-d'),
+            'id' => $media->id ?? '',
+            'name' => $media->name?? '',
+            'file_name' => $media->file_name??'',
+            'file_size' => $media->file_size?? '',
+            'file_type' => $media->file_type ?? '',
+            'created_at' => format_date($media->created_at, to_format: 'Y-m-d')?? 0000-00-00,
+            'updated_at' => format_date($media->updated_at, to_format: 'Y-m-d')?? 0000-00-00,
         ];
     }
 
@@ -3696,11 +3708,11 @@ if (!function_exists('formateMedia')) {
         function formatPriority($priority)
         {
             return [
-                'id' => $priority->id,
-                'title' => $priority->title,
-                'slug' => $priority->slug,
-                'color' => $priority->color,
-                'admin_id' => $priority->admin_id,
+                'id' => $priority->id?? 0,
+                'title' => $priority->title?? '',
+                'slug' => $priority->slug?? '',
+                'color' => $priority->color?? '',
+                'admin_id' => $priority->admin_id?? 0,
                 'created_at' => $priority->created_at ? $priority->created_at->toDateTimeString() : '',
                 'updated_at' => $priority->updated_at ? $priority->updated_at->toDateTimeString() : '',
             ];
@@ -3746,27 +3758,27 @@ if (!function_exists('formateMedia')) {
         $workspace->load(['users', 'clients']); // Eager load relations
 
         return [
-            'id' => $workspace->id,
-            'title' => $workspace->title,
-            'is_primary' => (bool) $workspace->is_primary,
+            'id' => $workspace->id?? 0,
+            'title' => $workspace->title?? '',
+            'is_primary' => (bool) $workspace->is_primary?? false,
             'users' => $workspace->users->map(function ($user) {
                 return [
-                    'id' => $user->id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg'),
+                    'id' => $user->id?? 0,
+                    'first_name' => $user->first_name?? '',
+                    'last_name' => $user->last_name?? '',
+                    'photo' => $user->photo ? asset('storage/' . $user->photo) : asset('storage/photos/no-image.jpg')?? '',
                 ];
             })->values(),
             'clients' => $workspace->clients->map(function ($client) {
                 return [
-                    'id' => $client->id,
-                    'first_name' => $client->first_name,
-                    'last_name' => $client->last_name,
-                    'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg'),
+                    'id' => $client->id?? 0,
+                    'first_name' => $client->first_name?? '',
+                    'last_name' => $client->last_name?? '',
+                    'photo' => $client->photo ? asset('storage/' . $client->photo) : asset('storage/photos/no-image.jpg')?? '',
                 ];
             })->values(),
-            'created_at' => format_date($workspace->created_at, true),
-            'updated_at' => format_date($workspace->updated_at, true),
+            'created_at' => format_date($workspace->created_at, true)?? '',
+            'updated_at' => format_date($workspace->updated_at, true)?? '',
         ];
     }
     if (!function_exists('formatTodo')) {
@@ -3795,27 +3807,27 @@ if (!function_exists('formateMedia')) {
     function formatIssue($issue)
     {
         return [
-            'id' => $issue->id,
-            'project_id' => $issue->project_id,
-            'title' => $issue->title,
-            'description' => $issue->description,
-            'status' => $issue->status,
+            'id' => $issue->id?? 0,
+            'project_id' => $issue->project_id?? 0,
+            'title' => $issue->title?? '',
+            'description' => $issue->description?? '',
+            'status' => $issue->status?? '',
 
             // Creator info
             'created_by' => [
-                'id' => optional($issue->creator)->id,
-                'first_name' => optional($issue->creator)->first_name,
-                'last_name' => optional($issue->creator)->last_name,
-                'email' => optional($issue->creator)->email,
+                'id' => optional($issue->creator)->id?? 0,
+                'first_name' => optional($issue->creator)->first_name?? '',
+                'last_name' => optional($issue->creator)->last_name?? '',
+                'email' => optional($issue->creator)->email?? '',
             ],
 
             // Assigned users
             'assignees' => $issue->users->map(function ($user) {
                 return [
-                    'id' => $user->id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'email' => $user->email,
+                    'id' => $user->id?? 0,
+                    'first_name' => $user->first_name?? '',
+                    'last_name' => $user->last_name?? '',
+                    'email' => $user->email?? '',
                     'photo' => $user->photo ? asset('storage/' . $user->photo) : '',
                 ];
             })->values(),
@@ -3852,26 +3864,26 @@ if (!function_exists('formateMedia')) {
         function formatMeeting($meeting)
         {
             return [
-                'id' => $meeting->id,
-                'title' => $meeting->title,
-                'start_date_time' => $meeting->start_date_time,
-                'end_date_time' => $meeting->end_date_time,
-                'workspace_id' => $meeting->workspace_id,
-                'admin_id' => $meeting->admin_id,
-                'user_id' => $meeting->user_id,
+                'id' => $meeting->id?? 0,
+                'title' => $meeting->title?? '',
+                'start_date_time' => $meeting->start_date_time?? '',
+                'end_date_time' => $meeting->end_date_time?? '',
+                'workspace_id' => $meeting->workspace_id?? 0,
+                'admin_id' => $meeting->admin_id?? 0,
+                'user_id' => $meeting->user_id?? 0,
                 'users' => $meeting->users->map(function ($user) {
                     return [
-                        'id' => $user->id,
-                        'first_name' => $user->first_name,
-                        'last_name' => $user->last_name
+                        'id' => $user->id?? 0,
+                        'first_name' => $user->first_name?? '',
+                        'last_name' => $user->last_name?? ''
 
                     ];
                 }),
                 'clients' => $meeting->clients->map(function ($client) {
                     return [
-                        'id' => $client->id,
-                        'first_name' => $client->first_name,
-                        'last_name' => $client->last_name
+                        'id' => $client->id?? 0,
+                        'first_name' => $client->first_name?? '',
+                        'last_name' => $client->last_name?? ''
 
                     ];
                 }),
@@ -3884,17 +3896,17 @@ if (!function_exists('formateMedia')) {
         function formatNote($note)
         {
             return [
-                'id' => $note->id,
-                'title' => $note->title,
-                'note_type' => $note->note_type,
-                'color' => $note->color,
-                'description' => $note->description,
+                'id' => $note->id?? 0,
+                'title' => $note->title?? '',
+                'note_type' => $note->note_type?? '',
+                'color' => $note->color?? '',
+                'description' => $note->description?? '',
                 'drawing_data' => $note->note_type === 'drawing' ? $note->drawing_data : '',
-                'creator_id' => $note->creator_id,
-                'admin_id' => $note->admin_id,
-                'workspace_id' => $note->workspace_id,
-                'created_at' => format_date($note->created_at, true),
-                'updated_at' => format_date($note->updated_at, true),
+                'creator_id' => $note->creator_id?? 0,
+                'admin_id' => $note->admin_id?? 0,
+                'workspace_id' => $note->workspace_id?? 0,
+                'created_at' => format_date($note->created_at, true)?? '',
+                'updated_at' => format_date($note->updated_at, true)?? '',
             ];
         }
     }
@@ -3918,33 +3930,33 @@ if (!function_exists('formateMedia')) {
             }
 
             return [
-                'id' => $leaveRequest->id,
-                'reason' => $leaveRequest->reason,
-                'from_date' => $leaveRequest->from_date,
-                'to_date' => $leaveRequest->to_date,
-                'from_time' => $leaveRequest->from_time,
-                'to_time' => $leaveRequest->to_time,
-                'status' => $leaveRequest->status,
-                'user_id' => $leaveRequest->user_id,
-                'workspace_id' => $leaveRequest->workspace_id,
-                'admin_id' => $leaveRequest->admin_id,
-                'action_by' => $leaveRequest->action_by,
+                'id' => $leaveRequest->id?? 0,
+                'reason' => $leaveRequest->reason?? '',
+                'from_date' => $leaveRequest->from_date?? '',
+                'to_date' => $leaveRequest->to_date?? '',
+                'from_time' => $leaveRequest->from_time?? '',
+                'to_time' => $leaveRequest->to_time?? '',
+                'status' => $leaveRequest->status?? '',
+                'user_id' => $leaveRequest->user_id?? 0,
+                'workspace_id' => $leaveRequest->workspace_id?? 0,
+                'admin_id' => $leaveRequest->admin_id?? 0,
+                'action_by' => $leaveRequest->action_by?? 0,
                 'visible_to_all' => (bool) $leaveRequest->visible_to_all,
                 'created_at' => $leaveRequest->created_at ? $leaveRequest->created_at->toDateTimeString() : '',
                 'updated_at' => $leaveRequest->updated_at ? $leaveRequest->updated_at->toDateTimeString() : '',
                 // Optional: Include user details
                 'user' => $leaveRequest->user ? [
-                    'id' => $leaveRequest->user->id,
-                    'name' => $leaveRequest->user->name,
-                    'email' => $leaveRequest->user->email,
+                    'id' => $leaveRequest->user->id?? 0,
+                    'name' => $leaveRequest->user->name?? '',
+                    'email' => $leaveRequest->user->email?? '',
                 ] : null,
                 // Optional: Include visibility users if not visible to all
                 'visible_to_users' => !$leaveRequest->visible_to_all
                     ? $leaveRequest->visibleToUsers->map(function ($user) {
                         return [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
+                            'id' => $user->id?? 0,
+                            'name' => $user->name?? '',
+                            'email' => $user->email?? '',
                         ];
                     })->toArray()
                     : [],

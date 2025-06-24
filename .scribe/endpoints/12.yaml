@@ -1,239 +1,73 @@
-name: 'Task Media'
-description: |-
-  Upload one or more media files to an existing task using its ID. The uploaded files will be stored
-  in the `task-media` media collection using Spatie MediaLibrary. This endpoint accepts multiple files.
+name: 'Task Celender'
+description: ''
 endpoints:
   -
     httpMethods:
-      - POST
-    uri: api/master-panel/tasks/upload-media
+      - GET
+    uri: 'api/master-panel/calendar/{workspaceId}'
     metadata:
-      groupName: 'Task Media'
-      groupDescription: |-
-        Upload one or more media files to an existing task using its ID. The uploaded files will be stored
-        in the `task-media` media collection using Spatie MediaLibrary. This endpoint accepts multiple files.
+      groupName: 'Task Celender'
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Upload media files to a task.'
-      description: ''
+      title: 'Get calendar tasks data for a workspace.'
+      description: |-
+        Retrieves tasks for the specified workspace filtered by an optional date range and project ID.
+        The tasks are formatted for use with FullCalendar.
       authenticated: false
       custom: []
     headers:
       workspace_id: '2'
-      Content-Type: multipart/form-data
+      Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      id:
-        name: id
-        description: 'The ID of the task to which the files should be uploaded.'
+    urlParameters:
+      workspaceId:
+        name: workspaceId
+        description: 'The ID of the workspace to fetch tasks from.'
         required: true
-        example: 25
+        example: 17
         type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      media_files:
-        name: media_files
-        description: 'The media files to upload. Must be provided as an array of files.'
-        required: true
-        example:
-          - null
-        type: 'file[]'
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-    cleanBodyParameters:
-      id: 25
-    fileParameters:
-      media_files:
-        - null
-    responses:
-      -
-        status: 200
-        content: |-
-          {
-            "error": false,
-            "message": "File(s) uploaded successfully.",
-            "id": [15, 16],
-            "type": "media",
-            "parent_type": "task",
-            "parent_id": 25
-          }
-        headers: []
-        description: Success
-        custom: []
-      -
-        status: 200
-        content: |-
-          {
-            "error": true,
-            "message": "No file(s) chosen."
-          }
-        headers: []
-        description: 'No files uploaded'
-        custom: []
-      -
-        status: 422
-        content: |-
-          {
-            "message": "The given data was invalid.",
-            "errors": {
-              "id": ["The selected id is invalid."]
-            }
-          }
-        headers: []
-        description: 'Missing or invalid task ID'
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - GET
-    uri: 'api/master-panel/tasks/{id}/media'
-    metadata:
-      groupName: 'Task Media'
-      groupDescription: 'Returns a list of media files associated with a specific task. Supports optional searching and sorting.'
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Get task media list.'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      workspace_id: '2'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      id:
-        name: id
-        description: 'The ID of the task to get media for.'
-        required: true
-        example: 25
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
     cleanUrlParameters:
-      id: 25
+      workspaceId: 17
     queryParameters:
-      search:
-        name: search
-        description: 'Optional search term to filter by file name, ID, or creation date.'
+      start:
+        name: start
+        description: 'optional Start date for filtering tasks (format: YYYY-MM-DD).'
         required: false
-        example: image
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      sort:
-        name: sort
-        description: 'Field to sort by. Default is `id`.'
-        required: false
-        example: file_name
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      order:
-        name: order
-        description: 'Sorting direction: `asc` or `desc`. Default is `desc`.'
-        required: false
-        example: asc
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanQueryParameters:
-      search: image
-      sort: file_name
-      order: asc
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: |-
-          {
-            "rows": [
-              {
-                "id": 16,
-                "file": "<a href=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" data-lightbox=\"task-media\"><img src=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" alt=\"hmgoepprod.jpg\" width=\"50\"></a>",
-                "file_name": "hmgoepprod.jpg",
-                "file_size": "67.54 KB",
-                "created_at": "2025-06-04",
-                "updated_at": "2025-06-04",
-                "actions": "<a href=\"http://localhost:8000/storage/task-media/hmgoepprod.jpg\" title=\"Download\" download><i class=\"bx bx-download bx-sm\"></i></a><button title=\"Delete\" type=\"button\" class=\"btn delete\" data-id=\"16\" data-type=\"task-media\" data-table=\"task_media_table\"><i class=\"bx bx-trash text-danger\"></i></button>"
-              }
-            ],
-            "total": 2
-          }
-        headers: []
-        description: ''
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - DELETE
-    uri: 'api/master-panel/tasks/media/{id}'
-    metadata:
-      groupName: 'Task Media'
-      groupDescription: 'Deletes a specific media file associated with a task using its media ID. This removes the file from both the database and the storage disk.'
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete a media file from a task.'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      workspace_id: '2'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      id:
-        name: id
-        description: 'The ID of the medium.'
-        required: true
         example: consequatur
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         custom: []
-      mediaId:
-        name: mediaId
-        description: 'The ID of the media file to delete.'
-        required: true
-        example: 45
-        type: integer
+      end:
+        name: end
+        description: 'optional End date for filtering tasks (format: YYYY-MM-DD).'
+        required: false
+        example: consequatur
+        type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         custom: []
-    cleanUrlParameters:
-      id: consequatur
-      mediaId: 45
-    queryParameters: []
-    cleanQueryParameters: []
+      project_id:
+        name: project_id
+        description: 'optional Project ID to filter tasks by project.'
+        required: false
+        example: 17
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanQueryParameters:
+      start: consequatur
+      end: consequatur
+      project_id: 17
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -241,15 +75,28 @@ endpoints:
       -
         status: 200
         content: |-
-          {
-            "error": false,
-            "message": "File deleted successfully.",
-            "id": 45,
-            "title": "example-file.pdf",
-            "parent_id": 23,
-            "type": "media",
-            "parent_type": "task"
-          }
+          [
+            {
+              "id": 25,
+              "tasks_info_url": "http://localhost:8000/master-panel/tasks/information/25",
+              "title": "Test Task Title",
+              "start": "2025-06-01",
+              "end": "2025-06-10",
+              "backgroundColor": "#a0e4a3",
+              "borderColor": "#ffffff",
+              "textColor": "#000000"
+            },
+            {
+              "id": 28,
+              "tasks_info_url": "http://localhost:8000/master-panel/tasks/information/28",
+              "title": "Create new onboarding flow",
+              "start": "2015-01-01",
+              "end": "2025-06-06",
+              "backgroundColor": "#a0e4a3",
+              "borderColor": "#ffffff",
+              "textColor": "#000000"
+            }
+          ]
         headers: []
         description: ''
         custom: []
@@ -258,7 +105,17 @@ endpoints:
         content: |-
           {
             "error": true,
-            "message": "File not found."
+            "message": "Workspace not found."
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Something went wrong: <error_message>"
           }
         headers: []
         description: ''

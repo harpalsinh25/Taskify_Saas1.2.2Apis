@@ -4,13 +4,13 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/master-panel/comments
+    uri: api/master-panel/project/comments
     metadata:
       groupName: 'Project Comments'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Add a comment .'
+      title: 'Add a comment.'
       description: |-
         This endpoint allows the authenticated user to post a comment on any model (like a project or task)
         using polymorphic relationships. It supports file attachments (images, PDFs, documents)
@@ -29,7 +29,7 @@ endpoints:
         name: model_type
         description: 'The fully qualified model class name.'
         required: true
-        example: App\Models\Project
+        example: App\\Models\\Project
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -77,7 +77,7 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      model_type: App\Models\Project
+      model_type: App\\Models\\Project
       model_id: 14
       content: 'This is a comment with a mention to @jane.'
       parent_id: 5
@@ -140,6 +140,293 @@ endpoints:
           {
             "success": false,
             "message": "An error occurred: [error details]"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/master-panel/project/comments/{id}'
+    metadata:
+      groupName: 'Project Comments'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get  comment by ID.'
+      description: 'This endpoint retrieves the details of a specific comment, including any attachments associated with it.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment to retrieve.'
+        required: true
+        example: 21
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: 21
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "comment": {
+              "id": 21,
+              "commentable_type": "App\\Models\\Project",
+              "commentable_id": 14,
+              "content": "This is a comment with mention to <a href='/users/5'>@jane</a>",
+              "user_id": 1,
+              "parent_id": null,
+              "created_at": "2025-06-12T10:31:02.000000Z",
+              "updated_at": "2025-06-12T10:31:02.000000Z",
+              "attachments": [
+                {
+                  "id": 1,
+                  "comment_id": 21,
+                  "file_name": "report.pdf",
+                  "file_path": "comment_attachments/report.pdf",
+                  "file_type": "application/pdf"
+                }
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "message": "No query results for model [App\\Models\\Comment] 99"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - PUT
+    uri: 'api/master-panel/project/comments/{id}'
+    metadata:
+      groupName: 'Project Comments'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update a comment'
+      description: 'This endpoint updates the content of an existing comment. It also handles user mention parsing and sends notifications to mentioned users.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment_id:
+        name: comment_id
+        description: 'The ID of the comment to update.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      content:
+        name: content
+        description: 'The new content of the comment. Mentions can be included using @username format.'
+        required: true
+        example: '"Updated comment with mention to @john"'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      isApi:
+        name: isApi
+        description: "Optional flag to determine if it's an API request."
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      comment_id: 12
+      content: '"Updated comment with mention to @john"'
+      isApi: true
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Comment updated successfully.",
+            "id": 12,
+            "type": "project"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "comment_id": [
+                "The comment_id field is required."
+              ],
+              "content": [
+                "The content field is required."
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Internal Server Error"
+          }
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - DELETE
+    uri: 'api/master-panel/project/comments/{id}'
+    metadata:
+      groupName: 'Project Comments'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete a comment'
+      description: 'This endpoint permanently deletes a comment and all of its associated attachments from the storage.'
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        name: id
+        description: 'The ID of the comment.'
+        required: true
+        example: consequatur
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      id: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      comment_id:
+        name: comment_id
+        description: 'The ID of the comment to delete.'
+        required: true
+        example: 15
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanBodyParameters:
+      comment_id: 15
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          {
+            "error": false,
+            "message": "Comment deleted successfully.",
+            "id": 15,
+            "type": "project"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "message": "No query results for model [App\\Models\\Comment] 15"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "message": "The given data was invalid.",
+            "errors": {
+              "comment_id": [
+                "The comment_id field is required."
+              ]
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 500
+        content: |-
+          {
+            "error": true,
+            "message": "Comment couldn't deleted."
           }
         headers: []
         description: ''

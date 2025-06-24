@@ -174,7 +174,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'optional The ID of the milestone to retrieve. If provided, returns a single milestone.'
+        description: 'optional The ID of the milestone to retrieve. If provided, other filters are ignored.'
         required: false
         example: 3
         type: integer
@@ -506,83 +506,6 @@ endpoints:
             "errors": {
               "title": ["The title field is required."]
             }
-          }
-        headers: []
-        description: ''
-        custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - DELETE
-    uri: 'api/master-panel/delete-milestone/{id}'
-    metadata:
-      groupName: 'Project Milestones'
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete a specific milestone.'
-      description: 'This endpoint deletes a single milestone by its ID. The milestone must exist. Once deleted, a confirmation message with related metadata is returned.'
-      authenticated: false
-      custom: []
-    headers:
-      Authorization: 'Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1'
-      Accept: application/json
-      workspace_id: '2'
-      Content-Type: application/json
-    urlParameters:
-      id:
-        name: id
-        description: 'The ID of the milestone to delete.'
-        required: true
-        example: 3
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      id: 3
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        status: 200
-        content: |-
-          {
-            "error": false,
-            "message": "Milestone deleted successfully.",
-            "id": 3,
-            "title": "Design Phase",
-            "type": "milestone",
-            "parent_type": "project",
-            "parent_id": 7
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 404
-        content: |-
-          {
-            "message": "No query results for model [App\\Models\\Milestone] 99"
-          }
-        headers: []
-        description: ''
-        custom: []
-      -
-        status: 500
-        content: |-
-          {
-            "error": true,
-            "message": "An unexpected error occurred while deleting the milestone."
           }
         headers: []
         description: ''

@@ -328,6 +328,7 @@ class TasksController extends Controller
 
         $recipients = !empty($userIds) ? array_map(fn($userId) => 'u_' . $userId, $userIds) : [];
         processNotifications($notification_data, $recipients);
+        // dd(processNotifications($notification_data, $recipients ));
 
         return response()->json([
             'error' => false,
@@ -803,7 +804,7 @@ class TasksController extends Controller
         $end_date_to = (request('task_end_date_to')) ? trim(request('task_end_date_to')) : "";
         $labelNote = get_label('note', 'Note');
         $where = [];
-        if ($id) {  
+        if ($id) {
             $id = explode('_', $id);
             $belongs_to = $id[0];
             $belongs_to_id = $id[1];

@@ -193,9 +193,6 @@
                                                                                 <li class="tocify-item level-2" data-unique="project-milestones-PUTapi-master-panel-update-milestone--id-">
                                 <a href="#project-milestones-PUTapi-master-panel-update-milestone--id-">Update an existing milestone.</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="project-milestones-DELETEapi-master-panel-delete-milestone--id-">
-                                <a href="#project-milestones-DELETEapi-master-panel-delete-milestone--id-">Delete a specific milestone.</a>
-                            </li>
                                                                         </ul>
                             </ul>
                     <ul id="tocify-header-project-status-and-priority" class="tocify-header">
@@ -219,8 +216,17 @@
                     <a href="#project-comments">Project Comments</a>
                 </li>
                                     <ul id="tocify-subheader-project-comments" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="project-comments-POSTapi-master-panel-comments">
-                                <a href="#project-comments-POSTapi-master-panel-comments">Add a comment .</a>
+                                                    <li class="tocify-item level-2" data-unique="project-comments-POSTapi-master-panel-project-comments">
+                                <a href="#project-comments-POSTapi-master-panel-project-comments">Add a comment.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-comments-GETapi-master-panel-project-comments--id-">
+                                <a href="#project-comments-GETapi-master-panel-project-comments--id-">Get  comment by ID.</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-comments-PUTapi-master-panel-project-comments--id-">
+                                <a href="#project-comments-PUTapi-master-panel-project-comments--id-">Update a comment</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="project-comments-DELETEapi-master-panel-project-comments--id-">
+                                <a href="#project-comments-DELETEapi-master-panel-project-comments--id-">Delete a comment</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -325,7 +331,10 @@ to the specified user or project.</a>
                     <a href="#task-comments">Task Comments</a>
                 </li>
                                     <ul id="tocify-subheader-task-comments" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="task-comments-GETapi-master-panel-comments--id-">
+                                                    <li class="tocify-item level-2" data-unique="task-comments-POSTapi-master-panel-comments-create">
+                                <a href="#task-comments-POSTapi-master-panel-comments-create">Add a comment to a model (e.g., task, project).</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="task-comments-GETapi-master-panel-comments--id-">
                                 <a href="#task-comments-GETapi-master-panel-comments--id-">get comments</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="task-comments-PUTapi-master-panel-comments--id-">
@@ -333,9 +342,6 @@ to the specified user or project.</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="task-comments-DELETEapi-master-panel-comments--id-">
                                 <a href="#task-comments-DELETEapi-master-panel-comments--id-">Permanently delete a comment and its attachments.</a>
-                            </li>
-                                                                                <li class="tocify-item level-2" data-unique="task-comments-POSTapi-master-panel-comments-create">
-                                <a href="#task-comments-POSTapi-master-panel-comments-create">Add a comment to a model (e.g., task, project).</a>
                             </li>
                                                                         </ul>
                             </ul>
@@ -543,7 +549,7 @@ Requires authentication. Workspace must be set via header `workspace-id`.</a>
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 18, 2025</li>
+        <li>Last updated: June 24, 2025</li>
     </ul>
 </div>
 
@@ -4354,7 +4360,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"end_date\": \"2025-05-31\",
     \"task_accessibility\": \"project_users\",
     \"description\": \"\\\"A complete redesign of the company website.\\\"\",
-    \"note\": \"[1, 2, 3]\",
+    \"note\": \"\\\"Client prefers Figma for designs.\\\"\",
+    \"user_id\": [
+        1,
+        2,
+        3
+    ],
     \"client_id\": [
         1,
         43
@@ -4394,7 +4405,12 @@ let body = {
     "end_date": "2025-05-31",
     "task_accessibility": "project_users",
     "description": "\"A complete redesign of the company website.\"",
-    "note": "[1, 2, 3]",
+    "note": "\"Client prefers Figma for designs.\"",
+    "user_id": [
+        1,
+        2,
+        3
+    ],
     "client_id": [
         1,
         43
@@ -4712,11 +4728,23 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="note"                data-endpoint="PUTapi-master-panel-projects--id-"
-               value="[1, 2, 3]"
+               value=""Client prefers Figma for designs.""
                data-component="body">
     <br>
-<p>Additional notes for the project. Nullable. Example: &quot;Client prefers Figma for designs.&quot;
-@bodyParam user_id int[] required Array of user IDs to assign. Example: <code>[1, 2, 3]</code></p>
+<p>Additional notes for the project. Nullable. Example: <code>"Client prefers Figma for designs."</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>user_id</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="user_id[0]"                data-endpoint="PUTapi-master-panel-projects--id-"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="user_id[1]"                data-endpoint="PUTapi-master-panel-projects--id-"
+               data-component="body">
+    <br>
+<p>Array of user IDs to assign.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>client_id</code></b>&nbsp;&nbsp;
@@ -5617,7 +5645,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "workspace_id: 2" \
     --header "Content-Type: multipart/form-data" \
     --form "id=15"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php5239.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpD078.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5832,7 +5860,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\php5239.tmp</code></p>
+<p>One or more files to upload (multipart/form-data). Example: <code>C:\Users\Dikshita\AppData\Local\Temp\phpD078.tmp</code></p>
         </div>
         </form>
 
@@ -6958,7 +6986,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="3"
                data-component="url">
     <br>
-<p>optional The ID of the milestone to retrieve. If provided, returns a single milestone. Example: <code>3</code></p>
+<p>optional The ID of the milestone to retrieve. If provided, other filters are ignored. Example: <code>3</code></p>
             </div>
                         <h4 class="fancy-heading-panel"><b>Query Parameters</b></h4>
                                     <div style="padding-left: 28px; clear: unset;">
@@ -7346,186 +7374,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>The ID of the milestone to update. Example: <code>5</code></p>
         </div>
         </form>
-
-                    <h2 id="project-milestones-DELETEapi-master-panel-delete-milestone--id-">Delete a specific milestone.</h2>
-
-<p>
-</p>
-
-<p>This endpoint deletes a single milestone by its ID. The milestone must exist. Once deleted, a confirmation message with related metadata is returned.</p>
-
-<span id="example-requests-DELETEapi-master-panel-delete-milestone--id-">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/master-panel/delete-milestone/3" \
-    --header "Authorization: Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1" \
-    --header "Accept: application/json" \
-    --header "workspace_id: 2" \
-    --header "Content-Type: application/json"</code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/delete-milestone/3"
-);
-
-const headers = {
-    "Authorization": "Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1",
-    "Accept": "application/json",
-    "workspace_id": "2",
-    "Content-Type": "application/json",
-};
-
-fetch(url, {
-    method: "DELETE",
-    headers,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-DELETEapi-master-panel-delete-milestone--id-">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: false,
-    &quot;message&quot;: &quot;Milestone deleted successfully.&quot;,
-    &quot;id&quot;: 3,
-    &quot;title&quot;: &quot;Design Phase&quot;,
-    &quot;type&quot;: &quot;milestone&quot;,
-    &quot;parent_type&quot;: &quot;project&quot;,
-    &quot;parent_id&quot;: 7
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (404):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;No query results for model [App\\Models\\Milestone] 99&quot;
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (500):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;error&quot;: true,
-    &quot;message&quot;: &quot;An unexpected error occurred while deleting the milestone.&quot;
-}</code>
- </pre>
-    </span>
-<span id="execution-results-DELETEapi-master-panel-delete-milestone--id-" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-DELETEapi-master-panel-delete-milestone--id-"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-delete-milestone--id-"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-DELETEapi-master-panel-delete-milestone--id-" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-DELETEapi-master-panel-delete-milestone--id-">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-DELETEapi-master-panel-delete-milestone--id-" data-method="DELETE"
-      data-path="api/master-panel/delete-milestone/{id}"
-      data-authed="0"
-      data-hasfiles="0"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-delete-milestone--id-', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-DELETEapi-master-panel-delete-milestone--id-"
-                    onclick="tryItOut('DELETEapi-master-panel-delete-milestone--id-');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-DELETEapi-master-panel-delete-milestone--id-"
-                    onclick="cancelTryOut('DELETEapi-master-panel-delete-milestone--id-');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-DELETEapi-master-panel-delete-milestone--id-"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-red">DELETE</small>
-            <b><code>api/master-panel/delete-milestone/{id}</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Authorization</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Authorization"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1"
-               data-component="header">
-    <br>
-<p>Example: <code>Bearer 40|dbscqcapUOVnO7g5bKWLIJ2H2zBM0CBUH218XxaNf548c4f1</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="workspace_id"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="2"
-               data-component="header">
-    <br>
-<p>Example: <code>2</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
-                    <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="id"                data-endpoint="DELETEapi-master-panel-delete-milestone--id-"
-               value="3"
-               data-component="url">
-    <br>
-<p>The ID of the milestone to delete. Example: <code>3</code></p>
-            </div>
-                    </form>
 
                 <h1 id="project-status-and-priority">Project status and priority</h1>
 
@@ -8304,7 +8152,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
     
 
-                                <h2 id="project-comments-POSTapi-master-panel-comments">Add a comment .</h2>
+                                <h2 id="project-comments-POSTapi-master-panel-project-comments">Add a comment.</h2>
 
 <p>
 </p>
@@ -8313,25 +8161,25 @@ You can check the Dev Tools console for debugging information.</code></pre>
 using polymorphic relationships. It supports file attachments (images, PDFs, documents)
 and also handles user mentions (e.g., @username), sending notifications to mentioned users.</p>
 
-<span id="example-requests-POSTapi-master-panel-comments">
+<span id="example-requests-POSTapi-master-panel-project-comments">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/master-panel/comments" \
+    "http://localhost:8000/api/master-panel/project/comments" \
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
-    --form "model_type=App\Models\Project"\
+    --form "model_type=App\\Models\\Project"\
     --form "model_id=14"\
     --form "content=This is a comment with a mention to @jane."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php545E.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpD387.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/comments"
+    "http://localhost:8000/api/master-panel/project/comments"
 );
 
 const headers = {
@@ -8340,7 +8188,7 @@ const headers = {
 };
 
 const body = new FormData();
-body.append('model_type', 'App\Models\Project');
+body.append('model_type', 'App\\Models\\Project');
 body.append('model_id', '14');
 body.append('content', 'This is a comment with a mention to @jane.');
 body.append('parent_id', '5');
@@ -8354,7 +8202,7 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-POSTapi-master-panel-comments">
+<span id="example-responses-POSTapi-master-panel-project-comments">
             <blockquote>
             <p>Example response (200):</p>
         </blockquote>
@@ -8419,43 +8267,43 @@ fetch(url, {
 }</code>
  </pre>
     </span>
-<span id="execution-results-POSTapi-master-panel-comments" hidden>
+<span id="execution-results-POSTapi-master-panel-project-comments" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-master-panel-comments"></span>:
+                id="execution-response-status-POSTapi-master-panel-project-comments"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-comments"
+    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-project-comments"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-master-panel-comments" hidden>
+<span id="execution-error-POSTapi-master-panel-project-comments" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-master-panel-comments">
+    <pre><code id="execution-error-message-POSTapi-master-panel-project-comments">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-master-panel-comments" data-method="POST"
-      data-path="api/master-panel/comments"
+<form id="form-POSTapi-master-panel-project-comments" data-method="POST"
+      data-path="api/master-panel/project/comments"
       data-authed="0"
       data-hasfiles="1"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-comments', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-project-comments', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-master-panel-comments"
-                    onclick="tryItOut('POSTapi-master-panel-comments');">Try it out ⚡
+                    id="btn-tryout-POSTapi-master-panel-project-comments"
+                    onclick="tryItOut('POSTapi-master-panel-project-comments');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-master-panel-comments"
-                    onclick="cancelTryOut('POSTapi-master-panel-comments');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-master-panel-project-comments"
+                    onclick="cancelTryOut('POSTapi-master-panel-project-comments');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-master-panel-comments"
+                    id="btn-executetryout-POSTapi-master-panel-project-comments"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -8463,7 +8311,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/master-panel/comments</code></b>
+            <b><code>api/master-panel/project/comments</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -8471,7 +8319,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-comments"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-project-comments"
                value="multipart/form-data"
                data-component="header">
     <br>
@@ -8482,7 +8330,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-master-panel-comments"
+                              name="Accept"                data-endpoint="POSTapi-master-panel-project-comments"
                value="application/json"
                data-component="header">
     <br>
@@ -8494,18 +8342,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="model_type"                data-endpoint="POSTapi-master-panel-comments"
-               value="App\Models\Project"
+                              name="model_type"                data-endpoint="POSTapi-master-panel-project-comments"
+               value="App\\Models\\Project"
                data-component="body">
     <br>
-<p>The fully qualified model class name. Example: <code>App\Models\Project</code></p>
+<p>The fully qualified model class name. Example: <code>App\\Models\\Project</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>model_id</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="model_id"                data-endpoint="POSTapi-master-panel-comments"
+               step="any"               name="model_id"                data-endpoint="POSTapi-master-panel-project-comments"
                value="14"
                data-component="body">
     <br>
@@ -8516,7 +8364,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <small>string</small>&nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="content"                data-endpoint="POSTapi-master-panel-comments"
+                              name="content"                data-endpoint="POSTapi-master-panel-project-comments"
                value="This is a comment with a mention to @jane."
                data-component="body">
     <br>
@@ -8527,7 +8375,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <small>integer</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="parent_id"                data-endpoint="POSTapi-master-panel-comments"
+               step="any"               name="parent_id"                data-endpoint="POSTapi-master-panel-project-comments"
                value="5"
                data-component="body">
     <br>
@@ -8538,13 +8386,571 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <small>file[]</small>&nbsp;
 <i>optional</i> &nbsp;
                 <input type="file" style="display: none"
-                              name="attachments[0]"                data-endpoint="POSTapi-master-panel-comments"
+                              name="attachments[0]"                data-endpoint="POSTapi-master-panel-project-comments"
                data-component="body">
         <input type="file" style="display: none"
-               name="attachments[1]"                data-endpoint="POSTapi-master-panel-comments"
+               name="attachments[1]"                data-endpoint="POSTapi-master-panel-project-comments"
                data-component="body">
     <br>
 <p>Optional. Files to attach with the comment (jpg, jpeg, png, pdf, xlsx, txt, docx). Max size: 2MB per file.</p>
+        </div>
+        </form>
+
+                    <h2 id="project-comments-GETapi-master-panel-project-comments--id-">Get  comment by ID.</h2>
+
+<p>
+</p>
+
+<p>This endpoint retrieves the details of a specific comment, including any attachments associated with it.</p>
+
+<span id="example-requests-GETapi-master-panel-project-comments--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost:8000/api/master-panel/project/comments/21" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/project/comments/21"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-master-panel-project-comments--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;comment&quot;: {
+        &quot;id&quot;: 21,
+        &quot;commentable_type&quot;: &quot;App\\Models\\Project&quot;,
+        &quot;commentable_id&quot;: 14,
+        &quot;content&quot;: &quot;This is a comment with mention to &lt;a href=&#039;/users/5&#039;&gt;@jane&lt;/a&gt;&quot;,
+        &quot;user_id&quot;: 1,
+        &quot;parent_id&quot;: null,
+        &quot;created_at&quot;: &quot;2025-06-12T10:31:02.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-12T10:31:02.000000Z&quot;,
+        &quot;attachments&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;comment_id&quot;: 21,
+                &quot;file_name&quot;: &quot;report.pdf&quot;,
+                &quot;file_path&quot;: &quot;comment_attachments/report.pdf&quot;,
+                &quot;file_type&quot;: &quot;application/pdf&quot;
+            }
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\Comment] 99&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-master-panel-project-comments--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-master-panel-project-comments--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-master-panel-project-comments--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-master-panel-project-comments--id-" data-method="GET"
+      data-path="api/master-panel/project/comments/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-master-panel-project-comments--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-master-panel-project-comments--id-"
+                    onclick="tryItOut('GETapi-master-panel-project-comments--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-master-panel-project-comments--id-"
+                    onclick="cancelTryOut('GETapi-master-panel-project-comments--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-master-panel-project-comments--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/master-panel/project/comments/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="id"                data-endpoint="GETapi-master-panel-project-comments--id-"
+               value="21"
+               data-component="url">
+    <br>
+<p>The ID of the comment to retrieve. Example: <code>21</code></p>
+            </div>
+                    </form>
+
+                    <h2 id="project-comments-PUTapi-master-panel-project-comments--id-">Update a comment</h2>
+
+<p>
+</p>
+
+<p>This endpoint updates the content of an existing comment. It also handles user mention parsing and sends notifications to mentioned users.</p>
+
+<span id="example-requests-PUTapi-master-panel-project-comments--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://localhost:8000/api/master-panel/project/comments/consequatur" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"comment_id\": 12,
+    \"content\": \"\\\"Updated comment with mention to @john\\\"\",
+    \"isApi\": true
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/project/comments/consequatur"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "comment_id": 12,
+    "content": "\"Updated comment with mention to @john\"",
+    "isApi": true
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTapi-master-panel-project-comments--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Comment updated successfully.&quot;,
+    &quot;id&quot;: 12,
+    &quot;type&quot;: &quot;project&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;comment_id&quot;: [
+            &quot;The comment_id field is required.&quot;
+        ],
+        &quot;content&quot;: [
+            &quot;The content field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Internal Server Error&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-PUTapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTapi-master-panel-project-comments--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTapi-master-panel-project-comments--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTapi-master-panel-project-comments--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTapi-master-panel-project-comments--id-" data-method="PUT"
+      data-path="api/master-panel/project/comments/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTapi-master-panel-project-comments--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTapi-master-panel-project-comments--id-"
+                    onclick="tryItOut('PUTapi-master-panel-project-comments--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTapi-master-panel-project-comments--id-"
+                    onclick="cancelTryOut('PUTapi-master-panel-project-comments--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTapi-master-panel-project-comments--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>api/master-panel/project/comments/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="PUTapi-master-panel-project-comments--id-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>The ID of the comment. Example: <code>consequatur</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>comment_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="comment_id"                data-endpoint="PUTapi-master-panel-project-comments--id-"
+               value="12"
+               data-component="body">
+    <br>
+<p>The ID of the comment to update. Example: <code>12</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>content</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="content"                data-endpoint="PUTapi-master-panel-project-comments--id-"
+               value=""Updated comment with mention to @john""
+               data-component="body">
+    <br>
+<p>The new content of the comment. Mentions can be included using @username format. Example: <code>"Updated comment with mention to @john"</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>isApi</code></b>&nbsp;&nbsp;
+<small>boolean</small>&nbsp;
+<i>optional</i> &nbsp;
+                <label data-endpoint="PUTapi-master-panel-project-comments--id-" style="display: none">
+            <input type="radio" name="isApi"
+                   value="true"
+                   data-endpoint="PUTapi-master-panel-project-comments--id-"
+                   data-component="body"             >
+            <code>true</code>
+        </label>
+        <label data-endpoint="PUTapi-master-panel-project-comments--id-" style="display: none">
+            <input type="radio" name="isApi"
+                   value="false"
+                   data-endpoint="PUTapi-master-panel-project-comments--id-"
+                   data-component="body"             >
+            <code>false</code>
+        </label>
+    <br>
+<p>Optional flag to determine if it's an API request. Example: <code>true</code></p>
+        </div>
+        </form>
+
+                    <h2 id="project-comments-DELETEapi-master-panel-project-comments--id-">Delete a comment</h2>
+
+<p>
+</p>
+
+<p>This endpoint permanently deletes a comment and all of its associated attachments from the storage.</p>
+
+<span id="example-requests-DELETEapi-master-panel-project-comments--id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost:8000/api/master-panel/project/comments/consequatur" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --data "{
+    \"comment_id\": 15
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/project/comments/consequatur"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+let body = {
+    "comment_id": 15
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-master-panel-project-comments--id-">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: false,
+    &quot;message&quot;: &quot;Comment deleted successfully.&quot;,
+    &quot;id&quot;: 15,
+    &quot;type&quot;: &quot;project&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (404):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;No query results for model [App\\Models\\Comment] 15&quot;
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;comment_id&quot;: [
+            &quot;The comment_id field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;error&quot;: true,
+    &quot;message&quot;: &quot;Comment couldn&#039;t deleted.&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-DELETEapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-master-panel-project-comments--id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-master-panel-project-comments--id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-master-panel-project-comments--id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-master-panel-project-comments--id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-master-panel-project-comments--id-" data-method="DELETE"
+      data-path="api/master-panel/project/comments/{id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-master-panel-project-comments--id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-master-panel-project-comments--id-"
+                    onclick="tryItOut('DELETEapi-master-panel-project-comments--id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-master-panel-project-comments--id-"
+                    onclick="cancelTryOut('DELETEapi-master-panel-project-comments--id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-master-panel-project-comments--id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/master-panel/project/comments/{id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-master-panel-project-comments--id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>id</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="id"                data-endpoint="DELETEapi-master-panel-project-comments--id-"
+               value="consequatur"
+               data-component="url">
+    <br>
+<p>The ID of the comment. Example: <code>consequatur</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>comment_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="comment_id"                data-endpoint="DELETEapi-master-panel-project-comments--id-"
+               value="15"
+               data-component="body">
+    <br>
+<p>The ID of the comment to delete. Example: <code>15</code></p>
         </div>
         </form>
 
@@ -9103,7 +9509,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request DELETE \
-    "http://localhost:8000/api/master-panel/projects/issues/2" \
+    "http://localhost:8000/api/master-panel/projects/issues/3" \
     --header "Accept: application/json" \
     --header "workspace_id: 2" \
     --header "Content-Type: application/json"</code></pre></div>
@@ -9111,7 +9517,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/projects/issues/2"
+    "http://localhost:8000/api/master-panel/projects/issues/3"
 );
 
 const headers = {
@@ -9247,10 +9653,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="id_id"                data-endpoint="DELETEapi-master-panel-projects-issues--id_id-"
-               value="2"
+               value="3"
                data-component="url">
     <br>
-<p>The ID of the id. Example: <code>2</code></p>
+<p>The ID of the id. Example: <code>3</code></p>
             </div>
                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>project</code></b>&nbsp;&nbsp;
@@ -12349,7 +12755,7 @@ in the <code>task-media</code> media collection using Spatie MediaLibrary. This 
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "id=25"\
-    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\php5886.tmp" </code></pre></div>
+    --form "media_files[]=@C:\Users\Dikshita\AppData\Local\Temp\phpD9D2.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13119,10 +13525,257 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
                 <h1 id="task-comments">Task Comments</h1>
 
-    <p>This endpoint updates the content of an existing comment. It also detects user mentions
-(e.g., @username) in the updated content and sends mention notifications accordingly.</p>
+    <p>This endpoint allows an authenticated user to add a comment to a specific model
+such as a Task, Project, or any commentable entity. It also supports mentions
+(e.g., @username) and file attachments (e.g., PNG, PDF).</p>
 
-                                <h2 id="task-comments-GETapi-master-panel-comments--id-">get comments</h2>
+                                <h2 id="task-comments-POSTapi-master-panel-comments-create">Add a comment to a model (e.g., task, project).</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-master-panel-comments-create">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://localhost:8000/api/master-panel/comments-create" \
+    --header "workspace_id: 2" \
+    --header "Content-Type: multipart/form-data" \
+    --header "Accept: application/json" \
+    --form "model_type=App\Models\Task"\
+    --form "model_id=25"\
+    --form "content=This is a test comment mentioning @john_doe"\
+    --form "parent_id=5"\
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpDAAD.tmp" </code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost:8000/api/master-panel/comments-create"
+);
+
+const headers = {
+    "workspace_id": "2",
+    "Content-Type": "multipart/form-data",
+    "Accept": "application/json",
+};
+
+const body = new FormData();
+body.append('model_type', 'App\Models\Task');
+body.append('model_id', '25');
+body.append('content', 'This is a test comment mentioning @john_doe');
+body.append('parent_id', '5');
+body.append('attachments[]', document.querySelector('input[name="attachments[]"]').files[0]);
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-master-panel-comments-create">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;success&quot;: true,
+    &quot;message&quot;: &quot;Comment Added Successfully&quot;,
+    &quot;comment&quot;: {
+        &quot;id&quot;: 20,
+        &quot;content&quot;: &quot;This is a test comment mentioning @john_doe&quot;,
+        &quot;user&quot;: {
+            &quot;id&quot;: null,
+            &quot;name&quot;: null,
+            &quot;email&quot;: null
+        },
+        &quot;attachments&quot;: [],
+        &quot;parent_id&quot;: null,
+        &quot;created_at&quot;: &quot;2025-06-04 06:05:24&quot;,
+        &quot;created_human&quot;: &quot;1 second ago&quot;
+    }
+}</code>
+ </pre>
+            <blockquote>
+            <p>Example response (422):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;The given data was invalid.&quot;,
+    &quot;errors&quot;: {
+        &quot;model_type&quot;: [
+            &quot;The model_type field is required.&quot;
+        ],
+        &quot;model_id&quot;: [
+            &quot;The model_id field is required.&quot;
+        ],
+        &quot;content&quot;: [
+            &quot;The content field is required.&quot;
+        ]
+    }
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-POSTapi-master-panel-comments-create" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-master-panel-comments-create"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-comments-create"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-master-panel-comments-create" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-master-panel-comments-create">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-master-panel-comments-create" data-method="POST"
+      data-path="api/master-panel/comments-create"
+      data-authed="0"
+      data-hasfiles="1"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-comments-create', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-master-panel-comments-create"
+                    onclick="tryItOut('POSTapi-master-panel-comments-create');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-master-panel-comments-create"
+                    onclick="cancelTryOut('POSTapi-master-panel-comments-create');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-master-panel-comments-create"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/master-panel/comments-create</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="workspace_id"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="2"
+               data-component="header">
+    <br>
+<p>Example: <code>2</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="multipart/form-data"
+               data-component="header">
+    <br>
+<p>Example: <code>multipart/form-data</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>model_type</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="model_type"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="App\Models\Task"
+               data-component="body">
+    <br>
+<p>The fully qualified model class name. Example: <code>App\Models\Task</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>model_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="model_id"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="25"
+               data-component="body">
+    <br>
+<p>The ID of the model to comment on. Example: <code>25</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>content</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="content"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="This is a test comment mentioning @john_doe"
+               data-component="body">
+    <br>
+<p>The comment content. Mentions like @username will be parsed. Example: <code>This is a test comment mentioning @john_doe</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="parent_id"                data-endpoint="POSTapi-master-panel-comments-create"
+               value="5"
+               data-component="body">
+    <br>
+<p>nullable The ID of the parent comment (for replies). Example: <code>5</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>attachments</code></b>&nbsp;&nbsp;
+<small>file[]</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="file" style="display: none"
+                              name="attachments[0]"                data-endpoint="POSTapi-master-panel-comments-create"
+               data-component="body">
+        <input type="file" style="display: none"
+               name="attachments[1]"                data-endpoint="POSTapi-master-panel-comments-create"
+               data-component="body">
+    <br>
+<p>Must be a file. Must not be greater than 2048 kilobytes.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>attachments[]</code></b>&nbsp;&nbsp;
+<small>file</small>&nbsp;
+<i>optional</i> &nbsp;
+                <input type="file" style="display: none"
+                              name="attachments.0"                data-endpoint="POSTapi-master-panel-comments-create"
+               value=""
+               data-component="body">
+    <br>
+<p>optional Optional file attachments (JPG, PNG, PDF, etc).</p>
+        </div>
+        </form>
+
+                    <h2 id="task-comments-GETapi-master-panel-comments--id-">get comments</h2>
 
 <p>
 </p>
@@ -13144,7 +13797,7 @@ Supports file attachments and user mentions within the comment content.</p>
     --form "model_id=12"\
     --form "content=This is a test comment with @johndoe mentioned."\
     --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php55C6.tmp" </code></pre></div>
+    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\phpDADD.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13738,252 +14391,6 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>The ID of the comment to delete. Example: <code>12</code></p>
-        </div>
-        </form>
-
-                    <h2 id="task-comments-POSTapi-master-panel-comments-create">Add a comment to a model (e.g., task, project).</h2>
-
-<p>
-</p>
-
-
-
-<span id="example-requests-POSTapi-master-panel-comments-create">
-<blockquote>Example request:</blockquote>
-
-
-<div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://localhost:8000/api/master-panel/comments-create" \
-    --header "workspace_id: 2" \
-    --header "Content-Type: multipart/form-data" \
-    --header "Accept: application/json" \
-    --form "model_type=App\Models\Task"\
-    --form "model_id=25"\
-    --form "content=This is a test comment mentioning @john_doe"\
-    --form "parent_id=5"\
-    --form "attachments[]=@C:\Users\Dikshita\AppData\Local\Temp\php5943.tmp" </code></pre></div>
-
-
-<div class="javascript-example">
-    <pre><code class="language-javascript">const url = new URL(
-    "http://localhost:8000/api/master-panel/comments-create"
-);
-
-const headers = {
-    "workspace_id": "2",
-    "Content-Type": "multipart/form-data",
-    "Accept": "application/json",
-};
-
-const body = new FormData();
-body.append('model_type', 'App\Models\Task');
-body.append('model_id', '25');
-body.append('content', 'This is a test comment mentioning @john_doe');
-body.append('parent_id', '5');
-body.append('attachments[]', document.querySelector('input[name="attachments[]"]').files[0]);
-
-fetch(url, {
-    method: "POST",
-    headers,
-    body,
-}).then(response =&gt; response.json());</code></pre></div>
-
-</span>
-
-<span id="example-responses-POSTapi-master-panel-comments-create">
-            <blockquote>
-            <p>Example response (200):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;success&quot;: true,
-    &quot;message&quot;: &quot;Comment Added Successfully&quot;,
-    &quot;comment&quot;: {
-        &quot;id&quot;: 20,
-        &quot;content&quot;: &quot;This is a test comment mentioning @john_doe&quot;,
-        &quot;user&quot;: {
-            &quot;id&quot;: null,
-            &quot;name&quot;: null,
-            &quot;email&quot;: null
-        },
-        &quot;attachments&quot;: [],
-        &quot;parent_id&quot;: null,
-        &quot;created_at&quot;: &quot;2025-06-04 06:05:24&quot;,
-        &quot;created_human&quot;: &quot;1 second ago&quot;
-    }
-}</code>
- </pre>
-            <blockquote>
-            <p>Example response (422):</p>
-        </blockquote>
-                <pre>
-
-<code class="language-json" style="max-height: 300px;">{
-    &quot;message&quot;: &quot;The given data was invalid.&quot;,
-    &quot;errors&quot;: {
-        &quot;model_type&quot;: [
-            &quot;The model_type field is required.&quot;
-        ],
-        &quot;model_id&quot;: [
-            &quot;The model_id field is required.&quot;
-        ],
-        &quot;content&quot;: [
-            &quot;The content field is required.&quot;
-        ]
-    }
-}</code>
- </pre>
-    </span>
-<span id="execution-results-POSTapi-master-panel-comments-create" hidden>
-    <blockquote>Received response<span
-                id="execution-response-status-POSTapi-master-panel-comments-create"></span>:
-    </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-master-panel-comments-create"
-      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
-</span>
-<span id="execution-error-POSTapi-master-panel-comments-create" hidden>
-    <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-master-panel-comments-create">
-
-Tip: Check that you&#039;re properly connected to the network.
-If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
-You can check the Dev Tools console for debugging information.</code></pre>
-</span>
-<form id="form-POSTapi-master-panel-comments-create" data-method="POST"
-      data-path="api/master-panel/comments-create"
-      data-authed="0"
-      data-hasfiles="1"
-      data-isarraybody="0"
-      autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-master-panel-comments-create', this);">
-    <h3>
-        Request&nbsp;&nbsp;&nbsp;
-                    <button type="button"
-                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-master-panel-comments-create"
-                    onclick="tryItOut('POSTapi-master-panel-comments-create');">Try it out ⚡
-            </button>
-            <button type="button"
-                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-master-panel-comments-create"
-                    onclick="cancelTryOut('POSTapi-master-panel-comments-create');" hidden>Cancel 🛑
-            </button>&nbsp;&nbsp;
-            <button type="submit"
-                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-master-panel-comments-create"
-                    data-initial-text="Send Request 💥"
-                    data-loading-text="⏱ Sending..."
-                    hidden>Send Request 💥
-            </button>
-            </h3>
-            <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>api/master-panel/comments-create</code></b>
-        </p>
-                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>workspace_id</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="workspace_id"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="2"
-               data-component="header">
-    <br>
-<p>Example: <code>2</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="multipart/form-data"
-               data-component="header">
-    <br>
-<p>Example: <code>multipart/form-data</code></p>
-            </div>
-                                <div style="padding-left: 28px; clear: unset;">
-                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
-&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="application/json"
-               data-component="header">
-    <br>
-<p>Example: <code>application/json</code></p>
-            </div>
-                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>model_type</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="model_type"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="App\Models\Task"
-               data-component="body">
-    <br>
-<p>The fully qualified model class name. Example: <code>App\Models\Task</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>model_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="model_id"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="25"
-               data-component="body">
-    <br>
-<p>The ID of the model to comment on. Example: <code>25</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>content</code></b>&nbsp;&nbsp;
-<small>string</small>&nbsp;
- &nbsp;
-                <input type="text" style="display: none"
-                              name="content"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="This is a test comment mentioning @john_doe"
-               data-component="body">
-    <br>
-<p>The comment content. Mentions like @username will be parsed. Example: <code>This is a test comment mentioning @john_doe</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>parent_id</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="parent_id"                data-endpoint="POSTapi-master-panel-comments-create"
-               value="5"
-               data-component="body">
-    <br>
-<p>nullable The ID of the parent comment (for replies). Example: <code>5</code></p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>attachments</code></b>&nbsp;&nbsp;
-<small>file[]</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="file" style="display: none"
-                              name="attachments[0]"                data-endpoint="POSTapi-master-panel-comments-create"
-               data-component="body">
-        <input type="file" style="display: none"
-               name="attachments[1]"                data-endpoint="POSTapi-master-panel-comments-create"
-               data-component="body">
-    <br>
-<p>Must be a file. Must not be greater than 2048 kilobytes.</p>
-        </div>
-                <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>attachments[]</code></b>&nbsp;&nbsp;
-<small>file</small>&nbsp;
-<i>optional</i> &nbsp;
-                <input type="file" style="display: none"
-                              name="attachments.0"                data-endpoint="POSTapi-master-panel-comments-create"
-               value=""
-               data-component="body">
-    <br>
-<p>optional Optional file attachments (JPG, PNG, PDF, etc).</p>
         </div>
         </form>
 

@@ -22,6 +22,7 @@ use App\Http\Controllers\TodosController;
 use App\Http\Controllers\UnitsController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CustomFieldsController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SubscriptionPlan;
 use App\Http\Controllers\ProfileController;
@@ -844,6 +845,17 @@ Route::middleware(['CheckInstallation', 'checkRole',])->group(function () {
             Route::get('/get-unread-announcements', [AnnouncementController::class, 'getUnreadAnnouncements'])->name('announcements.getUnreadAnnouncements');
             Route::put('/update-status', [AnnouncementController::class, 'update_status'])->name('announcements.update_status');
             Route::put('/mark-all-as-read', [AnnouncementController::class, 'mark_all_as_read'])->name('announcements.mark_all_as_read');
+        });
+                Route::prefix('/settings')->group(function () {
+            Route::get('/custom-fields', [CustomFieldsController::class, 'index'])->name('custom_fields.index');
+            Route::post('/custom-fields', [CustomFieldsController::class, 'store'])->name('custom_fields.store');
+            Route::get('/custom-fields/list', [CustomFieldsController::class, 'list'])->name('custom_fields.list');
+
+            Route::get('/custom-fields/{id}/edit', [CustomFieldsController::class, 'edit'])->name('custom_fields.edit');
+            Route::put('/custom-fields/{id}', [CustomFieldsController::class, 'update'])->name('custom_fields.update');
+            Route::delete('/custom-fields/destroy/{id}', [CustomFieldsController::class, 'destroy'])->name('custom_fields.destroy');
+            Route::delete('/custom-fields/destroy_multiple', [CustomFieldsController::class, 'destroy_multiple'])->name('custom_fields.destroy_multiple');
+        
         });
 
         Route::prefix('/task-lists')->group(function () {

@@ -663,7 +663,7 @@ endpoints:
         type: integer
         enumValues: []
         exampleWasSpecified: true
-        nullable: false
+        nullable: true
         custom: []
       budget:
         name: budget
@@ -673,7 +673,7 @@ endpoints:
         type: integer
         enumValues: []
         exampleWasSpecified: true
-        nullable: false
+        nullable: true
         custom: []
       start_date:
         name: start_date
@@ -713,16 +713,27 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: false
+        nullable: true
         custom: []
       note:
         name: note
-        description: |-
-          Additional notes for the project. Nullable. Example: "Client prefers Figma for designs."
-           @bodyParam user_id int[] required Array of user IDs to assign.
+        description: 'Additional notes for the project. Nullable.'
         required: false
-        example: '[1, 2, 3]'
+        example: '"Client prefers Figma for designs."'
         type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        custom: []
+      user_id:
+        name: user_id
+        description: 'Array of user IDs to assign.'
+        required: true
+        example:
+          - 1
+          - 2
+          - 3
+        type: 'integer[]'
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -770,7 +781,11 @@ endpoints:
       end_date: '2025-05-31'
       task_accessibility: project_users
       description: '"A complete redesign of the company website."'
-      note: '[1, 2, 3]'
+      note: '"Client prefers Figma for designs."'
+      user_id:
+        - 1
+        - 2
+        - 3
       client_id:
         - 1
         - 43
